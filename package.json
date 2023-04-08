@@ -19,7 +19,8 @@
   "dependencies": {
     "@types/react-reconciler": "^0.28.2",
     "debug": "^4.3.4",
-    "react-reconciler": "0.29.0"
+    "react-reconciler": "0.29.0",
+    "yoga-layout-prebuilt": "^1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",

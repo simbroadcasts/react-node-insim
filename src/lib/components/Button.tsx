@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 
 import type { BtnProps } from '../elements';
 import { useInSim } from '../InSimContext';

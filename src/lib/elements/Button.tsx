@@ -30,16 +30,16 @@ type BtnBaseProps = {
   UCID?: number;
 
   /** Width (0 to 200) */
-  width: number;
+  width?: number;
 
   /** Height (0 to 200) */
-  height: number;
+  height?: number;
 
   /** Top offset (0 to 200) */
-  top: number;
+  top?: number;
 
   /** Left offset (0 to 200) */
-  left: number;
+  left?: number;
 
   variant?: 'transparent' | 'light' | 'dark';
   align?: 'left' | 'right' | 'center';
@@ -98,10 +98,10 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
       ReqI: 1,
       ClickID: clickId,
       UCID: props.UCID ?? 0,
-      T: props.top,
-      L: props.left,
-      W: props.width,
-      H: props.height,
+      T: props.top ?? 0,
+      L: props.left ?? 0,
+      W: props.width ?? 0,
+      H: props.height ?? 0,
       Text: childrenAsString(props.children),
       BStyle: buttonStyle,
       TypeIn: props.maxTypeInChars
@@ -255,10 +255,10 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
     };
 
     if (visuallyChanged) {
-      packetProps.T = newProps.top;
-      packetProps.L = newProps.left;
-      packetProps.W = newProps.width;
-      packetProps.H = newProps.height;
+      packetProps.T = newProps.top ?? 0;
+      packetProps.L = newProps.left ?? 0;
+      packetProps.W = newProps.width ?? 0;
+      packetProps.H = newProps.height ?? 0;
       packetProps.BStyle = buttonStyle;
       packetProps.TypeIn = newProps.maxTypeInChars ?? 0;
     }

@@ -4,6 +4,8 @@ import type { InSimElements } from 'node-insim-react';
 import { Button, useInSim } from 'node-insim-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { Layouts } from './components';
+
 const variants: InSimElements['btn']['variant'][] = [
   'dark',
   'light',
@@ -28,8 +30,8 @@ export function App() {
   const [count, setCount] = useState(0);
   const [width, setWidth] = useState(60);
   const [height, setHeight] = useState(10);
-  const [top, setTop] = useState(20);
-  const [left, setLeft] = useState(40);
+  const [top, setTop] = useState(29);
+  const [left, setLeft] = useState(60);
   const [variantId, setVariantId] = useState(0);
   const [alignId, setAlignId] = useState(1);
   const [colorId, setColorId] = useState(0);
@@ -85,7 +87,7 @@ export function App() {
 
       <Button
         top={40}
-        left={55}
+        left={60}
         width={45}
         height={10}
         variant="dark"
@@ -94,12 +96,12 @@ export function App() {
         {isButtonShown ? 'Hide' : 'Show'} button above
       </Button>
 
-      <Button top={50} left={40} width={15} height={10} align="right">
+      <Button top={50} left={45} width={15} height={10} align="right">
         Top
       </Button>
       <Button
         top={50}
-        left={55}
+        left={60}
         width={10}
         height={10}
         variant="dark"
@@ -112,7 +114,7 @@ export function App() {
       </Button>
       <Button
         top={50}
-        left={65}
+        left={70}
         width={10}
         height={10}
         variant="dark"
@@ -120,12 +122,12 @@ export function App() {
       >
         +
       </Button>
-      <Button top={60} left={40} width={15} height={10} align="right">
+      <Button top={60} left={45} width={15} height={10} align="right">
         Left
       </Button>
       <Button
         top={60}
-        left={55}
+        left={60}
         width={10}
         height={10}
         variant="dark"
@@ -135,7 +137,7 @@ export function App() {
       </Button>
       <Button
         top={60}
-        left={65}
+        left={70}
         width={10}
         height={10}
         variant="dark"
@@ -143,12 +145,12 @@ export function App() {
       >
         +
       </Button>
-      <Button top={70} left={40} width={15} height={10} align="right">
+      <Button top={70} left={45} width={15} height={10} align="right">
         Width
       </Button>
       <Button
         top={70}
-        left={55}
+        left={60}
         width={10}
         height={10}
         variant="dark"
@@ -158,7 +160,7 @@ export function App() {
       </Button>
       <Button
         top={70}
-        left={65}
+        left={70}
         width={10}
         height={10}
         variant="dark"
@@ -166,12 +168,12 @@ export function App() {
       >
         +
       </Button>
-      <Button top={80} left={40} width={15} height={10} align="right">
+      <Button top={80} left={45} width={15} height={10} align="right">
         Height
       </Button>
       <Button
         top={80}
-        left={55}
+        left={60}
         width={10}
         height={10}
         variant="dark"
@@ -181,7 +183,7 @@ export function App() {
       </Button>
       <Button
         top={80}
-        left={65}
+        left={70}
         width={10}
         height={10}
         variant="dark"
@@ -189,7 +191,7 @@ export function App() {
       >
         +
       </Button>
-      <Button top={90} left={40} width={15} height={10} align="right">
+      <Button top={90} left={45} width={15} height={10} align="right">
         Variant
       </Button>
       {variants.map((variant, id) => {
@@ -198,7 +200,7 @@ export function App() {
           <Button
             key={id}
             top={90}
-            left={55 + id * width}
+            left={60 + id * width}
             width={width}
             height={10}
             variant="dark"
@@ -208,7 +210,7 @@ export function App() {
           </Button>
         );
       })}
-      <Button top={100} left={40} width={15} height={10} align="right">
+      <Button top={100} left={45} width={15} height={10} align="right">
         Align
       </Button>
       {alignments.map((align, id) => {
@@ -217,7 +219,7 @@ export function App() {
           <Button
             key={id}
             top={100}
-            left={55 + id * width}
+            left={60 + id * width}
             width={width}
             height={10}
             variant="dark"
@@ -227,7 +229,7 @@ export function App() {
           </Button>
         );
       })}
-      <Button top={110} left={40} width={15} height={10} align="right">
+      <Button top={110} left={45} width={15} height={10} align="right">
         Color
       </Button>
       {colors.map((color, id) => {
@@ -236,7 +238,7 @@ export function App() {
           <Button
             key={id}
             top={113}
-            left={55 + id * width}
+            left={60 + id * width}
             width={width}
             height={5}
             variant="dark"
@@ -252,7 +254,7 @@ export function App() {
       </Button>
       <Button
         top={128}
-        left={55}
+        left={60}
         width={10}
         height={10}
         variant="dark"
@@ -262,12 +264,12 @@ export function App() {
       >
         -
       </Button>
-      <Button top={128} left={65} width={10} height={10}>
+      <Button top={128} left={70} width={10} height={10}>
         {buttonCount}
       </Button>
       <Button
         top={128}
-        left={75}
+        left={80}
         width={10}
         height={10}
         variant="dark"
@@ -278,7 +280,7 @@ export function App() {
 
       <Button
         top={145}
-        left={55}
+        left={60}
         width={30}
         height={10}
         variant="dark"
@@ -292,7 +294,7 @@ export function App() {
       </Button>
       <Button
         top={145}
-        left={85}
+        left={90}
         width={30}
         height={10}
         variant="light"
@@ -308,6 +310,8 @@ export function App() {
             {index}
           </Button>
         ))}
+
+      <Layouts />
     </>
   );
 }
