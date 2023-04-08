@@ -1,8 +1,8 @@
 import type { IS_BTC } from 'node-insim/packets';
-import { ButtonClickFlags } from 'node-insim/packets';
+import { ButtonClickFlags, IS_MSL } from 'node-insim/packets';
+import type { InSimElements } from 'node-insim-react';
+import { Button, useInSim } from 'node-insim-react';
 import React, { useCallback, useEffect, useState } from 'react';
-
-import type { InSimElements } from '../lib/JSX';
 
 const variants: InSimElements['btn']['variant'][] = [
   'dark',
@@ -42,7 +42,15 @@ export function App() {
   const align = alignments[alignId];
   const color = colors[colorId];
 
+  const { inSim } = useInSim();
+
   useEffect(() => {
+    inSim.send(new IS_MSL({ Msg: `Count: ${count}` }));
+  }, [count]);
+
+  useEffect(() => {
+    inSim.send(new IS_MSL({ Msg: 'App mounted' }));
+
     setInterval(() => {
       setCount((prevCount) => prevCount + 1);
     }, 1000);
@@ -60,7 +68,7 @@ export function App() {
   return (
     <>
       {isButtonShown && (
-        <btn
+        <Button
           UCID={255}
           onClick={testButtonClick}
           top={top}
@@ -72,10 +80,10 @@ export function App() {
           color={color}
         >
           Click to increment: {count}
-        </btn>
+        </Button>
       )}
 
-      <btn
+      <Button
         top={40}
         left={55}
         width={45}
@@ -84,12 +92,12 @@ export function App() {
         onClick={() => setIsButtonShown((isShown) => !isShown)}
       >
         {isButtonShown ? 'Hide' : 'Show'} button above
-      </btn>
+      </Button>
 
-      <btn top={50} left={40} width={15} height={10} align="right">
+      <Button top={50} left={40} width={15} height={10} align="right">
         Top
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={50}
         left={55}
         width={10}
@@ -101,8 +109,8 @@ export function App() {
         }}
       >
         -
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={50}
         left={65}
         width={10}
@@ -111,11 +119,11 @@ export function App() {
         onClick={() => setTop((prevTop) => prevTop + 1)}
       >
         +
-      </btn>
-      <btn top={60} left={40} width={15} height={10} align="right">
+      </Button>
+      <Button top={60} left={40} width={15} height={10} align="right">
         Left
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={60}
         left={55}
         width={10}
@@ -124,8 +132,8 @@ export function App() {
         onClick={() => setLeft((prevLeft) => prevLeft - 1)}
       >
         -
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={60}
         left={65}
         width={10}
@@ -134,11 +142,11 @@ export function App() {
         onClick={() => setLeft((prevLeft) => prevLeft + 1)}
       >
         +
-      </btn>
-      <btn top={70} left={40} width={15} height={10} align="right">
+      </Button>
+      <Button top={70} left={40} width={15} height={10} align="right">
         Width
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={70}
         left={55}
         width={10}
@@ -147,8 +155,8 @@ export function App() {
         onClick={() => setWidth((prevWidth) => prevWidth - 1)}
       >
         -
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={70}
         left={65}
         width={10}
@@ -157,11 +165,11 @@ export function App() {
         onClick={() => setWidth((prevWidth) => prevWidth + 1)}
       >
         +
-      </btn>
-      <btn top={80} left={40} width={15} height={10} align="right">
+      </Button>
+      <Button top={80} left={40} width={15} height={10} align="right">
         Height
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={80}
         left={55}
         width={10}
@@ -170,8 +178,8 @@ export function App() {
         onClick={() => setHeight((prevHeight) => prevHeight - 1)}
       >
         -
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={80}
         left={65}
         width={10}
@@ -180,14 +188,14 @@ export function App() {
         onClick={() => setHeight((prevHeight) => prevHeight + 1)}
       >
         +
-      </btn>
-      <btn top={90} left={40} width={15} height={10} align="right">
+      </Button>
+      <Button top={90} left={40} width={15} height={10} align="right">
         Variant
-      </btn>
+      </Button>
       {variants.map((variant, id) => {
         const width = 20;
         return (
-          <btn
+          <Button
             key={id}
             top={90}
             left={55 + id * width}
@@ -197,16 +205,16 @@ export function App() {
             onClick={() => setVariantId(id)}
           >
             {variant ?? 'undefined'}
-          </btn>
+          </Button>
         );
       })}
-      <btn top={100} left={40} width={15} height={10} align="right">
+      <Button top={100} left={40} width={15} height={10} align="right">
         Align
-      </btn>
+      </Button>
       {alignments.map((align, id) => {
         const width = 20;
         return (
-          <btn
+          <Button
             key={id}
             top={100}
             left={55 + id * width}
@@ -216,16 +224,16 @@ export function App() {
             onClick={() => setAlignId(id)}
           >
             {align ?? 'undefined'}
-          </btn>
+          </Button>
         );
       })}
-      <btn top={110} left={40} width={15} height={10} align="right">
+      <Button top={110} left={40} width={15} height={10} align="right">
         Color
-      </btn>
+      </Button>
       {colors.map((color, id) => {
         const width = 12;
         return (
-          <btn
+          <Button
             key={id}
             top={113}
             left={55 + id * width}
@@ -235,14 +243,14 @@ export function App() {
             onClick={() => setColorId(id)}
           >
             {color ?? 'undefined'}
-          </btn>
+          </Button>
         );
       })}
 
-      <btn top={128} left={25} width={30} height={10} align="right">
+      <Button top={128} left={25} width={30} height={10} align="right">
         Add buttons
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={128}
         left={55}
         width={10}
@@ -253,11 +261,11 @@ export function App() {
         }
       >
         -
-      </btn>
-      <btn top={128} left={65} width={10} height={10}>
+      </Button>
+      <Button top={128} left={65} width={10} height={10}>
         {buttonCount}
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={128}
         left={75}
         width={10}
@@ -266,9 +274,9 @@ export function App() {
         onClick={() => setButtonCount((prevCount) => prevCount + 1)}
       >
         +
-      </btn>
+      </Button>
 
-      <btn
+      <Button
         top={145}
         left={55}
         width={30}
@@ -281,8 +289,8 @@ export function App() {
         }}
       >
         Open dialog
-      </btn>
-      <btn
+      </Button>
+      <Button
         top={145}
         left={85}
         width={30}
@@ -291,14 +299,14 @@ export function App() {
         color="unselected"
       >
         {typeIn}
-      </btn>
+      </Button>
 
       {Array(buttonCount)
         .fill(0)
         .map((_, index) => (
-          <btn key={index} top={140} left={index * 4} width={4} height={5}>
+          <Button key={index} top={140} left={index * 4} width={4} height={5}>
             {index}
-          </btn>
+          </Button>
         ))}
     </>
   );

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, no-console */
 import type { InSim } from 'node-insim';
 import type { IS_BTN_Data } from 'node-insim/packets';
+import type { FunctionComponentElement } from 'react';
 import type { HostConfig } from 'react-reconciler';
 import Reconciler from 'react-reconciler';
 
-import { Button } from './Button';
+import { Button } from './elements';
+import { InSimContextProvider } from './InSimContext';
 import type { Children, InSimElements } from './JSX';
 import { log } from './logger';
 
@@ -82,7 +84,6 @@ const hostConfig: HostConfig<
     log('appendInitialChild', {
       parent: parentInstance.packet.ClickID,
     });
-    // log({ parentInstance, child });
   },
 
   finalizeInitialChildren(): boolean {
@@ -94,18 +95,8 @@ const hostConfig: HostConfig<
     type: T,
     oldProps: Props<T>,
     newProps: Props<T>,
-    rootContainer: Container,
-    hostContext: HostContext,
   ): UpdatePayload<T> | null {
     log('prepareUpdate');
-    // log({
-    //   instance,
-    //   type,
-    //   oldProps,
-    //   newProps,
-    //   rootContainer,
-    //   hostContext,
-    // });
 
     switch (type) {
       case 'btn': {
@@ -114,44 +105,6 @@ const hostConfig: HostConfig<
     }
 
     throw new Error(`Invalid instance type "${type}"`);
-
-    // if (
-    //   oldProps.width === newProps.width &&
-    //   oldProps.height === newProps.height &&
-    //   oldProps.top === newProps.top &&
-    //   oldProps.left === newProps.left &&
-    //   oldProps.variant === newProps.variant &&
-    //   oldProps.align === newProps.align &&
-    //   oldProps.color === newProps.color &&
-    //   oldProps.children === newProps.children &&
-    //   oldProps.onClick === newProps.onClick &&
-    //   oldProps.onType === newProps.onType
-    // ) {
-    //   log(`Button ${instance.packet.ClickID} - props have not changed`);
-    //   return null;
-    // }
-    //
-    // const changes: UpdatePayload['changes'] = {
-    //   visuallyChanged: false,
-    // };
-    //
-    // if (
-    //   oldProps.width !== newProps.width ||
-    //   oldProps.height !== newProps.height ||
-    //   oldProps.top !== newProps.top ||
-    //   oldProps.left !== newProps.left ||
-    //   oldProps.variant !== newProps.variant ||
-    //   oldProps.align !== newProps.align ||
-    //   oldProps.color !== newProps.color
-    // ) {
-    //   log(`Button ${instance.packet.ClickID} - visual has changed`);
-    //   changes.visuallyChanged = true;
-    // }
-    //
-    // return {
-    //   changes,
-    //   inSim: rootContainer.inSim,
-    // };
   },
 
   shouldSetTextContent(type: Type, props: Props): boolean {
@@ -160,8 +113,9 @@ const hostConfig: HostConfig<
     );
   },
 
-  getRootHostContext(): HostContext | null {
-    // log('getRootHostContext');
+  getRootHostContext(rootContainer: Container): HostContext | null {
+    log('getRootHostContext');
+
     return rootHostContext;
   },
 
@@ -365,7 +319,7 @@ export function childrenAsString(children?: Children | Children[]): string {
 const reconciler = Reconciler(hostConfig);
 
 export const InSimRenderer = {
-  render(component: any, inSim: InSim) {
+  render(component: FunctionComponentElement<unknown>, inSim: InSim) {
     const root = reconciler.createContainer(
       {
         inSim,
@@ -381,6 +335,10 @@ export const InSimRenderer = {
       },
       null,
     );
-    reconciler.updateContainer(component, root, null);
+    reconciler.updateContainer(
+      <InSimContextProvider inSim={inSim}>{component}</InSimContextProvider>,
+      root,
+      null,
+    );
   },
 };

@@ -13,7 +13,10 @@
     "esModuleInterop": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "node-insim-react": ["./src/lib/index.ts"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

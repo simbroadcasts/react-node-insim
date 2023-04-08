@@ -1,5 +1,5 @@
 import { InSim } from 'node-insim';
-import { IS_ISI_ReqI, PacketType } from 'node-insim/packets';
+import { InSimFlags, IS_ISI_ReqI, PacketType } from 'node-insim/packets';
 import React from 'react';
 
 import { InSimRenderer } from '../lib';
@@ -13,6 +13,7 @@ inSim.connect({
   IName: 'React InSim',
   Host: '127.0.0.1',
   Port: 29999,
+  Flags: InSimFlags.ISF_LOCAL,
 });
 
 inSim.on('connect', () => console.log('Connected'));

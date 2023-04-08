@@ -9,16 +9,16 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 
-import { InSimElement } from './InSimElement';
+import { InSimElement } from '../InSimElement';
 import type {
   Container,
   HostContext,
   Props,
   UpdatePayload,
-} from './InSimRenderer';
-import { childrenAsString } from './InSimRenderer';
-import type { Children, InSimElementProps } from './JSX';
-import { log } from './logger';
+} from '../InSimRenderer';
+import { childrenAsString } from '../InSimRenderer';
+import type { Children, InSimElementProps } from '../JSX';
+import { log } from '../logger';
 
 export type BtnProps = InSimElementProps<IS_BTN, BtnBaseProps>;
 
@@ -64,7 +64,7 @@ type BtnBaseProps = {
 };
 
 export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
-  readonly packet: IS_BTN;
+  readonly packet: IS_BTN = new IS_BTN();
   private onClickListeners: Required<BtnProps>['onClick'][] = [];
   private onTypeListeners: Required<BtnProps>['onType'][] = [];
 
@@ -109,7 +109,7 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
         : 0,
     });
 
-    log('add button', clickId, {
+    log(`Button ${clickId} - add`, {
       nextClickId: hostContext.nextClickId,
     });
 
@@ -127,7 +127,7 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
 
   remove() {
     const { packet } = this;
-    log('remove button', packet.ClickID);
+    log(`Button ${packet.ClickID} - remove`);
 
     const { inSim, renderedButtonIds } = this.container;
 
@@ -144,17 +144,6 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
 
     this.clearOnClickListeners();
     this.clearOnTypeListeners();
-
-    // Remove all click and type listeners when the all buttons are cleared by user
-    inSim.on(PacketType.ISP_BFN, (packet) => {
-      if (packet.SubT === ButtonFunction.BFN_USER_CLEAR) {
-        log(
-          `button ${this.packet.ClickID} - user cleared all buttons - clear listeners`,
-        );
-        this.clearOnClickListeners();
-        this.clearOnTypeListeners();
-      }
-    });
   }
 
   prepareUpdate(oldProps: Props, newProps: Props): UpdatePayload | null {
@@ -167,11 +156,22 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
     let onClickChanged = false;
     let onTypeChanged = false;
 
+    if (newProps.shouldClearAllButtons) {
+      log(
+        `Button ${this.packet.ClickID} - user has hidden all buttons - do not render`,
+      );
+      return null;
+    }
+
     const buttonTextIsEqual =
       childrenAsString(oldProps.children) ===
       childrenAsString(newProps.children);
+    const shouldKeepAllButtonsHidden =
+      oldProps.shouldClearAllButtons === newProps.shouldClearAllButtons &&
+      newProps.shouldClearAllButtons;
 
     if (
+      shouldKeepAllButtonsHidden &&
       oldProps.UCID === newProps.UCID &&
       oldProps.width === newProps.width &&
       oldProps.height === newProps.height &&
@@ -180,14 +180,19 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
       oldProps.variant === newProps.variant &&
       oldProps.align === newProps.align &&
       oldProps.color === newProps.color &&
+      oldProps.maxTypeInChars === newProps.maxTypeInChars &&
       buttonTextIsEqual &&
       oldProps.onClick === newProps.onClick &&
       oldProps.onType === newProps.onType
     ) {
+      log(
+        `Button ${this.packet.ClickID} - props have not changed - do not render`,
+      );
       return null;
     }
 
     if (
+      !shouldKeepAllButtonsHidden ||
       oldProps.UCID !== newProps.UCID ||
       oldProps.width !== newProps.width ||
       oldProps.height !== newProps.height ||
@@ -196,6 +201,7 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
       oldProps.variant !== newProps.variant ||
       oldProps.align !== newProps.align ||
       oldProps.color !== newProps.color ||
+      oldProps.maxTypeInChars !== newProps.maxTypeInChars ||
       (oldProps.onClick === undefined && newProps.onClick !== undefined) ||
       (oldProps.onClick !== undefined && newProps.onClick === undefined) ||
       (oldProps.onType === undefined && newProps.onType !== undefined) ||
@@ -233,7 +239,6 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
       }
     }
 
-    // Only onClick or onType changed - no need to update
     if (eventListenersChanged && !visuallyChanged && buttonTextIsEqual) {
       log(
         `Button ${this.packet.ClickID} - only event listeners changed - do not re-render`,
@@ -255,6 +260,7 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
       packetProps.W = newProps.width;
       packetProps.H = newProps.height;
       packetProps.BStyle = buttonStyle;
+      packetProps.TypeIn = newProps.maxTypeInChars ?? 0;
     }
 
     return {
