@@ -1,0 +1,47 @@
+{
+  "name": "node-insim-react",
+  "version": "0.0.1",
+  "description": "Node InSim React",
+  "main": "index.js",
+  "author": "Martin Kapal <flamecze@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "tsx watch src/example/index.tsx",
+    "format": "prettier --write \"./**/*.{js,ts,md,json,yml,yaml}\"",
+    "lint": "eslint \"./src/**/*\" --ext .js,.ts",
+    "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix"
+  },
+  "peerDependencies": {
+    "node-insim": "^0.10.2",
+    "react": "^18.2.0"
+  },
+  "dependencies": {
+    "@types/react-reconciler": "^0.28.2",
+    "debug": "^4.3.4",
+    "react-reconciler": "0.29.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/debug": "^4.1.7",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "esbuild": "^0.15.13",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "node-insim": "^0.10.2",
+    "prettier": "^2.6.2",
+    "react": "^18.2.0",
+    "tsx": "^3.12.6",
+    "typescript": "^4.9.5"
+  },
+  "files": [
+    "**/*.js",
+    "**/*.d.ts"
+  ]
+}
