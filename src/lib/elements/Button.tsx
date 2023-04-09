@@ -34,7 +34,7 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
       );
     }
 
-    this.checkDimensions(props);
+    this.checkDimensions(props, true);
 
     const buttonStyle = getUpdatedButtonStyleFromProps(props);
     const clickId = getNextFreeClickId(hostContext, container);
@@ -223,10 +223,13 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
     this.container.inSim.send(new IS_BTN(data));
   }
 
-  private checkDimensions(props: Props) {
+  private checkDimensions(props: Props, checkWidthAndHeight = false) {
     if (
       ((props.width ?? 0) === 0 && (props.height ?? 0) !== 0) ||
-      ((props.width ?? 0) !== 0 && (props.height ?? 0) === 0)
+      ((props.width ?? 0) !== 0 && (props.height ?? 0) === 0) ||
+      (checkWidthAndHeight &&
+        (props.width ?? 0) === 0 &&
+        (props.height ?? 0) === 0)
     ) {
       throw new Error(
         `Invalid button dimensions: W=${props.width} H=${props.height}`,
