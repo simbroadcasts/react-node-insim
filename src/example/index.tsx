@@ -1,8 +1,8 @@
 import { InSim } from 'node-insim';
 import { InSimFlags, IS_ISI_ReqI, PacketType } from 'node-insim/packets';
+import { InSimRenderer } from 'node-insim-react';
 import React from 'react';
 
-import { InSimRenderer } from '../lib';
 import { App } from './App';
 import { ErrorBoundary } from './ErrorBoundary';
 
@@ -20,6 +20,7 @@ inSim.on('connect', () => console.log('Connected'));
 
 inSim.on('disconnect', () => console.log('Disconnected'));
 
+// TODO throw error if not yet connected while rendering
 inSim.on(PacketType.ISP_VER, () => {
   InSimRenderer.render(
     <React.StrictMode>
