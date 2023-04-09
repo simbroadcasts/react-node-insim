@@ -1,6 +1,6 @@
 import type { Key, Ref } from 'react';
 
-import type { BtnProps } from './elements';
+import type { ButtonProps } from './components';
 
 export type Children = string | number;
 
@@ -11,5 +11,5 @@ export type InSimElementProps<RefElement, Props> = Props & {
 };
 
 export interface InSimElements {
-  btn: BtnProps;
+  btn: ButtonProps;
 }

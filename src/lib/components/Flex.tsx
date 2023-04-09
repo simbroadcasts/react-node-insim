@@ -8,19 +8,19 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
-import type { BtnProps } from '../elements';
+import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
 export type FlexProps = PositionProps &
-  Partial<Pick<BtnProps, 'width' | 'height' | 'variant' | 'color'>> &
+  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
   };
 
-type ButtonChild = ReactElement<BtnProps>;
+type ButtonChild = ReactElement<ButtonProps>;
 
-type PositionProps = Required<Pick<BtnProps, 'top' | 'left'>>;
+type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
 
 type FlexboxProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
@@ -161,8 +161,7 @@ export function Flex({
           }
 
           const buttonNode = root.getChild(index);
-          const { top, left, width, height, right, bottom } =
-            buttonNode.getComputedLayout();
+          const { top, left, width, height } = buttonNode.getComputedLayout();
 
           return cloneElement(child, {
             top: Math.abs(rootLayout.top) + top,
