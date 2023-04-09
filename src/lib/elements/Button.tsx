@@ -1,3 +1,4 @@
+import lodash from 'lodash';
 import type { IS_BTC, IS_BTN_Data, IS_BTT } from 'node-insim/packets';
 import {
   ButtonFunction,
@@ -166,12 +167,16 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
     const buttonTextIsEqual =
       childrenAsString(oldProps.children) ===
       childrenAsString(newProps.children);
-    const shouldKeepAllButtonsHidden =
-      oldProps.shouldClearAllButtons === newProps.shouldClearAllButtons &&
-      newProps.shouldClearAllButtons;
+
+    const shouldRestoreAllButtons =
+      oldProps.shouldClearAllButtons !== newProps.shouldClearAllButtons &&
+      !newProps.shouldClearAllButtons;
 
     if (
-      shouldKeepAllButtonsHidden &&
+      !shouldRestoreAllButtons &&
+      oldProps.flex === newProps.flex &&
+      oldProps.initializeDialogWithButtonText ===
+        newProps.initializeDialogWithButtonText &&
       oldProps.UCID === newProps.UCID &&
       oldProps.width === newProps.width &&
       oldProps.height === newProps.height &&
@@ -192,7 +197,10 @@ export class Button extends InSimElement<BtnProps, IS_BTN_Data> {
     }
 
     if (
-      !shouldKeepAllButtonsHidden ||
+      shouldRestoreAllButtons ||
+      oldProps.flex !== newProps.flex ||
+      oldProps.initializeDialogWithButtonText !==
+        newProps.initializeDialogWithButtonText ||
       oldProps.UCID !== newProps.UCID ||
       oldProps.width !== newProps.width ||
       oldProps.height !== newProps.height ||
