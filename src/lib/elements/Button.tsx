@@ -1,4 +1,3 @@
-import lodash from 'lodash';
 import type { IS_BTC, IS_BTN_Data, IS_BTT } from 'node-insim/packets';
 import {
   ButtonFunction,
@@ -53,6 +52,7 @@ type BtnBaseProps = {
     | 'cancel'
     | 'textstring'
     | 'unavailable';
+  flex?: number;
 
   /** If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95) */
   maxTypeInChars?: number;
