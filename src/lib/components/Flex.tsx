@@ -1,5 +1,11 @@
-import type { ReactElement } from 'react';
-import React, { Children, cloneElement, Fragment } from 'react';
+import type { ForwardedRef, ReactElement } from 'react';
+import React, {
+  Children,
+  cloneElement,
+  createElement,
+  forwardRef,
+  Fragment,
+} from 'react';
 import type {
   YogaAlign,
   YogaFlexDirection,
@@ -8,6 +14,7 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
+import type { Flex as FlexElement } from '../elements';
 import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
@@ -60,37 +67,40 @@ type FlexboxProps = {
   marginHorizontal?: number;
 };
 
-export function Flex({
-  children,
-  direction = 'row',
-  justifyContent = 'start',
-  alignItems = 'start',
-  alignContent = 'start',
-  wrap = 'no-wrap',
-  padding,
-  paddingLeft,
-  paddingRight,
-  paddingTop,
-  paddingBottom,
-  paddingVertical,
-  paddingHorizontal,
-  margin,
-  marginLeft,
-  marginRight,
-  marginTop,
-  marginBottom,
-  marginVertical,
-  marginHorizontal,
-  top: topOffset,
-  left: leftOffset,
-  width,
-  height,
-  variant,
-  color,
-  backgroundColor,
-  borderSize = 0,
-  borderColor,
-}: FlexProps) {
+export const Flex = forwardRef(function FlexWithRef(
+  {
+    children,
+    direction = 'row',
+    justifyContent = 'start',
+    alignItems = 'start',
+    alignContent = 'start',
+    wrap = 'no-wrap',
+    padding,
+    paddingLeft,
+    paddingRight,
+    paddingTop,
+    paddingBottom,
+    paddingVertical,
+    paddingHorizontal,
+    margin,
+    marginLeft,
+    marginRight,
+    marginTop,
+    marginBottom,
+    marginVertical,
+    marginHorizontal,
+    top: topOffset,
+    left: leftOffset,
+    width,
+    height,
+    variant,
+    color,
+    backgroundColor,
+    borderSize = 0,
+    borderColor,
+  }: FlexProps,
+  ref: ForwardedRef<FlexElement>,
+) {
   const root = yoga.Node.create();
 
   if (width !== undefined) {
@@ -140,31 +150,46 @@ export function Flex({
     root.setMargin(yoga.EDGE_HORIZONTAL, marginHorizontal);
 
   Children.forEach(children, (child, index) => {
-    if (child.type !== Button) {
+    if (!isValidChild(child)) {
       return;
     }
 
-    const buttonNode = yoga.Node.create();
-    buttonNode.setWidth(child.props.width ?? 0);
-    buttonNode.setHeight(child.props.height ?? 0);
+    const childNode = yoga.Node.create();
+
+    if (child.props.width) {
+      childNode.setWidth(child.props.width);
+    } else {
+      childNode.setWidthAuto();
+    }
+
+    if (child.props.height) {
+      childNode.setHeight(child.props.height);
+    } else {
+      childNode.setHeightAuto();
+    }
 
     if (alignItems === 'stretch') {
       if (direction === 'column') {
-        root.getWidth().value && buttonNode.setWidthAuto();
+        root.getWidth().value && childNode.setWidthAuto();
       } else {
-        root.getHeight().value && buttonNode.setHeightAuto();
+        root.getHeight().value && childNode.setHeightAuto();
       }
     }
 
-    child.props.flex && buttonNode.setFlex(child.props.flex);
+    child.props.flex && childNode.setFlex(child.props.flex);
 
-    root.insertChild(buttonNode, index);
+    root.insertChild(childNode, index);
   });
 
   root.calculateLayout();
   const rootLayout = root.getComputedLayout();
 
-  return (
+  return createElement(
+    'flex',
+    {
+      layout: rootLayout,
+      ref,
+    },
     <>
       {borderSize > 0 && borderColor && (
         <>
@@ -209,26 +234,36 @@ export function Flex({
       )}
       <Fragment key={backgroundColor}>
         {Children.map(children, (child, index) => {
-          if (child.type !== Button) {
+          if (!isValidChild(child)) {
             return;
           }
 
           const buttonNode = root.getChild(index);
           const { top, left, width, height } = buttonNode.getComputedLayout();
 
+          const childWidth = Number.isNaN(buttonNode.getWidth().value)
+            ? undefined
+            : width;
+          const childHeight = Number.isNaN(buttonNode.getHeight().value)
+            ? undefined
+            : height;
+
           return cloneElement(child, {
             top: Math.abs(rootLayout.top) + top,
             left: Math.abs(rootLayout.left) + left,
-            width,
-            height,
+            width: childWidth,
+            height: childHeight,
             variant: child.props.variant ?? variant,
             color: child.props.color ?? color,
           });
         })}
       </Fragment>
-    </>
+    </>,
   );
-}
+});
+
+const isValidChild = (child: ReactElement) =>
+  child.type === Button || child.type === Flex;
 
 const directionMap: Record<
   NonNullable<FlexProps['direction']>,

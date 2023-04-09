@@ -5,18 +5,19 @@ import type { FunctionComponentElement } from 'react';
 import type { HostConfig } from 'react-reconciler';
 import Reconciler from 'react-reconciler';
 
-import { Button } from './elements';
+import type { ButtonProps } from './components';
+import { Button, Flex } from './elements';
 import { InSimContextProvider } from './InSimContext';
 import type { Children, InSimElements } from './JSX';
 import { log } from './logger';
 
-type Type = 'btn';
+type Type = keyof InSimElements;
 export type Props<T extends keyof InSimElements = 'btn'> = InSimElements[T];
 export type Container = {
   inSim: InSim;
   renderedButtonIds: Set<number>;
 };
-type Instance = Button;
+type Instance = Button | Flex;
 
 type TextInstance = string | number;
 type SuspenseInstance = any;
@@ -58,16 +59,28 @@ const hostConfig: HostConfig<
   isPrimaryRenderer: true,
   supportsHydration: false,
 
-  createInstance(
-    type: Type,
-    props: Props,
+  createInstance<T extends keyof InSimElements>(
+    type: T,
+    props: Props<T>,
     rootContainer: Container,
     hostContext: HostContext,
-  ): Instance {
+  ): Button | Flex {
     log('createInstance', { type });
 
     if (type === 'btn') {
-      return new Button(props, hostContext, rootContainer);
+      return new Button(
+        props as InSimElements['btn'],
+        hostContext,
+        rootContainer,
+      );
+    }
+
+    if (type === 'flex') {
+      return new Flex(
+        props as InSimElements['flex'],
+        hostContext,
+        rootContainer,
+      );
     }
 
     throw new Error(`Invalid instance type "${type}"`);
@@ -81,9 +94,7 @@ const hostConfig: HostConfig<
     parentInstance: Instance,
     child: Instance | TextInstance,
   ): void {
-    log('appendInitialChild', {
-      parent: parentInstance.packet.ClickID,
-    });
+    log('appendInitialChild');
   },
 
   finalizeInitialChildren(): boolean {
@@ -100,7 +111,13 @@ const hostConfig: HostConfig<
 
     switch (type) {
       case 'btn': {
-        return instance.prepareUpdate(oldProps, newProps);
+        return instance.prepareUpdate(
+          oldProps as ButtonProps,
+          newProps as ButtonProps,
+        );
+      }
+      case 'flex': {
+        return null;
       }
     }
 
@@ -156,7 +173,7 @@ const hostConfig: HostConfig<
   },
 
   appendChild(parentInstance: Instance, child: Instance | TextInstance): void {
-    log('appendChild', { parent: parentInstance.packet.ClickID });
+    log('appendChild');
     // log({ parentInstance, child });
   },
 
@@ -201,7 +218,7 @@ const hostConfig: HostConfig<
     child: Instance | TextInstance | SuspenseInstance,
   ): void {
     log('removeChildFromContainer', {
-      child: child.packet.ClickID,
+      // child: child.packet.ClickID,
     });
 
     if (child instanceof Button) {
@@ -210,7 +227,9 @@ const hostConfig: HostConfig<
   },
 
   resetTextContent(instance: Instance): void {
-    instance.packet.Text = '';
+    if (instance instanceof Button) {
+      instance.packet.Text = '';
+    }
   },
 
   commitTextUpdate(
@@ -230,7 +249,7 @@ const hostConfig: HostConfig<
     updatePayload: UpdatePayload,
     type: Type,
   ): void {
-    log('commitUpdate', instance.packet.ClickID);
+    log('commitUpdate');
 
     switch (type) {
       case 'btn': {

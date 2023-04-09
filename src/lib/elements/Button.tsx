@@ -28,6 +28,13 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
   constructor(props: Props, hostContext: HostContext, container: Container) {
     super(hostContext, container);
 
+    if (props.shouldClearAllButtons) {
+      log(
+        `Button ${this.packet.ClickID} - user has hidden all buttons - do not render`,
+      );
+      return;
+    }
+
     if (container.renderedButtonIds.size > IS_BTN.MAX_CLICK_ID) {
       throw new Error(
         `Too many buttons. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,

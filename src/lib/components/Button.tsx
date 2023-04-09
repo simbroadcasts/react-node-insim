@@ -1,10 +1,12 @@
-import type { IS_BTC, IS_BTN, IS_BTT } from 'node-insim/packets';
-import { createElement } from 'react';
+import type { IS_BTC, IS_BTT } from 'node-insim/packets';
+import type { ForwardedRef } from 'react';
+import { createElement, forwardRef } from 'react';
 
+import type { Button as ButtonElement } from '../elements';
 import { useInSim } from '../InSimContext';
 import type { Children, InSimElementProps } from '../JSX';
 
-export type ButtonProps = InSimElementProps<IS_BTN, ButtonBaseProps>;
+export type ButtonProps = InSimElementProps<ButtonElement, ButtonBaseProps>;
 
 type ButtonBaseProps = {
   /** 0 to 240 characters of text */
@@ -48,11 +50,15 @@ type ButtonBaseProps = {
   onType?: (packet: IS_BTT) => void;
 };
 
-export function Button(props: ButtonProps) {
+export const Button = forwardRef(function Button(
+  props: ButtonProps,
+  ref: ForwardedRef<ButtonElement>,
+) {
   const { shouldClearAllButtons } = useInSim();
 
   return createElement<ButtonProps>('btn', {
     shouldClearAllButtons,
     ...props,
+    ref,
   });
-}
+});
