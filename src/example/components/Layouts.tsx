@@ -4,9 +4,10 @@ import React, { Fragment, useState } from 'react';
 import type { FlexProps } from '../../lib/components/Flex';
 
 const alignContentOptions: FlexProps['alignContent'][] = [
-  'left',
+  undefined,
+  'start',
   'center',
-  'right',
+  'end',
   'stretch',
   'auto',
   'baseline',
@@ -15,20 +16,23 @@ const alignContentOptions: FlexProps['alignContent'][] = [
 ];
 
 const alignItemsOptions: FlexProps['alignItems'][] = [
-  'left',
+  undefined,
+  'start',
   'center',
-  'right',
+  'end',
   'stretch',
   'auto',
   'baseline',
 ];
 
 const backgroundColorOptions: FlexProps['backgroundColor'][] = [
+  undefined,
   'light',
   'dark',
 ];
 
 const directionOptions: FlexProps['direction'][] = [
+  undefined,
   'row',
   'row-reverse',
   'column',
@@ -36,110 +40,194 @@ const directionOptions: FlexProps['direction'][] = [
 ];
 
 const justifyContentOptions: FlexProps['justifyContent'][] = [
-  'left',
+  undefined,
+  'start',
   'center',
-  'right',
+  'end',
   'space-evenly',
   'space-around',
   'space-between',
 ];
 
-const wrapOptions: FlexProps['wrap'][] = ['no-wrap', 'wrap', 'wrap-reverse'];
+const wrapOptions: FlexProps['wrap'][] = [
+  undefined,
+  'no-wrap',
+  'wrap',
+  'wrap-reverse',
+];
+
+const colorOptions: FlexProps['color'][] = [
+  undefined,
+  'lightgrey',
+  'title',
+  'unselected',
+  'selected',
+  'ok',
+  'cancel',
+  'textstring',
+  'unavailable',
+];
+
+const variantOptions: FlexProps['variant'][] = [
+  undefined,
+  'dark',
+  'light',
+  'transparent',
+];
+
+const plusMinusOptions = ['-', '+'];
 
 const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
+  top: plusMinusOptions,
+  left: plusMinusOptions,
+  width: [undefined, 30, 50, 90],
+  height: [undefined, 30, 50, 90],
+  color: colorOptions,
+  backgroundColor: backgroundColorOptions,
+  borderSize: plusMinusOptions,
+  borderColor: variantOptions,
+  variant: variantOptions,
   alignContent: alignContentOptions,
   alignItems: alignItemsOptions,
-  backgroundColor: backgroundColorOptions,
   direction: directionOptions,
-  // color: undefined,
-  // height: 0,
   justifyContent: justifyContentOptions,
-  // left: 0,
-  margin: [0, 5, 10],
-  marginBottom: [0, 5, 10],
-  marginHorizontal: [0, 5, 10],
-  marginLeft: [0, 5, 10],
-  marginRight: [0, 5, 10],
-  marginTop: [0, 5, 10],
-  marginVertical: [0, 5, 10],
-  padding: [0, 5, 10],
-  paddingBottom: [0, 5, 10],
-  paddingHorizontal: [0, 5, 10],
-  paddingLeft: [0, 5, 10],
-  paddingRight: [0, 5, 10],
-  paddingTop: [0, 5, 10],
-  paddingVertical: [0, 5, 10],
-  // top: 0,
-  // variant: undefined,
-  // width: 0,
+  margin: plusMinusOptions,
+  marginBottom: plusMinusOptions,
+  marginHorizontal: plusMinusOptions,
+  marginLeft: plusMinusOptions,
+  marginRight: plusMinusOptions,
+  marginTop: plusMinusOptions,
+  marginVertical: plusMinusOptions,
+  padding: plusMinusOptions,
+  paddingBottom: plusMinusOptions,
+  paddingHorizontal: plusMinusOptions,
+  paddingLeft: plusMinusOptions,
+  paddingRight: plusMinusOptions,
+  paddingTop: plusMinusOptions,
+  paddingVertical: plusMinusOptions,
   wrap: wrapOptions,
 };
 
 export function Layouts() {
-  const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({});
+  const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
+    backgroundColor: 'light',
+    variant: 'dark',
+    top: 140,
+    left: 80,
+  });
+
+  const rowHeight = 4;
 
   return (
     <>
-      {Object.entries(rows).map(([key, options], index) => (
-        <Fragment key={key}>
-          <Button
-            width={20}
-            height={5}
-            top={5 + 5 * index}
-            left={5}
-            align="left"
-          >
-            {key}
-          </Button>
-          <HStack
-            width={15}
-            height={5}
-            top={5 + 5 * index}
-            left={25}
-            variant="light"
-          >
-            {[undefined, ...options].map((value) => {
-              const valueString =
-                value !== undefined ? (value as string).toString() : '[none]';
+      {Object.entries(rows).map(([key, options], index) => {
+        const flexPropValue = flexProps[key as keyof FlexProps];
 
-              return (
-                <Button
-                  color={
-                    flexProps[key as keyof FlexProps] === value
-                      ? 'selected'
-                      : 'unselected'
-                  }
-                  key={valueString}
-                  onClick={() =>
-                    setFlexProps((prevState) => ({
-                      ...prevState,
-                      [key]: value,
-                    }))
-                  }
-                >
-                  {valueString}
-                </Button>
-              );
-            })}
-          </HStack>
-        </Fragment>
-      ))}
+        const isPlusMinus =
+          options.length === 2 && options[0] === '-' && options[1] === '+';
 
-      <Flex
-        top={120}
-        left={80}
-        width={80}
-        height={40}
-        color="title"
-        {...flexProps}
-      >
-        <Button width={20} height={10} variant="dark">
+        const allOptions = isPlusMinus
+          ? [(flexPropValue ?? '[none]').toString(), ...options]
+          : options;
+
+        return (
+          <Fragment key={key}>
+            <Button
+              width={20}
+              height={rowHeight}
+              top={5 + rowHeight * index}
+              left={5}
+              align="left"
+            >
+              {key}
+            </Button>
+            <HStack
+              width={15}
+              height={rowHeight}
+              top={5 + rowHeight * index}
+              left={25}
+              variant="light"
+            >
+              {allOptions.map((value, index, array) => {
+                const isPlusMinus =
+                  array.length === 3 && array[1] === '-' && array[2] === '+';
+
+                const valueString =
+                  value !== undefined ? (value as string).toString() : '[none]';
+
+                const variant =
+                  isPlusMinus && index === 0 ? 'transparent' : undefined;
+                const color =
+                  flexPropValue === value ? 'selected' : 'unselected';
+
+                return (
+                  <Button
+                    variant={variant}
+                    color={color}
+                    key={`${valueString}-${variant}`}
+                    onClick={
+                      isPlusMinus && index === 0
+                        ? undefined
+                        : () => {
+                            if (
+                              typeof flexPropValue === 'number' ||
+                              flexPropValue === undefined
+                            ) {
+                              if (value === '+') {
+                                setFlexProps((prevState) => {
+                                  const prevValue =
+                                    prevState[key as keyof FlexProps];
+                                  return {
+                                    ...prevState,
+                                    [key]:
+                                      prevValue === undefined
+                                        ? 1
+                                        : Number(prevValue) + 1,
+                                  };
+                                });
+                                return;
+                              }
+
+                              if (value === '-') {
+                                setFlexProps((prevState) => {
+                                  const prevValue =
+                                    prevState[key as keyof FlexProps];
+                                  return {
+                                    ...prevState,
+                                    [key]:
+                                      prevValue === undefined
+                                        ? 0
+                                        : Number(prevValue) - 1,
+                                  };
+                                });
+                                return;
+                              }
+                            }
+
+                            setFlexProps((prevState) => ({
+                              ...prevState,
+                              [key]: value,
+                            }));
+                          }
+                    }
+                  >
+                    {valueString}
+                  </Button>
+                );
+              })}
+            </HStack>
+          </Fragment>
+        );
+      })}
+
+      <Flex top={120} left={70} {...flexProps}>
+        <Button width={20} height={10}>
           Hello
         </Button>
-        <Button width={30} height={8} variant="dark">
+        <Button width={35} height={8}>
           Flex
         </Button>
-        <Button width={8} height={5} variant="dark">
+        <Button width={8} height={5}>
           Box
         </Button>
       </Flex>

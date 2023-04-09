@@ -16,6 +16,8 @@ export type FlexProps = PositionProps &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
+    borderSize?: number;
+    borderColor?: 'light' | 'dark';
   };
 
 type ButtonChild = ReactElement<ButtonProps>;
@@ -25,19 +27,19 @@ type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
 type FlexboxProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   justifyContent?:
-    | 'left'
+    | 'start'
     | 'center'
-    | 'right'
+    | 'end'
     | 'space-evenly'
     | 'space-around'
     | 'space-between';
-  alignItems?: 'auto' | 'baseline' | 'left' | 'center' | 'right' | 'stretch';
+  alignItems?: 'auto' | 'baseline' | 'start' | 'center' | 'end' | 'stretch';
   alignContent?:
     | 'auto'
     | 'baseline'
-    | 'left'
+    | 'start'
     | 'center'
-    | 'right'
+    | 'end'
     | 'stretch'
     | 'space-around'
     | 'space-between';
@@ -60,11 +62,11 @@ type FlexboxProps = {
 
 export function Flex({
   children,
-  direction,
-  justifyContent,
-  alignItems,
-  alignContent,
-  wrap,
+  direction = 'row',
+  justifyContent = 'start',
+  alignItems = 'start',
+  alignContent = 'start',
+  wrap = 'no-wrap',
   padding,
   paddingLeft,
   paddingRight,
@@ -86,18 +88,35 @@ export function Flex({
   variant,
   color,
   backgroundColor,
+  borderSize = 0,
+  borderColor,
 }: FlexProps) {
   const root = yoga.Node.create();
-  root.setWidth(width ?? 0);
-  root.setHeight(height ?? 0);
+
+  if (width !== undefined) {
+    root.setWidth(width);
+  } else {
+    root.setWidth(0);
+    root.setWidthAuto();
+  }
+
+  if (height !== undefined) {
+    root.setHeight(height);
+  } else {
+    root.setHeight(0);
+    root.setHeightAuto();
+  }
+
   root.setPosition(yoga.EDGE_TOP, topOffset);
   root.setPosition(yoga.EDGE_LEFT, leftOffset);
 
-  justifyContent && root.setJustifyContent(justifyContentMap[justifyContent]);
-  direction && root.setFlexDirection(directionMap[direction]);
-  alignItems && root.setAlignItems(alignItemsMap[alignItems]);
-  alignContent && root.setAlignContent(alignContentMap[alignContent]);
-  wrap && root.setFlexWrap(flexWrapMap[wrap]);
+  root.setJustifyContent(justifyContentMap[justifyContent]);
+  root.setFlexDirection(directionMap[direction]);
+  root.setAlignItems(alignItemsMap[alignItems]);
+  root.setAlignContent(alignContentMap[alignContent]);
+  root.setFlexWrap(flexWrapMap[wrap]);
+
+  root.setBorder(yoga.EDGE_ALL, borderSize);
 
   padding !== undefined && root.setPadding(yoga.EDGE_ALL, padding);
   paddingLeft !== undefined && root.setPadding(yoga.EDGE_LEFT, paddingLeft);
@@ -130,9 +149,11 @@ export function Flex({
     buttonNode.setHeight(child.props.height ?? 0);
 
     if (alignItems === 'stretch') {
-      direction === 'column'
-        ? buttonNode.setWidthAuto()
-        : buttonNode.setHeightAuto();
+      if (direction === 'column') {
+        root.getWidth().value && buttonNode.setWidthAuto();
+      } else {
+        root.getHeight().value && buttonNode.setHeightAuto();
+      }
     }
 
     child.props.flex && buttonNode.setFlex(child.props.flex);
@@ -140,17 +161,49 @@ export function Flex({
     root.insertChild(buttonNode, index);
   });
 
-  root.calculateLayout(width, height);
+  root.calculateLayout();
   const rootLayout = root.getComputedLayout();
 
   return (
     <>
+      {borderSize > 0 && borderColor && (
+        <>
+          <Button
+            width={borderSize}
+            height={rootLayout.height}
+            top={Math.abs(rootLayout.top)}
+            left={Math.abs(rootLayout.left)}
+            variant={borderColor}
+          />
+          <Button
+            width={borderSize}
+            height={rootLayout.height}
+            top={Math.abs(rootLayout.top)}
+            left={Math.abs(rootLayout.left) + (rootLayout.width - borderSize)}
+            variant={borderColor}
+          />
+          <Button
+            width={rootLayout.width}
+            height={borderSize}
+            top={Math.abs(rootLayout.top)}
+            left={Math.abs(rootLayout.left)}
+            variant={borderColor}
+          />
+          <Button
+            width={rootLayout.width}
+            height={borderSize}
+            top={Math.abs(rootLayout.top) + rootLayout.height - borderSize}
+            left={Math.abs(rootLayout.left)}
+            variant={borderColor}
+          />
+        </>
+      )}
       {backgroundColor && (
         <Button
-          width={rootLayout.width}
-          height={rootLayout.height}
-          top={Math.abs(rootLayout.top)}
-          left={Math.abs(rootLayout.left)}
+          width={rootLayout.width - borderSize * 2}
+          height={rootLayout.height - borderSize * 2}
+          top={Math.abs(rootLayout.top) + borderSize}
+          left={Math.abs(rootLayout.left) + borderSize}
           variant={backgroundColor}
         />
       )}
@@ -191,9 +244,9 @@ const justifyContentMap: Record<
   NonNullable<FlexProps['justifyContent']>,
   YogaJustifyContent
 > = {
-  left: yoga.JUSTIFY_FLEX_START,
+  start: yoga.JUSTIFY_FLEX_START,
   center: yoga.JUSTIFY_CENTER,
-  right: yoga.JUSTIFY_FLEX_END,
+  end: yoga.JUSTIFY_FLEX_END,
   'space-evenly': yoga.JUSTIFY_SPACE_EVENLY,
   'space-around': yoga.JUSTIFY_SPACE_AROUND,
   'space-between': yoga.JUSTIFY_SPACE_BETWEEN,
@@ -202,9 +255,9 @@ const justifyContentMap: Record<
 const alignItemsMap: Record<NonNullable<FlexProps['alignItems']>, YogaAlign> = {
   auto: yoga.ALIGN_AUTO,
   baseline: yoga.ALIGN_BASELINE,
-  left: yoga.ALIGN_FLEX_START,
+  start: yoga.ALIGN_FLEX_START,
   center: yoga.ALIGN_CENTER,
-  right: yoga.ALIGN_FLEX_END,
+  end: yoga.ALIGN_FLEX_END,
   stretch: yoga.ALIGN_STRETCH,
 };
 
@@ -214,9 +267,9 @@ const alignContentMap: Record<
 > = {
   auto: yoga.ALIGN_AUTO,
   baseline: yoga.ALIGN_BASELINE,
-  left: yoga.ALIGN_FLEX_START,
+  start: yoga.ALIGN_FLEX_START,
   center: yoga.ALIGN_CENTER,
-  right: yoga.ALIGN_FLEX_END,
+  end: yoga.ALIGN_FLEX_END,
   stretch: yoga.ALIGN_STRETCH,
   'space-around': yoga.ALIGN_SPACE_AROUND,
   'space-between': yoga.ALIGN_SPACE_BETWEEN,
