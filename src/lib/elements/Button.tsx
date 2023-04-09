@@ -34,14 +34,7 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
       );
     }
 
-    if (
-      (props.width === 0 && props.height !== 0) ||
-      (props.width !== 0 && props.height === 0)
-    ) {
-      throw new Error(
-        `Invalid button dimensions: W=${props.width} H=${props.height}`,
-      );
-    }
+    this.checkDimensions(props);
 
     const buttonStyle = getUpdatedButtonStyleFromProps(props);
     const clickId = getNextFreeClickId(hostContext, container);
@@ -73,13 +66,9 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
     container.inSim.send(btnPacket);
     this.packet = btnPacket;
 
-    if (props.onClick) {
-      this.addOnClickListener(props.onClick);
-    }
+    props.onClick && this.addOnClickListener(props.onClick);
 
-    if (props.onType) {
-      this.addOnTypeListener(props.onType);
-    }
+    props.onType && this.addOnTypeListener(props.onType);
   }
 
   remove() {
@@ -105,6 +94,8 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
 
   prepareUpdate(oldProps: Props, newProps: Props): UpdatePayload | null {
     log(`Button ${this.packet.ClickID} - prepare update`);
+
+    this.checkDimensions(newProps);
 
     const { packet } = this;
     const { inSim } = this.container;
@@ -189,18 +180,12 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
 
     if (onClickChanged) {
       this.clearOnClickListeners();
-
-      if (newProps.onClick) {
-        this.addOnClickListener(newProps.onClick);
-      }
+      newProps.onClick && this.addOnClickListener(newProps.onClick);
     }
 
     if (onTypeChanged) {
       this.clearOnTypeListeners();
-
-      if (newProps.onType) {
-        this.addOnTypeListener(newProps.onType);
-      }
+      newProps.onType && this.addOnTypeListener(newProps.onType);
     }
 
     if (eventListenersChanged && !visuallyChanged && buttonTextIsEqual) {
@@ -236,6 +221,17 @@ export class Button extends InSimElement<ButtonProps, IS_BTN_Data> {
   applyData(data: IS_BTN_Data) {
     log(`Button ${this.packet.ClickID} - apply new props`);
     this.container.inSim.send(new IS_BTN(data));
+  }
+
+  private checkDimensions(props: Props) {
+    if (
+      ((props.width ?? 0) === 0 && (props.height ?? 0) !== 0) ||
+      ((props.width ?? 0) !== 0 && (props.height ?? 0) === 0)
+    ) {
+      throw new Error(
+        `Invalid button dimensions: W=${props.width} H=${props.height}`,
+      );
+    }
   }
 
   private addOnClickListener(onClick: (packet: IS_BTC) => void): void {
