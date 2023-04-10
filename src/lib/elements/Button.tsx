@@ -18,7 +18,7 @@ import type {
   PublicInstance,
   UpdatePayload,
 } from '../ReactInSim';
-import type { Instance, TextInstance, Type } from '../ReactInSim';
+import type { Instance, Type } from '../ReactInSim';
 import { childrenToString } from '../ReactInSim';
 
 const log = baseLog.extend('button');
@@ -88,12 +88,11 @@ export class Button extends InSimElement {
     parent: number,
     type: Type,
     props: ButtonProps,
-    children: Array<Instance | TextInstance>,
-    text: string | null,
+    children: Array<Instance>,
     context: HostContext,
     container: Container,
   ) {
-    super(id, parent, type, children, text, context, container);
+    super(id, parent, type, children, context, container);
 
     if (container.renderedButtonIds.size > IS_BTN.MAX_CLICK_ID) {
       throw new Error(

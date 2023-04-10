@@ -1,11 +1,8 @@
-import type { InSim } from 'node-insim';
-
 import type {
   Container,
   HostContext,
   Instance,
   Props,
-  TextInstance,
   Type,
   UpdatePayload,
 } from './ReactInSim';
@@ -14,8 +11,7 @@ export abstract class InSimElement {
   readonly id: number;
   parent: number;
   readonly type: Type;
-  readonly children: Array<Instance | TextInstance>;
-  readonly text: string | null;
+  readonly children: Array<Instance>;
   readonly context: HostContext;
   readonly container: Container;
 
@@ -23,8 +19,7 @@ export abstract class InSimElement {
     id: number,
     parent: number,
     type: Type,
-    children: Array<Instance | TextInstance>,
-    text: string | null,
+    children: Array<Instance>,
     context: HostContext,
     container: Container,
   ) {
@@ -32,7 +27,6 @@ export abstract class InSimElement {
     this.parent = parent;
     this.type = type;
     this.children = children;
-    this.text = text;
     this.context = context;
     this.container = container;
   }

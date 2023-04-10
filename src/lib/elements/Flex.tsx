@@ -1,14 +1,6 @@
 import type { FlexProps } from '../components';
 import { InSimElement } from '../InSimElement';
-import type {
-  Container,
-  HostContext,
-  Instance,
-  Props,
-  TextInstance,
-  Type,
-  UpdatePayload,
-} from '../ReactInSim';
+import type { Container, HostContext, Instance, Type } from '../ReactInSim';
 
 export class Flex extends InSimElement {
   constructor(
@@ -16,23 +8,18 @@ export class Flex extends InSimElement {
     parent: number,
     type: Type,
     props: FlexProps,
-    children: Array<Instance | TextInstance>,
-    text: string | null,
+    children: Array<Instance>,
     context: HostContext,
     container: Container,
   ) {
-    super(id, parent, type, children, text, context, container);
+    super(id, parent, type, children, context, container);
   }
 
   commitMount(): void {
     // noop
   }
 
-  commitUpdate(
-    oldProps: Props,
-    newProps: Props,
-    updatePayload: NonNullable<UpdatePayload<Props>>,
-  ): void {
+  commitUpdate(): void {
     // noop
   }
 
