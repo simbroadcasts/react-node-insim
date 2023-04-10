@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Layouts, TypeIn } from './components';
+import { InSimEvents, Layouts, TypeIn } from './components';
 
 export function App() {
   useEffect(() => {
@@ -11,6 +11,7 @@ export function App() {
 
   return (
     <>
+      {/*<InSimEvents />*/}
       <Layouts />
       {/*<TypeIn />*/}
     </>
