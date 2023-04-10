@@ -48,8 +48,13 @@ type ButtonBaseProps = {
   /** Left offset (0 to 200) */
   left?: number;
 
+  /** Background color */
   variant?: 'transparent' | 'light' | 'dark';
+
+  /** Label text alignment */
   align?: 'left' | 'right' | 'center';
+
+  /** Label text color */
   color?:
     | 'lightgrey'
     | 'title'
@@ -62,7 +67,8 @@ type ButtonBaseProps = {
   flex?: number;
 
   /**
-   * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95) */
+   * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95)
+   */
   maxTypeInChars?: number;
 
   /** Initialise dialog with the button's text */
@@ -71,7 +77,14 @@ type ButtonBaseProps = {
   /** Sets the caption of the text entry dialog, if enabled by the {@link maxTypeInChars} property */
   caption?: string;
 
+  /** A function to be called when a user clicks the button */
   onClick?: (packet: IS_BTC) => void;
+
+  /**
+   * A function to be called when a user enters a value in the button's dialog.
+   *
+   * {@link maxTypeInChars} must be set to a value greater than 0.
+   */
   onType?: (packet: IS_BTT) => void;
 
   /** Used when user has requested to clear all buttons */
