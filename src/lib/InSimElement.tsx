@@ -1,3 +1,5 @@
+import type { Key, Ref } from 'react';
+
 import type {
   Container,
   HostContext,
@@ -6,6 +8,12 @@ import type {
   Type,
   UpdatePayload,
 } from './ReactInSim';
+
+export type InSimElementProps<PublicInstance, Props> = Props & {
+  ref?: Ref<PublicInstance>;
+  key?: Key;
+  shouldClearAllButtons?: boolean;
+};
 
 export abstract class InSimElement {
   readonly id: number;

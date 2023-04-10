@@ -9,8 +9,8 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 
+import type { InSimElementProps } from '../InSimElement';
 import { InSimElement } from '../InSimElement';
-import type { Children, InSimElementProps } from '../JSX';
 import { log as baseLog } from '../logger';
 import type {
   Container,
@@ -27,9 +27,11 @@ export type ButtonElement = PublicInstance<Button>;
 
 export type ButtonProps = InSimElementProps<ButtonElement, ButtonBaseProps>;
 
+type Child = string | number;
+
 type ButtonBaseProps = {
   /** 0 to 240 characters of text */
-  children?: Children | Children[];
+  children?: Child | Child[];
 
   /** Connection to display the button (0 = local / 255 = all) */
   UCID?: number;
