@@ -1,24 +1,49 @@
-import type { Container, HostContext, UpdatePayload } from './InSimRenderer';
-import type { InSimElementProps } from './JSX';
+import type { InSim } from 'node-insim';
 
-export abstract class InSimElement<
-  Props extends InSimElementProps<unknown, unknown>,
-  InSimData,
-> {
-  protected readonly hostContext: HostContext;
-  protected readonly container: Container;
+import type {
+  Container,
+  HostContext,
+  Instance,
+  Props,
+  TextInstance,
+  Type,
+  UpdatePayload,
+} from './ReactInSim';
 
-  protected constructor(hostContext: HostContext, container: Container) {
-    this.hostContext = hostContext;
+export abstract class InSimElement {
+  readonly id: number;
+  parent: number;
+  readonly type: Type;
+  readonly children: Array<Instance | TextInstance>;
+  readonly text: string | null;
+  readonly context: HostContext;
+  readonly container: Container;
+
+  protected constructor(
+    id: number,
+    parent: number,
+    type: Type,
+    children: Array<Instance | TextInstance>,
+    text: string | null,
+    context: HostContext,
+    container: Container,
+  ) {
+    this.id = id;
+    this.parent = parent;
+    this.type = type;
+    this.children = children;
+    this.text = text;
+    this.context = context;
     this.container = container;
   }
 
-  abstract remove(): void;
+  abstract commitMount(): void;
 
-  abstract prepareUpdate(
+  abstract commitUpdate(
     oldProps: Props,
     newProps: Props,
-  ): UpdatePayload | null;
+    updatePayload: NonNullable<UpdatePayload<Props>>,
+  ): void;
 
-  abstract applyData(data: InSimData): void;
+  abstract detachDeletedInstance(): void;
 }

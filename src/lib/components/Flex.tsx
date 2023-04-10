@@ -14,8 +14,7 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
-import type { Flex as FlexElement } from '../elements';
-import type { ButtonProps } from './Button';
+import type { ButtonProps, Flex as FlexElement } from '../elements';
 import { Button } from './Button';
 
 export type FlexProps = PositionProps &

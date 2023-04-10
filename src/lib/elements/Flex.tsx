@@ -1,27 +1,42 @@
-import type { InSimElements } from 'node-insim-react';
-
+import type { FlexProps } from '../components';
 import { InSimElement } from '../InSimElement';
-import type { UpdatePayload } from '../InSimRenderer';
-import type { Container, HostContext } from '../InSimRenderer';
+import type {
+  Container,
+  HostContext,
+  Instance,
+  Props,
+  TextInstance,
+  Type,
+  UpdatePayload,
+} from '../ReactInSim';
 
-export class Flex extends InSimElement<any, any> {
+export class Flex extends InSimElement {
   constructor(
-    props: InSimElements['flex'],
-    hostContext: HostContext,
+    id: number,
+    parent: number,
+    type: Type,
+    props: FlexProps,
+    children: Array<Instance | TextInstance>,
+    text: string | null,
+    context: HostContext,
     container: Container,
   ) {
-    super(hostContext, container);
+    super(id, parent, type, children, text, context, container);
   }
 
-  applyData(data: any): void {
-    //
+  commitMount(): void {
+    // noop
   }
 
-  prepareUpdate(oldProps: any, newProps: any): UpdatePayload | null {
-    return null;
+  commitUpdate(
+    oldProps: Props,
+    newProps: Props,
+    updatePayload: NonNullable<UpdatePayload<Props>>,
+  ): void {
+    // noop
   }
 
-  remove(): void {
-    //
+  detachDeletedInstance(): void {
+    // noop
   }
 }

@@ -17,21 +17,16 @@ type InSimContextAPI = {
   shouldClearAllButtons: boolean;
 };
 
-const InSimContext = createContext<InSimContextAPI | null>(null);
+export const InSimContext = createContext<InSimContextAPI | null>(null);
 
-export function useInSim(): InSimContextAPI {
+export function useInSimContext(): InSimContextAPI {
   const context = useContext(InSimContext);
 
   if (!context) {
-    throw new Error('App must be wrapped in <RootContext.Provider>.');
+    throw new Error('useInSim must be called within <RootContext.Provider>.');
   }
 
-  const { shouldClearAllButtons, inSim } = context;
-
-  return {
-    inSim,
-    shouldClearAllButtons,
-  };
+  return context;
 }
 
 type RootProps = {

@@ -1,7 +1,6 @@
+import type { FlexProps } from 'node-insim-react';
 import { Button, Flex, HStack } from 'node-insim-react';
 import React, { Fragment, useState } from 'react';
-
-import type { FlexProps } from '../../lib/components/Flex';
 
 const alignContentOptions: FlexProps['alignContent'][] = [
   undefined,
@@ -112,8 +111,8 @@ export function Layouts() {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
-    top: 140,
-    left: 80,
+    top: 120,
+    left: 50,
   });
 
   const rowHeight = 4;
@@ -220,7 +219,7 @@ export function Layouts() {
         );
       })}
 
-      <Flex top={120} left={70} {...flexProps}>
+      <Flex top={0} left={0} {...flexProps}>
         <Button width={20} height={10}>
           Hello
         </Button>
@@ -230,6 +229,25 @@ export function Layouts() {
         <Button width={8} height={5}>
           Box
         </Button>
+
+        <Flex
+          top={1}
+          left={1}
+          width={40}
+          height={13}
+          backgroundColor="dark"
+          variant="light"
+        >
+          <Button width={20} height={10}>
+            seges
+          </Button>
+          <Button width={35} height={8}>
+            sestee
+          </Button>
+          <Button width={8} height={5}>
+            etestBox
+          </Button>
+        </Flex>
       </Flex>
     </>
   );

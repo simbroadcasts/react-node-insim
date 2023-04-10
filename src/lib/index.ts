@@ -1,4 +1,5 @@
+export type { FlexProps } from './components';
 export { Button, Flex, HStack, Stack, VStack } from './components';
-export { useInSim } from './InSimContext';
-export { InSimRenderer } from './InSimRenderer';
-export type { InSimElements } from './JSX';
+export type { ButtonElement } from './elements';
+export { useInSim } from './hooks';
+export { ReactInSim } from './ReactInSim';

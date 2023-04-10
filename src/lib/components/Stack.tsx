@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { Children, cloneElement } from 'react';
 
-import type { ButtonProps } from './Button';
+import type { ButtonProps } from '../elements';
 import { Button } from './Button';
 
 type ButtonChild = ReactElement<ButtonProps>;
