@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { InSimEvents, Layouts, TypeIn } from './components';
+import { FlexLayout, GridLayout } from './components';
 
 export function App() {
   useEffect(() => {
@@ -12,7 +12,8 @@ export function App() {
   return (
     <>
       {/*<InSimEvents />*/}
-      <Layouts />
+      {/*<FlexLayout />*/}
+      <GridLayout />
       {/*<TypeIn />*/}
     </>
   );

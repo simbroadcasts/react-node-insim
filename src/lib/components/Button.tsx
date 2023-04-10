@@ -1,10 +1,7 @@
 import type { ForwardedRef } from 'react';
 import { createElement, forwardRef } from 'react';
 
-import type {
-  Button as ButtonElement,
-  ButtonProps as ButtonElementProps,
-} from '../elements';
+import type { ButtonElement, ButtonElementProps } from '../elements';
 import { useInSimContext } from '../InSimContext';
 
 export type ButtonProps = Omit<ButtonElementProps, 'shouldClearAllButtons'>;

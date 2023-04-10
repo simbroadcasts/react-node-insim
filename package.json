@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@types/react-reconciler": "^0.28.2",
+    "@welefen/grid-layout": "^1.1.0",
     "debug": "^4.3.4",
     "react-reconciler": "0.29.0",
     "yoga-layout-prebuilt": "^1.10.0"
@@ -35,7 +36,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "node-insim": "^0.10.2",
+    "node-insim": "file:.yalc/node-insim",
     "prettier": "^2.6.2",
     "react": "^18.2.0",
     "tsx": "^3.12.6",

@@ -14,11 +14,11 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
-import type { ButtonProps, Flex as FlexElement } from '../elements';
+import type { ButtonElementProps, Flex as FlexElement } from '../elements';
 import { Button } from './Button';
 
 export type FlexProps = PositionProps &
-  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> &
+  Partial<Pick<ButtonElementProps, 'width' | 'height' | 'variant' | 'color'>> &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
@@ -26,9 +26,9 @@ export type FlexProps = PositionProps &
     borderColor?: 'light' | 'dark';
   };
 
-type ButtonChild = ReactElement<ButtonProps>;
+type ButtonChild = ReactElement<ButtonElementProps>;
 
-type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
+type PositionProps = Required<Pick<ButtonElementProps, 'top' | 'left'>>;
 
 type FlexboxProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';

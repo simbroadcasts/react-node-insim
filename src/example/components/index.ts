@@ -1,3 +1,4 @@
+export { FlexLayout } from './FlexLayout';
+export { GridLayout } from './GridLayout';
 export { InSimEvents } from './InSimEvents';
-export { Layouts } from './Layouts';
 export { TypeIn } from './TypeIn';

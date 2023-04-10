@@ -25,7 +25,10 @@ const log = baseLog.extend('button');
 
 export type ButtonElement = PublicInstance<Button>;
 
-export type ButtonProps = InSimElementProps<ButtonElement, ButtonBaseProps>;
+export type ButtonElementProps = InSimElementProps<
+  ButtonElement,
+  ButtonBaseProps
+>;
 
 type Child = string | number;
 
@@ -95,14 +98,14 @@ const BUTTON_REQUEST_ID = 1;
 
 export class Button extends InSimElement {
   private _packet: IS_BTN = new IS_BTN();
-  private onClickListeners: Required<ButtonProps>['onClick'][] = [];
-  private onTypeListeners: Required<ButtonProps>['onType'][] = [];
+  private onClickListeners: Required<ButtonElementProps>['onClick'][] = [];
+  private onTypeListeners: Required<ButtonElementProps>['onType'][] = [];
 
   constructor(
     id: number,
     parent: number,
     type: Type,
-    props: ButtonProps,
+    props: ButtonElementProps,
     children: Array<Instance>,
     context: HostContext,
     container: Container,
@@ -142,9 +145,9 @@ export class Button extends InSimElement {
   }
 
   commitUpdate(
-    oldProps: ButtonProps,
-    newProps: ButtonProps,
-    changedPropNames: NonNullable<UpdatePayload<ButtonProps>>,
+    oldProps: ButtonElementProps,
+    newProps: ButtonElementProps,
+    changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
     this.log('update');
 
@@ -176,7 +179,7 @@ export class Button extends InSimElement {
     const onClickChanged = changedPropNames.includes('onClick');
     const onTypeChanged = changedPropNames.includes('onType');
 
-    const eventListenerPropNames: (keyof ButtonProps)[] = [];
+    const eventListenerPropNames: (keyof ButtonElementProps)[] = [];
     onClickChanged && eventListenerPropNames.push('onClick');
     onTypeChanged && eventListenerPropNames.push('onType');
 
@@ -235,7 +238,7 @@ export class Button extends InSimElement {
     return this._packet;
   }
 
-  private getButtonDataFromProps(props: ButtonProps): IS_BTN_Data {
+  private getButtonDataFromProps(props: ButtonElementProps): IS_BTN_Data {
     const buttonStyle = this.getButtonStyleFromProps(props);
     const initValueButtonText = props.initializeDialogWithButtonText
       ? TypeIn.INIT_VALUE_BUTTON_TEXT
@@ -261,7 +264,7 @@ export class Button extends InSimElement {
     };
   }
 
-  private getButtonStyleFromProps(props: ButtonProps): number {
+  private getButtonStyleFromProps(props: ButtonElementProps): number {
     let buttonStyle = 0;
 
     if (props.onClick || props.maxTypeInChars) {
@@ -336,7 +339,7 @@ export class Button extends InSimElement {
   }
 
   private checkDimensions(
-    props: ButtonProps,
+    props: ButtonElementProps,
     { checkWidthAndHeight = false }: { checkWidthAndHeight?: boolean } = {},
   ) {
     if (
@@ -381,28 +384,34 @@ function findFreeId(array: number[]) {
   return previousId + 1;
 }
 
-const buttonVariantMap: Record<Required<ButtonProps>['variant'], ButtonStyle> =
-  {
-    dark: ButtonStyle.ISB_DARK,
-    light: ButtonStyle.ISB_LIGHT,
-    transparent: 0,
-  };
+const buttonVariantMap: Record<
+  Required<ButtonElementProps>['variant'],
+  ButtonStyle
+> = {
+  dark: ButtonStyle.ISB_DARK,
+  light: ButtonStyle.ISB_LIGHT,
+  transparent: 0,
+};
 
-const buttonAlignmentMap: Record<Required<ButtonProps>['align'], ButtonStyle> =
-  {
-    left: ButtonStyle.ISB_LEFT,
-    center: 0,
-    right: ButtonStyle.ISB_RIGHT,
-  };
+const buttonAlignmentMap: Record<
+  Required<ButtonElementProps>['align'],
+  ButtonStyle
+> = {
+  left: ButtonStyle.ISB_LEFT,
+  center: 0,
+  right: ButtonStyle.ISB_RIGHT,
+};
 
-const buttonColorMap: Record<Required<ButtonProps>['color'], ButtonTextColour> =
-  {
-    lightgrey: ButtonTextColour.LIGHT_GREY,
-    title: ButtonTextColour.TITLE_COLOUR,
-    unselected: ButtonTextColour.UNSELECTED_TEXT,
-    selected: ButtonTextColour.SELECTED_TEXT,
-    ok: ButtonTextColour.OK,
-    cancel: ButtonTextColour.CANCEL,
-    textstring: ButtonTextColour.TEXT_STRING,
-    unavailable: ButtonTextColour.UNAVAILABLE,
-  };
+const buttonColorMap: Record<
+  Required<ButtonElementProps>['color'],
+  ButtonTextColour
+> = {
+  lightgrey: ButtonTextColour.LIGHT_GREY,
+  title: ButtonTextColour.TITLE_COLOUR,
+  unselected: ButtonTextColour.UNSELECTED_TEXT,
+  selected: ButtonTextColour.SELECTED_TEXT,
+  ok: ButtonTextColour.OK,
+  cancel: ButtonTextColour.CANCEL,
+  textstring: ButtonTextColour.TEXT_STRING,
+  unavailable: ButtonTextColour.UNAVAILABLE,
+};

@@ -107,7 +107,7 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   wrap: wrapOptions,
 };
 
-export function Layouts() {
+export function FlexLayout() {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
