@@ -1,6 +1,6 @@
-import type { FlexProps } from 'node-insim-react';
-import { Button, Flex, HStack } from 'node-insim-react';
-import React, { Fragment, useState } from 'react';
+import { Fragment, useState } from 'react';
+import type { FlexProps } from 'react-node-insim';
+import { Button, Flex, HStack } from 'react-node-insim';
 
 const alignContentOptions: FlexProps['alignContent'][] = [
   undefined,

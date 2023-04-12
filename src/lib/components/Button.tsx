@@ -2,7 +2,7 @@ import type { ForwardedRef } from 'react';
 import { createElement, forwardRef } from 'react';
 
 import type { ButtonElement, ButtonElementProps } from '../elements';
-import { useInSimContext } from '../InSimContext';
+import { useInSimContext } from '../internals/InSimContext';
 
 export type ButtonProps = Omit<ButtonElementProps, 'shouldClearAllButtons'>;
 

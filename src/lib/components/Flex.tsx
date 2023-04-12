@@ -1,5 +1,5 @@
 import type { ForwardedRef, ReactElement } from 'react';
-import React, {
+import {
   Children,
   cloneElement,
   createElement,
@@ -14,11 +14,12 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
-import type { ButtonElementProps, Flex as FlexElement } from '../elements';
+import type { Flex as FlexElement } from '../elements';
+import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
 export type FlexProps = PositionProps &
-  Partial<Pick<ButtonElementProps, 'width' | 'height' | 'variant' | 'color'>> &
+  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
@@ -26,9 +27,9 @@ export type FlexProps = PositionProps &
     borderColor?: 'light' | 'dark';
   };
 
-type ButtonChild = ReactElement<ButtonElementProps>;
+type ButtonChild = ReactElement<ButtonProps>;
 
-type PositionProps = Required<Pick<ButtonElementProps, 'top' | 'left'>>;
+type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
 
 type FlexboxProps = {
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';

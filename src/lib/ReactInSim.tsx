@@ -9,37 +9,20 @@ import {
 
 import type { FlexProps } from './components';
 import { Button, Flex } from './elements';
-import { InSimContextProvider } from './InSimContext';
 import type { InSimElement } from './InSimElement';
-import { log } from './logger';
-
-type ReactNodeList = ReactNode | ReactNode[];
-
-export type Container = {
-  rootID: string;
-  inSim: InSim;
-  children: Instance[];
-  pendingChildren: Instance[];
-  renderedButtonIds: Set<number>;
-  nextClickId: number;
-};
-
-export type Props = Record<string, unknown>;
-
-type TextChild = string | number | null;
-
-type TextChildren = TextChild[] | TextChild;
-
-export type Type = 'btn' | 'flex';
-
-export type Instance = InSimElement;
-
-export type PublicInstance<T extends Instance> = Omit<
-  T,
-  'commitMount' | 'commitUpdate' | 'detachDeletedInstance'
->;
-
-export type HostContext = object;
+import { InSimContextProvider } from './internals/InSimContext';
+import { log } from './internals/logger';
+import { childrenToString } from './internals/utils';
+import type {
+  Container,
+  HostContext,
+  Instance,
+  Props,
+  PublicInstance,
+  TextChildren,
+  Type,
+  UpdatePayload,
+} from './types';
 
 type CreateRootOptions = InSim;
 
@@ -97,10 +80,6 @@ function shouldSetTextContent(type: Type, props: Props): boolean {
     typeof props.children === 'number'
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type UpdatePayload<Props extends Record<string, unknown> = {}> =
-  | (keyof Props)[];
 
 const hostConfig: HostConfig<
   Type,
@@ -204,7 +183,6 @@ const hostConfig: HostConfig<
           -1,
           type,
           props,
-          [],
           hostContext,
           rootContainerInstance,
         );
@@ -487,7 +465,7 @@ export const ReactInSim = {
     roots.set(rootID, fiberRoot);
 
     return {
-      render(children: ReactNodeList) {
+      render(children: ReactNode | ReactNode[]) {
         InSimRenderer.updateContainer(
           <InSimContextProvider inSim={inSim}>{children}</InSimContextProvider>,
           fiberRoot,
@@ -571,20 +549,4 @@ function shallowDiff(
 
     return oldObj[propName] !== newObj[propName];
   });
-}
-
-export function childrenToString(children?: TextChildren): string {
-  if (children === null || children === undefined) {
-    return '';
-  }
-
-  if (Array.isArray(children)) {
-    return children.join('');
-  }
-
-  if (typeof children === 'number') {
-    return children.toString(10);
-  }
-
-  return children;
 }

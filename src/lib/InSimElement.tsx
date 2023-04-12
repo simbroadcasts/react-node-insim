@@ -1,13 +1,13 @@
 import type { Key, Ref } from 'react';
 
 import type {
+  Children,
   Container,
   HostContext,
-  Instance,
   Props,
   Type,
   UpdatePayload,
-} from './ReactInSim';
+} from './types';
 
 export type InSimElementProps<PublicInstance, Props> = Props & {
   ref?: Ref<PublicInstance>;
@@ -19,7 +19,7 @@ export abstract class InSimElement {
   readonly id: number;
   parent: number;
   readonly type: Type;
-  readonly children: Array<Instance>;
+  readonly children: Children;
   readonly context: HostContext;
   readonly container: Container;
 
@@ -27,7 +27,7 @@ export abstract class InSimElement {
     id: number,
     parent: number,
     type: Type,
-    children: Array<Instance>,
+    children: Children,
     context: HostContext,
     container: Container,
   ) {

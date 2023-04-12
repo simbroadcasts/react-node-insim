@@ -1,7 +1,7 @@
 import { InSim } from 'node-insim';
 import { InSimFlags, PacketType } from 'node-insim/packets';
-import { ReactInSim } from 'node-insim-react';
 import React from 'react';
+import ReactInSim from 'react-node-insim';
 
 import { App } from './App';
 import { ErrorBoundary } from './ErrorBoundary';

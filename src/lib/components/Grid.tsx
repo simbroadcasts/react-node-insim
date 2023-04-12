@@ -1,14 +1,14 @@
 import { Container, Node } from '@welefen/grid-layout';
 import type { ReactElement } from 'react';
-import React, { Children, cloneElement, Fragment } from 'react';
+import { Children, cloneElement, Fragment } from 'react';
 
-import type { ButtonElementProps } from '../elements';
+import type { ButtonProps } from './Button';
 import { Button } from './Button';
 import type { GridButtonProps } from './GridButton';
 import { GridButton } from './GridButton';
 
 export type FlexProps = PositionProps &
-  Partial<Pick<ButtonElementProps, 'variant' | 'color'>> &
+  Partial<Pick<ButtonProps, 'variant' | 'color'>> &
   GridProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
@@ -17,7 +17,7 @@ export type FlexProps = PositionProps &
 type ButtonChild = ReactElement<GridButtonProps>;
 
 type PositionProps = Required<
-  Pick<ButtonElementProps, 'top' | 'left' | 'width' | 'height'>
+  Pick<ButtonProps, 'top' | 'left' | 'width' | 'height'>
 >;
 
 type GridProps = Container['config'];

@@ -1,0 +1,7 @@
+{
+  "extends": ["tsconfig.json"],
+  "compilerOptions": {
+    "stripInternal": true
+  },
+  "exclude": ["node_modules", "src/example", "src/lib/internals"]
+}

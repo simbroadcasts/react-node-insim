@@ -1,15 +1,13 @@
 import type { ReactElement } from 'react';
 import { Children, cloneElement } from 'react';
 
-import type { ButtonElementProps } from '../elements';
+import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
-type ButtonChild = ReactElement<ButtonElementProps>;
+type ButtonChild = ReactElement<ButtonProps>;
 
-export type StackProps = Required<Pick<ButtonElementProps, 'top' | 'left'>> &
-  Partial<
-    Pick<ButtonElementProps, 'width' | 'height' | 'variant' | 'color'>
-  > & {
+export type StackProps = Required<Pick<ButtonProps, 'top' | 'left'>> &
+  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> & {
     direction: 'horizontal' | 'vertical';
     children: ButtonChild | ButtonChild[];
   };

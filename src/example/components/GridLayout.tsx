@@ -1,4 +1,4 @@
-import { Grid, GridButton } from 'node-insim-react';
+import { Grid, GridButton } from 'react-node-insim';
 
 export function GridLayout() {
   return (

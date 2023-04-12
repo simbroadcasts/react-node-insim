@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "strict": true,
     "declaration": true,
+    "emitDeclarationOnly": true,
     "target": "es2015",
     "module": "commonjs",
     "skipLibCheck": true,
@@ -16,7 +17,7 @@
     "experimentalDecorators": true,
     "jsx": "react-jsx",
     "paths": {
-      "node-insim-react": ["./src/lib/index.ts"]
+      "react-node-insim": ["./src/index.ts"]
     }
   },
   "include": ["src/**/*"],

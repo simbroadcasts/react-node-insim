@@ -1,6 +1,6 @@
 import type { InSim } from 'node-insim';
 
-import { useInSimContext } from '../InSimContext';
+import { useInSimContext } from '../internals/InSimContext';
 
 type InSimHookAPI = InSim;
 

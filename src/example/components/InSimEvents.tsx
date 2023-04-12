@@ -1,5 +1,5 @@
 import { IS_TINY, TinyType } from 'node-insim/packets';
-import { Button, InSim, useInSim } from 'node-insim-react';
+import { Button, InSim, useInSim } from 'react-node-insim';
 
 export function InSimEvents() {
   const inSim = useInSim();

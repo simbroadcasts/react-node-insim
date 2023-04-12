@@ -11,15 +11,16 @@ import {
 
 import type { InSimElementProps } from '../InSimElement';
 import { InSimElement } from '../InSimElement';
-import { log as baseLog } from '../logger';
+import { log as baseLog } from '../internals/logger';
+import { childrenToString } from '../internals/utils';
 import type {
   Container,
   HostContext,
   PublicInstance,
+  TextChildren,
+  Type,
   UpdatePayload,
-} from '../ReactInSim';
-import type { Instance, Type } from '../ReactInSim';
-import { childrenToString } from '../ReactInSim';
+} from '../types';
 
 const log = baseLog.extend('button');
 
@@ -30,11 +31,9 @@ export type ButtonElementProps = InSimElementProps<
   ButtonBaseProps
 >;
 
-type Child = string | number;
-
 type ButtonBaseProps = {
   /** 0 to 240 characters of text */
-  children?: Child | Child[];
+  children?: TextChildren;
 
   /** Connection to display the button (0 = local / 255 = all) */
   UCID?: number;
@@ -106,11 +105,10 @@ export class Button extends InSimElement {
     parent: number,
     type: Type,
     props: ButtonElementProps,
-    children: Array<Instance>,
     context: HostContext,
     container: Container,
   ) {
-    super(id, parent, type, children, context, container);
+    super(id, parent, type, [], context, container);
 
     if (container.renderedButtonIds.size > IS_BTN.MAX_CLICK_ID) {
       throw new Error(

@@ -2,13 +2,7 @@ import type { InSim } from 'node-insim';
 import type { IS_BFN } from 'node-insim/packets';
 import { ButtonFunction, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { log } from './logger';
 
@@ -17,8 +11,10 @@ type InSimContextAPI = {
   shouldClearAllButtons: boolean;
 };
 
+/** @internal */
 export const InSimContext = createContext<InSimContextAPI | null>(null);
 
+/** @internal */
 export function useInSimContext(): InSimContextAPI {
   const context = useContext(InSimContext);
 
@@ -34,6 +30,7 @@ type RootProps = {
   children: ReactNode;
 };
 
+/** @internal */
 export function InSimContextProvider({ inSim, children }: RootProps) {
   const [shouldClearAllButtons, setShouldClearAllButtons] = useState(false);
 

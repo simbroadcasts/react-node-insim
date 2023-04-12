@@ -1,6 +1,6 @@
 import type { FlexProps } from '../components';
 import { InSimElement } from '../InSimElement';
-import type { Container, HostContext, Instance, Type } from '../ReactInSim';
+import type { Container, HostContext, Instance, Type } from '../types';
 
 export class Flex extends InSimElement {
   constructor(
