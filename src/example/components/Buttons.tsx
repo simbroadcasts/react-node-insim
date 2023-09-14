@@ -5,6 +5,7 @@ import { Button, useConnections, VStack } from 'react-node-insim';
 export function Buttons() {
   const connections = useConnections();
   const [UCID, setUCID] = useState(0);
+  const [popupOpenForUCIDs, setPopupOpenForUCIDs] = useState<number[]>([]);
 
   const onChangeUcid = useCallback(({ Text }: IS_BTT) => {
     const ucid = parseInt(Text);
@@ -58,7 +59,39 @@ export function Buttons() {
         <Button variant="dark" UCID={UCID}>
           {connectionButtonText}
         </Button>
+        <Button
+          variant="dark"
+          UCID={255}
+          onClick={(packet) => {
+            if (popupOpenForUCIDs.includes(packet.UCID)) {
+              setPopupOpenForUCIDs((ucids) =>
+                ucids.filter((ucid) => ucid !== packet.UCID),
+              );
+              return;
+            }
+            setPopupOpenForUCIDs((ucids) => [...ucids, packet.UCID]);
+          }}
+        >
+          Show a popup just for me
+        </Button>
       </VStack>
+      {popupOpenForUCIDs.map((popupUCID) => (
+        <Button
+          top={50}
+          left={145}
+          width={45}
+          height={6}
+          variant="dark"
+          UCID={popupUCID}
+          onClick={(packet) =>
+            setPopupOpenForUCIDs((ucids) =>
+              ucids.filter((ucid) => ucid !== packet.UCID),
+            )
+          }
+        >
+          Hide the popup
+        </Button>
+      ))}
     </>
   );
 }
