@@ -10,7 +10,7 @@ export {
   VStack,
 } from './lib/components';
 export type { ButtonElement } from './lib/elements';
-export { useInSim } from './lib/hooks';
+export { useConnections, useInSim, usePlayers } from './lib/hooks';
 import { ReactInSim } from './lib/ReactInSim';
 
 export default ReactInSim;
