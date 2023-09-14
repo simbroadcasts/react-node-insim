@@ -77,6 +77,7 @@ export function Buttons() {
       </VStack>
       {popupOpenForUCIDs.map((popupUCID) => (
         <Button
+          key={popupUCID}
           top={50}
           left={145}
           width={45}
