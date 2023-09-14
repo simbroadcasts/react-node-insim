@@ -34,7 +34,7 @@ inSim.on(PacketType.ISP_VER, (packet) => {
     }),
   );
 
-  const root = ReactInSim.createRoot(inSim, { appendButtonIDs: true });
+  const root = ReactInSim.createRoot(inSim, { appendButtonIDs: false });
 
   root.render(
     <React.StrictMode>
