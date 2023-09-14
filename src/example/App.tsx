@@ -1,18 +1,24 @@
 import { useEffect } from 'react';
 
-import { FlexLayout, GridLayout, InSimEvents, TypeIn } from './components';
+import {
+  Buttons,
+  FlexLayout,
+  GridLayout,
+  InSimEvents,
+  TypeIn,
+} from './components';
 
 export function App() {
   useEffect(() => {
     console.log('App mounted');
-    console.log('');
     // InSimRenderer.dumpTree();
   }, []);
 
   return (
     <>
+      <Buttons />
       {/*<InSimEvents />*/}
-      <FlexLayout />
+      {/*<FlexLayout />*/}
       {/*<GridLayout />*/}
       {/*<TypeIn />*/}
     </>

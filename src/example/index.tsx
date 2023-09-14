@@ -1,5 +1,5 @@
 import { InSim } from 'node-insim';
-import { InSimFlags, IS_MST, PacketType } from 'node-insim/packets';
+import { IS_MST, PacketType } from 'node-insim/packets';
 import React from 'react';
 import ReactInSim from 'react-node-insim';
 
@@ -13,9 +13,9 @@ const SEND_VERSION_REQUEST_ID = 200;
 inSim.connect({
   ReqI: SEND_VERSION_REQUEST_ID,
   IName: 'React InSim',
-  Host: '127.0.0.1',
-  Port: 29999,
-  Flags: InSimFlags.ISF_LOCAL,
+  Host: '188.122.74.155',
+  Port: 52317,
+  Admin: 'test<password',
 });
 
 inSim.on('connect', () => console.log('Connected'));
@@ -28,13 +28,13 @@ inSim.on(PacketType.ISP_VER, (packet) => {
     return;
   }
 
-  const root = ReactInSim.createRoot(inSim);
   inSim.send(
     new IS_MST({
       Msg: 'React Node InSim connected',
     }),
   );
 
+  const root = ReactInSim.createRoot(inSim, { appendButtonIDs: true });
 
   root.render(
     <React.StrictMode>

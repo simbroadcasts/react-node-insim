@@ -2,13 +2,27 @@ import type { InSim } from 'node-insim';
 
 import type { InSimElement } from './InSimElement';
 
+export type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
+
+export type WithPartial<T, K extends keyof T> = Omit<T, K> & {
+  [P in K]?: T[P];
+};
+
+type UCID = number;
+
 export type Container = {
   rootID: string;
   inSim: InSim;
   children: Instance[];
   pendingChildren: Instance[];
-  renderedButtonIds: Set<number>;
-  nextClickId: number;
+
+  /**
+   * ClickID1: [UCID1, UCID2,      , UCID4]
+   * ClickID2: [UCID1, UCID2, UCID3, UCID4]
+   * ClickID2: [              UCID3, UCID4]
+   */
+  buttonUCIDsByClickID: Set<UCID>[];
+  appendButtonIDs: boolean;
 };
 
 export type Type = 'btn' | 'flex';

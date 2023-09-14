@@ -1,11 +1,12 @@
-import type { IS_BTC, IS_BTN_Data, IS_BTT } from 'node-insim/packets';
-import { PacketType } from 'node-insim/packets';
+import type { InSim } from 'node-insim';
+import type { IS_BTC, IS_BTN_Data, IS_BTT, IS_NCN } from 'node-insim/packets';
 import {
   ButtonFunction,
   ButtonStyle,
   ButtonTextColour,
   IS_BFN,
   IS_BTN,
+  PacketType,
   TypeIn,
 } from 'node-insim/packets';
 
@@ -36,28 +37,28 @@ type ButtonBaseProps = {
   children?: TextChildren;
 
   /** Connection to display the button (0 = local / 255 = all) */
-  UCID?: number;
+  UCID: number;
 
   /** Width (0 to 200) */
-  width?: number;
+  width: number;
 
   /** Height (0 to 200) */
-  height?: number;
+  height: number;
 
   /** Top offset (0 to 200) */
-  top?: number;
+  top: number;
 
   /** Left offset (0 to 200) */
-  left?: number;
+  left: number;
 
   /** Background color */
-  variant?: 'transparent' | 'light' | 'dark';
+  variant: 'transparent' | 'light' | 'dark';
 
   /** Label text alignment */
-  align?: 'left' | 'right' | 'center';
+  align: 'left' | 'right' | 'center';
 
   /** Label text color */
-  color?:
+  color:
     | 'lightgrey'
     | 'title'
     | 'unselected'
@@ -66,18 +67,20 @@ type ButtonBaseProps = {
     | 'cancel'
     | 'textstring'
     | 'unavailable';
-  flex?: number;
 
   /**
    * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95)
    */
-  maxTypeInChars?: number;
+  maxTypeInChars: number;
 
   /** Initialise dialog with the button's text */
-  initializeDialogWithButtonText?: boolean;
+  initializeDialogWithButtonText: boolean;
 
   /** Sets the caption of the text entry dialog, if enabled by the {@link maxTypeInChars} property */
-  caption?: string;
+  caption: string;
+
+  /** Used when user has requested to clear all buttons */
+  shouldClearAllButtons: boolean;
 
   /** A function to be called when a user clicks the button */
   onClick?: (packet: IS_BTC) => void;
@@ -89,16 +92,16 @@ type ButtonBaseProps = {
    */
   onType?: (packet: IS_BTT) => void;
 
-  /** Used when user has requested to clear all buttons */
-  shouldClearAllButtons?: boolean;
+  flex?: number;
 };
 
-const BUTTON_REQUEST_ID = 1;
-
 export class Button extends InSimElement {
-  private _packet: IS_BTN = new IS_BTN();
+  private static readonly BUTTON_REQUEST_ID = 1;
+
+  private packet: IS_BTN = new IS_BTN();
   private onClickListeners: Required<ButtonElementProps>['onClick'][] = [];
   private onTypeListeners: Required<ButtonElementProps>['onType'][] = [];
+  private onNewConnectionListener?: (packet: IS_NCN, inSim: InSim) => void;
 
   constructor(
     id: number,
@@ -110,36 +113,30 @@ export class Button extends InSimElement {
   ) {
     super(id, parent, type, [], context, container);
 
-    if (container.renderedButtonIds.size > IS_BTN.MAX_CLICK_ID) {
-      throw new Error(
-        `Too many buttons. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
-      );
-    }
+    this.assertButtonCount(props);
 
     if (props.shouldClearAllButtons) {
-      log(`Button ${this.id} - user has hidden all buttons - do not create`);
+      this.log(`user has hidden all buttons - do not create`);
       return;
     }
 
-    this.checkDimensions(props, { checkWidthAndHeight: true });
+    this.assertTextLength(props);
+    this.assertDimensions(props, { checkWidthAndHeight: true });
 
-    const buttonData = this.getButtonDataFromProps(props);
-    this._packet = new IS_BTN(buttonData);
+    this.updateButtonPacketData(props);
 
-    props.onClick && this.addOnClickListener(props.onClick);
-    props.onType && this.addOnTypeListener(props.onType);
+    this.addOnClickListener(props);
+    this.addOnTypeListener(props);
 
-    log(`Button ${this.id} - instance created`);
+    this.log('instance created');
   }
 
   commitMount(): void {
-    const clickId = this.getNextFreeClickId();
-    this._packet.ClickID = clickId;
+    this.packet.ClickID = this.findAvailableClickId(this.packet.UCID);
+    this.log(`mount`);
 
-    this.log('send packet');
-
-    this.container.inSim.send(this._packet);
-    this.container.renderedButtonIds.add(clickId);
+    this.sendNewButton();
+    this.reinitializeButtonAfterNewConnection();
   }
 
   commitUpdate(
@@ -147,60 +144,32 @@ export class Button extends InSimElement {
     newProps: ButtonElementProps,
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
-    this.log('update');
+    this.log('update', `[${changedPropNames.join()}]`);
 
     if (newProps.shouldClearAllButtons) {
       this.log(`user has hidden all buttons - do not update`);
       return;
     }
 
-    this.checkDimensions(newProps);
+    this.assertDimensions(newProps);
 
-    // Only text changed
-    if (changedPropNames.length === 1 && changedPropNames[0] === 'children') {
+    const onlyTextChanged = this.onlyTextChanged(changedPropNames);
+
+    if (onlyTextChanged) {
       this.log(`only text changed`);
-      this.container.inSim.send(
-        new IS_BTN({
-          ReqI: BUTTON_REQUEST_ID,
-          ClickID: this._packet.ClickID,
-          Text: childrenToString(newProps.children),
-          W: 0,
-          H: 0,
-        }),
-      );
+      this.logClickIds();
+      this.sendButtonWithUpdatedText(newProps);
       return;
     }
 
-    const updatedButtonData = this.getButtonDataFromProps(newProps);
-    this._packet = new IS_BTN(updatedButtonData);
+    this.updateEventListeners(newProps, changedPropNames);
 
-    const onClickChanged = changedPropNames.includes('onClick');
-    const onTypeChanged = changedPropNames.includes('onType');
-
-    const eventListenerPropNames: (keyof ButtonElementProps)[] = [];
-    onClickChanged && eventListenerPropNames.push('onClick');
-    onTypeChanged && eventListenerPropNames.push('onType');
-
-    const onlyEventListenersChanged = changedPropNames.every((prop) =>
-      eventListenerPropNames.includes(prop),
+    const onlyEventListenersChanged =
+      this.onlyEventListenersChanged(changedPropNames);
+    const eventListenersAddedOrRemoved = this.eventListenersAddedOrRemoved(
+      oldProps,
+      newProps,
     );
-    const eventListenersAddedOrRemoved =
-      (oldProps.onClick === undefined && newProps.onClick !== undefined) ||
-      (oldProps.onClick !== undefined && newProps.onClick === undefined) ||
-      (oldProps.onType === undefined && newProps.onType !== undefined) ||
-      (oldProps.onType !== undefined && newProps.onType === undefined);
-
-    if (onClickChanged) {
-      this.log(`onClick changed`);
-      this.clearOnClickListeners();
-      newProps.onClick && this.addOnClickListener(newProps.onClick);
-    }
-
-    if (onTypeChanged) {
-      this.log(`onType changed`);
-      this.clearOnTypeListeners();
-      newProps.onType && this.addOnTypeListener(newProps.onType);
-    }
 
     if (eventListenersAddedOrRemoved) {
       this.log('event listeners added or removed');
@@ -211,32 +180,61 @@ export class Button extends InSimElement {
       return;
     }
 
-    this.container.inSim.send(this._packet);
+    const ucidChanged = changedPropNames.includes('UCID');
+
+    if (ucidChanged) {
+      this.updateUCID(oldProps, newProps);
+    }
+
+    this.logClickIds();
+    this.updateButtonPacketData(newProps);
+    this.sendNewButton();
   }
 
   detachDeletedInstance(): void {
     this.log(`delete`);
 
-    this.container.inSim.send(
-      new IS_BFN({
-        SubT: ButtonFunction.BFN_DEL_BTN,
-        ClickID: this._packet.ClickID,
-        UCID: this._packet.UCID,
-      }),
-    );
+    const clickID = this.packet.ClickID;
+    const ucid = this.packet.UCID;
 
-    this.container.renderedButtonIds.delete(this._packet.ClickID);
-    this.container.nextClickId = this._packet.ClickID;
-
-    this.clearOnClickListeners();
-    this.clearOnTypeListeners();
+    this.deleteButton(clickID, ucid);
+    this.removeClickIdForUCID(clickID, ucid);
+    this.clearAllListeners();
   }
 
-  get packet(): IS_BTN {
-    return this._packet;
+  private assertDimensions(
+    props: ButtonElementProps,
+    { checkWidthAndHeight = false }: { checkWidthAndHeight?: boolean } = {},
+  ): void {
+    if (
+      (props.width === 0 && props.height !== 0) ||
+      (props.width !== 0 && props.height === 0) ||
+      (checkWidthAndHeight && props.width === 0 && props.height === 0)
+    ) {
+      throw new Error(
+        `Invalid button dimensions: W=${props.width} H=${props.height}`,
+        {
+          cause: this,
+        },
+      );
+    }
   }
 
-  private getButtonDataFromProps(props: ButtonElementProps): IS_BTN_Data {
+  private assertTextLength(props: ButtonElementProps): void {
+    if (childrenToString(props.children).length > 240) {
+      throw new Error('Button text too long');
+    }
+  }
+
+  private assertButtonCount({ UCID }: ButtonElementProps): void {
+    if (this.container.buttonUCIDsByClickID.length > IS_BTN.MAX_CLICK_ID) {
+      throw new Error(
+        `Too many buttons for UCID ${UCID}. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
+      );
+    }
+  }
+
+  private updateButtonPacketData(props: ButtonElementProps): void {
     const buttonStyle = this.getButtonStyleFromProps(props);
     const initValueButtonText = props.initializeDialogWithButtonText
       ? TypeIn.INIT_VALUE_BUTTON_TEXT
@@ -246,20 +244,95 @@ export class Button extends InSimElement {
       ? `\0${props.caption}\0${textString}`
       : textString;
 
-    return {
-      ReqI: BUTTON_REQUEST_ID,
-      ClickID: this._packet?.ClickID ?? 0,
-      UCID: props.UCID ?? 0,
-      T: props.top ?? 0,
-      L: props.left ?? 0,
-      W: props.width ?? 0,
-      H: props.height ?? 0,
+    const buttonData: Required<IS_BTN_Data> = {
+      ReqI: Button.BUTTON_REQUEST_ID,
+      ClickID: this.packet.ClickID,
+      UCID: props.UCID,
+      T: props.top,
+      L: props.left,
+      W: props.width,
+      H: props.height,
       Text: buttonText,
       BStyle: buttonStyle,
-      TypeIn: props.maxTypeInChars
-        ? props.maxTypeInChars + initValueButtonText
-        : 0,
+      TypeIn: props.maxTypeInChars + initValueButtonText,
+      Inst: 0,
     };
+
+    this.packet = new IS_BTN(buttonData);
+  }
+
+  private reinitializeButtonAfterNewConnection(): void {
+    this.onNewConnectionListener = (packet: IS_NCN) => {
+      if (this.packet.UCID === packet.UCID || this.packet.UCID === 255) {
+        this.log('reinitialize existing button');
+        this.sendNewButton();
+      }
+    };
+    this.container.inSim.on(PacketType.ISP_NCN, this.onNewConnectionListener);
+  }
+
+  private updateEventListeners(
+    newProps: ButtonElementProps,
+    changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
+  ): void {
+    const onClickChanged = changedPropNames.includes('onClick');
+    const onTypeChanged = changedPropNames.includes('onType');
+
+    if (onClickChanged) {
+      this.log(`onClick changed`);
+      this.clearOnClickListeners();
+      this.addOnClickListener(newProps);
+    }
+
+    if (onTypeChanged) {
+      this.log(`onType changed`);
+      this.clearOnTypeListeners();
+      this.addOnTypeListener(newProps);
+    }
+  }
+
+  private onlyEventListenersChanged(
+    changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
+  ): boolean {
+    const onClickChanged = changedPropNames.includes('onClick');
+    const onTypeChanged = changedPropNames.includes('onType');
+
+    const eventListenerPropNames: (keyof ButtonElementProps)[] = [];
+    onClickChanged && eventListenerPropNames.push('onClick');
+    onTypeChanged && eventListenerPropNames.push('onType');
+
+    return changedPropNames.every((prop) =>
+      eventListenerPropNames.includes(prop),
+    );
+  }
+
+  private eventListenersAddedOrRemoved(
+    oldProps: ButtonElementProps,
+    newProps: ButtonElementProps,
+  ): boolean {
+    return (
+      (oldProps.onClick === undefined && newProps.onClick !== undefined) ||
+      (oldProps.onClick !== undefined && newProps.onClick === undefined) ||
+      (oldProps.onType === undefined && newProps.onType !== undefined) ||
+      (oldProps.onType !== undefined && newProps.onType === undefined)
+    );
+  }
+
+  private updateUCID(
+    oldProps: ButtonElementProps,
+    newProps: ButtonElementProps,
+    // oldClickId: number,
+  ): void {
+    const oldClickId = this.packet.ClickID;
+    this.log(`UCID changed from ${oldProps.UCID} to ${newProps.UCID}`);
+
+    if (this.container.buttonUCIDsByClickID[oldClickId]) {
+      this.log(`delete UCID ${oldProps.UCID} for ClickID ${oldClickId}`);
+      this.container.buttonUCIDsByClickID[oldClickId].delete(oldProps.UCID);
+    }
+
+    this.deleteButton(oldClickId, oldProps.UCID);
+    this.packet.ClickID = this.findAvailableClickId(newProps.UCID);
   }
 
   private getButtonStyleFromProps(props: ButtonElementProps): number {
@@ -284,102 +357,212 @@ export class Button extends InSimElement {
     return buttonStyle;
   }
 
-  private getNextFreeClickId(): number {
-    const nextId = findFreeId([...this.container.renderedButtonIds]);
-    this.log('next clickId', nextId);
-    this.container.nextClickId = nextId;
+  private findAvailableClickId(ucid: number): number {
+    const freeClickId = this.container.buttonUCIDsByClickID.findIndex(
+      (ucIds) => {
+        if (ucid === 255) {
+          return ucIds.size === 0;
+        }
 
-    return nextId;
+        return !ucIds.has(ucid) && !ucIds.has(255);
+      },
+    );
+    const clickId =
+      freeClickId === -1
+        ? this.container.buttonUCIDsByClickID.length
+        : freeClickId;
+
+    if (freeClickId === -1) {
+      this.container.buttonUCIDsByClickID[clickId] = new Set([ucid]);
+      this.log(`created new clickID ${clickId} for UCID ${ucid}`);
+    } else {
+      this.container.buttonUCIDsByClickID[clickId].add(ucid);
+      this.log(`found free clickID ${clickId} for UCID ${ucid}`);
+    }
+
+    this.logClickIds();
+
+    return clickId;
   }
 
-  private addOnClickListener(onClick: (packet: IS_BTC) => void): void {
+  private addOnClickListener({ onClick }: ButtonElementProps): void {
+    if (!onClick) {
+      return;
+    }
+
+    this.log(`add onClick listener`);
+
     const onClickListener = (btcPacket: IS_BTC) => {
-      if (this._packet.ClickID === btcPacket.ClickID) {
+      if (this.packet.ClickID === btcPacket.ClickID) {
         onClick(btcPacket);
       }
     };
 
-    this.log(`add onClick listener`);
     this.container.inSim.on(PacketType.ISP_BTC, onClickListener);
     this.onClickListeners.push(onClickListener);
   }
 
-  private addOnTypeListener(onType: (packet: IS_BTT) => void): void {
+  private addOnTypeListener({ onType }: ButtonElementProps): void {
+    if (!onType) {
+      return;
+    }
+
+    this.log(`add onType listener`);
+
     const onTypeListener = (bttPacket: IS_BTT) => {
-      if (this._packet.ClickID === bttPacket.ClickID) {
+      if (this.packet.ClickID === bttPacket.ClickID) {
         onType(bttPacket);
       }
     };
 
-    this.log(`add onType listener`);
     this.container.inSim.on(PacketType.ISP_BTT, onTypeListener);
     this.onTypeListeners.push(onTypeListener);
   }
 
-  private clearOnClickListeners() {
+  private clearAllListeners(): void {
+    this.clearOnClickListeners();
+    this.clearOnTypeListeners();
+    this.clearOnNewConnectionListener();
+  }
+
+  private clearOnClickListeners(): void {
     if (this.onClickListeners && this.onClickListeners.length > 0) {
       this.onClickListeners.forEach((listener: (packet: IS_BTC) => void) => {
         this.log(`remove onClick listener`);
-        this.container.inSim.removeListener(PacketType.ISP_BTC, listener);
+        this.container.inSim.off(PacketType.ISP_BTC, listener);
       });
       this.onClickListeners = [];
     }
   }
 
-  private clearOnTypeListeners() {
+  private clearOnTypeListeners(): void {
     if (this.onTypeListeners && this.onTypeListeners.length > 0) {
       this.onTypeListeners.forEach((listener: (packet: IS_BTT) => void) => {
         this.log(`remove onType listener`);
-        this.container.inSim.removeListener(PacketType.ISP_BTT, listener);
+        this.container.inSim.off(PacketType.ISP_BTT, listener);
       });
       this.onTypeListeners = [];
     }
   }
 
-  private checkDimensions(
-    props: ButtonElementProps,
-    { checkWidthAndHeight = false }: { checkWidthAndHeight?: boolean } = {},
-  ) {
-    if (
-      ((props.width ?? 0) === 0 && (props.height ?? 0) !== 0) ||
-      ((props.width ?? 0) !== 0 && (props.height ?? 0) === 0) ||
-      (checkWidthAndHeight &&
-        (props.width ?? 0) === 0 &&
-        (props.height ?? 0) === 0)
-    ) {
-      throw new Error(
-        `Invalid button dimensions: W=${props.width} H=${props.height}`,
-        {
-          cause: this,
-        },
+  private clearOnNewConnectionListener(): void {
+    if (this.onNewConnectionListener) {
+      this.container.inSim.off(
+        PacketType.ISP_NCN,
+        this.onNewConnectionListener,
       );
     }
   }
 
-  private log(...params: unknown[]) {
-    log(
-      `instance ID ${this.id} (ClickID ${this._packet.ClickID}) -`,
-      ...params,
+  private onlyTextChanged(
+    changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
+  ): boolean {
+    const onePropChanged = changedPropNames.length === 1;
+    const twoPropsChanged = changedPropNames.length === 2;
+
+    const childrenChanged = changedPropNames.includes('children');
+    const captionChanged = changedPropNames.includes('caption');
+    const onlyChildrenChanged =
+      onePropChanged && changedPropNames[0] === 'children';
+    const onlyCaptionChanged =
+      onePropChanged && changedPropNames[0] === 'caption';
+    const childrenAndCaptionChanged =
+      twoPropsChanged && childrenChanged && captionChanged;
+
+    return (
+      onlyChildrenChanged || onlyCaptionChanged || childrenAndCaptionChanged
     );
   }
-}
 
-function findFreeId(array: number[]) {
-  const sortedArray = array
-    .slice() // Make a copy of the array.
-    .sort(function (a, b) {
-      return a - b;
-    }); // Sort it.
-  let previousId = -1;
-  for (const element of sortedArray) {
-    if (element != previousId + 1) {
-      // Found a gap.
-      return previousId + 1;
+  private sendNewButton(): void {
+    this.log('send button');
+
+    const packet = new IS_BTN(this.packet);
+
+    if (this.container.appendButtonIDs) {
+      packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
     }
-    previousId = element;
+
+    this.container.inSim.send(packet);
   }
-  // Found no gaps.
-  return previousId + 1;
+
+  private sendButtonWithUpdatedText(props: ButtonElementProps): void {
+    this.log('update button text');
+
+    const text = this.buildButtonText(props);
+    const packet = new IS_BTN({
+      ...this.packet,
+      Text: text,
+      W: 0,
+      H: 0,
+    });
+
+    if (this.container.appendButtonIDs) {
+      packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
+    }
+
+    this.container.inSim.send(packet);
+  }
+
+  private deleteButton(clickID: number, ucid: number) {
+    this.container.inSim.send(
+      new IS_BFN({
+        SubT: ButtonFunction.BFN_DEL_BTN,
+        ClickID: clickID,
+        UCID: ucid,
+      }),
+    );
+  }
+
+  private removeClickIdForUCID(clickID: number, ucid: number): void {
+    if (
+      this.container.buttonUCIDsByClickID[clickID] &&
+      this.container.buttonUCIDsByClickID[clickID].has(ucid)
+    ) {
+      this.container.buttonUCIDsByClickID[clickID].delete(ucid);
+      this.log(`deleted clickID ${clickID} for UCID ${ucid}`);
+      this.logClickIds();
+    }
+  }
+
+  private buildButtonText(props: ButtonElementProps): string {
+    const textString = childrenToString(props.children);
+
+    if (props.caption) {
+      return `\0${props.caption}\0${textString}`;
+    }
+
+    return textString;
+  }
+
+  private log(...params: unknown[]) {
+    const format = `ID ${this.id} (ClickID ${this.packet.ClickID}, UCID ${this.packet.UCID}) -`;
+    log(format, ...params);
+  }
+
+  private logClickIds() {
+    log(`UCIDs by ClickID:`);
+    this.container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
+      log(`- ClickID ${clickID}: ${Array.from(ucIds.values()).join()}`);
+    });
+
+    log(`ClickIDs by UCID:`);
+    const clickIdsByUCID: Map<number, Set<number>> = new Map();
+
+    this.container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
+      ucIds.forEach((ucid) => {
+        if (!clickIdsByUCID.has(ucid)) {
+          clickIdsByUCID.set(ucid, new Set([clickID]));
+        } else {
+          clickIdsByUCID.get(ucid)?.add(clickID);
+        }
+      });
+    });
+
+    clickIdsByUCID.forEach((clickIds, ucid) => {
+      log(`- UCID ${ucid}: ${Array.from(clickIds.values()).join()}`);
+    });
+  }
 }
 
 const buttonVariantMap: Record<

@@ -15,6 +15,7 @@ export function InSimEvents() {
         left={30}
         width={25}
         height={6}
+        UCID={255}
         variant="dark"
         onClick={() => {
           inSim.send(

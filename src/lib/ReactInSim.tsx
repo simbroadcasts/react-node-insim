@@ -1,4 +1,5 @@
 import type { InSim } from 'node-insim';
+import { PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import type { Fiber, HostConfig, OpaqueRoot } from 'react-reconciler';
 import ReactReconciler from 'react-reconciler';
@@ -8,6 +9,7 @@ import {
 } from 'react-reconciler/constants';
 
 import type { FlexProps } from './components';
+import type { ButtonElementProps } from './elements';
 import { Button, Flex } from './elements';
 import type { InSimElement } from './InSimElement';
 import { InSimContextProvider } from './internals/InSimContext';
@@ -24,7 +26,9 @@ import type {
   UpdatePayload,
 } from './types';
 
-type CreateRootOptions = InSim;
+type CreateRootOptions = {
+  appendButtonIDs?: boolean;
+};
 
 const NO_CONTEXT = {};
 
@@ -182,7 +186,7 @@ const hostConfig: HostConfig<
           id,
           -1,
           type,
-          props,
+          props as ButtonElementProps,
           hostContext,
           rootContainerInstance,
         );
@@ -438,15 +442,18 @@ const DEFAULT_ROOT_ID = '<default>';
 let idCounter = 0;
 
 export const ReactInSim = {
-  createRoot(inSim: CreateRootOptions) {
+  createRoot(
+    inSim: InSim,
+    { appendButtonIDs = false }: CreateRootOptions = {},
+  ) {
     const rootID = '' + idCounter++;
     const container: Container = {
       rootID,
       inSim,
       pendingChildren: [],
       children: [],
-      renderedButtonIds: new Set<number>([]),
-      nextClickId: 0,
+      buttonUCIDsByClickID: [],
+      appendButtonIDs,
     };
     rootContainers.set(rootID, container);
     const fiberRoot = InSimRenderer.createContainer(
@@ -463,6 +470,15 @@ export const ReactInSim = {
     );
 
     roots.set(rootID, fiberRoot);
+
+    inSim.on(PacketType.ISP_CNL, (packet) => {
+      container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
+        if (ucIds.has(packet.UCID)) {
+          log(`removing UCID ${packet.UCID} from clickID ${clickID}`);
+          ucIds.delete(packet.UCID);
+        }
+      });
+    });
 
     return {
       render(children: ReactNode | ReactNode[]) {
