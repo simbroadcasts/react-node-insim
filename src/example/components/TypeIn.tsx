@@ -6,7 +6,7 @@ export function TypeIn() {
 
   return (
     <>
-      <Button top={40} left={40} width={30} height={10}>
+      <Button top={40} left={40} width={30} height={10} UCID={255}>
         Name
       </Button>
       <Button
@@ -14,6 +14,7 @@ export function TypeIn() {
         left={70}
         width={30}
         height={10}
+        UCID={255}
         variant="light"
         color="unselected"
         caption="Enter your name"
