@@ -96,7 +96,8 @@ type ButtonBaseProps = {
 };
 
 export class Button extends InSimElement {
-  private static readonly BUTTON_REQUEST_ID = 1;
+  private static readonly REQUEST_ID = 1;
+  private static readonly UCID_ALL = 255;
 
   private packet: IS_BTN = new IS_BTN();
   private onClickListeners: Required<ButtonElementProps>['onClick'][] = [];
@@ -132,7 +133,7 @@ export class Button extends InSimElement {
   }
 
   commitMount(): void {
-    this.packet.ClickID = this.findAvailableClickId(this.packet.UCID);
+    this.generateClickIdForUCID(this.packet.UCID);
     this.log(`mount`);
 
     this.sendNewButton();
@@ -245,7 +246,7 @@ export class Button extends InSimElement {
       : textString;
 
     const buttonData: Required<IS_BTN_Data> = {
-      ReqI: Button.BUTTON_REQUEST_ID,
+      ReqI: Button.REQUEST_ID,
       ClickID: this.packet.ClickID,
       UCID: props.UCID,
       T: props.top,
@@ -263,7 +264,10 @@ export class Button extends InSimElement {
 
   private reinitializeButtonAfterNewConnection(): void {
     this.onNewConnectionListener = (packet: IS_NCN) => {
-      if (this.packet.UCID === packet.UCID || this.packet.UCID === 255) {
+      if (
+        this.packet.UCID === packet.UCID ||
+        this.packet.UCID === Button.UCID_ALL
+      ) {
         this.log('reinitialize existing button');
         this.sendNewButton();
       }
@@ -321,7 +325,6 @@ export class Button extends InSimElement {
   private updateUCID(
     oldProps: ButtonElementProps,
     newProps: ButtonElementProps,
-    // oldClickId: number,
   ): void {
     const oldClickId = this.packet.ClickID;
     this.log(`UCID changed from ${oldProps.UCID} to ${newProps.UCID}`);
@@ -332,7 +335,7 @@ export class Button extends InSimElement {
     }
 
     this.deleteButton(oldClickId, oldProps.UCID);
-    this.packet.ClickID = this.findAvailableClickId(newProps.UCID);
+    this.generateClickIdForUCID(newProps.UCID);
   }
 
   private getButtonStyleFromProps(props: ButtonElementProps): number {
@@ -357,14 +360,14 @@ export class Button extends InSimElement {
     return buttonStyle;
   }
 
-  private findAvailableClickId(ucid: number): number {
+  private generateClickIdForUCID(ucid: number): void {
     const freeClickId = this.container.buttonUCIDsByClickID.findIndex(
       (ucIds) => {
-        if (ucid === 255) {
+        if (ucid === Button.UCID_ALL) {
           return ucIds.size === 0;
         }
 
-        return !ucIds.has(ucid) && !ucIds.has(255);
+        return !ucIds.has(ucid) && !ucIds.has(Button.UCID_ALL);
       },
     );
     const clickId =
@@ -382,7 +385,7 @@ export class Button extends InSimElement {
 
     this.logClickIds();
 
-    return clickId;
+    this.packet.ClickID = clickId;
   }
 
   private addOnClickListener({ onClick }: ButtonElementProps): void {
