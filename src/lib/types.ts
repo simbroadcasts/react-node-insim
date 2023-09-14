@@ -29,7 +29,9 @@ export type Type = 'btn' | 'flex';
 
 export type Props = Record<string, unknown>;
 
-export type TextChildren = string | number;
+type TextChild = string | number;
+
+export type TextChildren = TextChild | TextChild[];
 
 export type Children = Instance[];
 
