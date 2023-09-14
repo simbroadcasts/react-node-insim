@@ -1,5 +1,5 @@
 import { InSim } from 'node-insim';
-import { InSimFlags, PacketType } from 'node-insim/packets';
+import { InSimFlags, IS_MST, PacketType } from 'node-insim/packets';
 import React from 'react';
 import ReactInSim from 'react-node-insim';
 
@@ -8,10 +8,10 @@ import { ErrorBoundary } from './ErrorBoundary';
 
 const inSim = new InSim();
 
-const sendVersionReqI = 200;
+const SEND_VERSION_REQUEST_ID = 200;
 
 inSim.connect({
-  ReqI: sendVersionReqI,
+  ReqI: SEND_VERSION_REQUEST_ID,
   IName: 'React InSim',
   Host: '127.0.0.1',
   Port: 29999,
@@ -24,11 +24,17 @@ inSim.on('disconnect', () => console.log('Disconnected'));
 
 // TODO throw error if not yet connected while rendering
 inSim.on(PacketType.ISP_VER, (packet) => {
-  if (packet.ReqI !== sendVersionReqI) {
+  if (packet.ReqI !== SEND_VERSION_REQUEST_ID) {
     return;
   }
 
   const root = ReactInSim.createRoot(inSim);
+  inSim.send(
+    new IS_MST({
+      Msg: 'React Node InSim connected',
+    }),
+  );
+
 
   root.render(
     <React.StrictMode>
