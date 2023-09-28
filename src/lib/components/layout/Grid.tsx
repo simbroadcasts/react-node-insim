@@ -2,8 +2,8 @@ import { Container, Node } from '@welefen/grid-layout';
 import type { ReactElement } from 'react';
 import { Children, cloneElement, Fragment } from 'react';
 
-import type { ButtonProps } from './Button';
-import { Button } from './Button';
+import type { ButtonProps } from '../Button';
+import { Button } from '../Button';
 import type { GridButtonProps } from './GridButton';
 import { GridButton } from './GridButton';
 

@@ -3,3 +3,5 @@ export { FlexLayout } from './FlexLayout';
 export { GridLayout } from './GridLayout';
 export { PlayersAndConnectionsButtons } from './PlayersAndConnectionsButtons';
 export { StackLayout } from './StackLayout';
+export { ToggleButtonExample } from './ToggleButtonExample';
+export { ToggleButtonGroupExample } from './ToggleButtonGroupExample';

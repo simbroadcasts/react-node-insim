@@ -12,6 +12,8 @@ import {
   GridLayout,
   PlayersAndConnectionsButtons,
   StackLayout,
+  ToggleButtonExample,
+  ToggleButtonGroupExample,
 } from './apps';
 
 const root = createRoot({
@@ -30,6 +32,8 @@ root.render(
         <GridLayout />
         <StackLayout />
         <ButtonTypeIn />
+        <ToggleButtonExample />
+        <ToggleButtonGroupExample />
       </ConnectionsProvider>
     </PlayersProvider>
   </React.StrictMode>,

@@ -14,9 +14,9 @@ import type {
 } from 'yoga-layout-prebuilt';
 import yoga from 'yoga-layout-prebuilt';
 
-import type { Flex as FlexElement } from '../renderer/inSim';
-import type { ButtonProps } from './Button';
-import { Button } from './Button';
+import type { Flex as FlexElement } from '../../renderer/inSim';
+import type { ButtonProps } from '../Button';
+import { Button } from '../Button';
 
 export type FlexProps = PositionProps &
   Partial<
