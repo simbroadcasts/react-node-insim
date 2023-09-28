@@ -12,6 +12,7 @@ import {
   GridExample,
   PlayersAndConnectionsExample,
   StackExample,
+  TextAreaExample,
   ToggleButtonExample,
   ToggleButtonGroupExample,
 } from './apps';
@@ -34,6 +35,7 @@ root.render(
         <ButtonTypeInExample />
         <ToggleButtonExample />
         <ToggleButtonGroupExample />
+        <TextAreaExample />
       </ConnectionsProvider>
     </PlayersProvider>
   </React.StrictMode>,
