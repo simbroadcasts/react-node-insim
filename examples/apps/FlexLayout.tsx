@@ -112,12 +112,15 @@ export function FlexLayout() {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
-    top: 125,
+    top: 126,
     left: 5,
     width: 90,
     height: 30,
     borderSize: 1,
     borderColor: 'dark',
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   });
 
   const left = 0;
@@ -267,7 +270,7 @@ export function FlexLayout() {
       })}
 
       <Button
-        top={(flexProps.top ?? 0) - rowHeight}
+        top={(flexProps.top ?? 0) - rowHeight - 1}
         left={flexProps.left}
         width={10}
         height={rowHeight}
@@ -275,7 +278,7 @@ export function FlexLayout() {
         align="left"
         UCID={255}
       >
-        Preview
+        Flex
       </Button>
 
       <Flex top={0} left={0} UCID={255} {...flexProps}>

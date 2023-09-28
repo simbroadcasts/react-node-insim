@@ -31,14 +31,16 @@ export function PlayersAndConnectionsButtons() {
     inSim.send(new IS_MST({ Msg: `/echo UCID ${ucid}` }));
   };
 
+  const top = 20;
+  const left = 160;
   const width = 20;
   const height = 4;
 
   return (
     <>
       <Button
-        top={5}
-        left={160}
+        top={top}
+        left={left}
         width={width}
         height={height}
         UCID={255}
@@ -48,8 +50,8 @@ export function PlayersAndConnectionsButtons() {
       </Button>
       <VStack
         variant="dark"
-        top={5 + height}
-        left={160}
+        top={top + height}
+        left={left}
         width={width}
         height={height}
         UCID={255}
@@ -61,8 +63,8 @@ export function PlayersAndConnectionsButtons() {
         ))}
       </VStack>
       <Button
-        top={5}
-        left={160 + width}
+        top={top}
+        left={left + width}
         width={width}
         height={height}
         UCID={255}
@@ -72,8 +74,8 @@ export function PlayersAndConnectionsButtons() {
       </Button>
       <VStack
         variant="dark"
-        top={5 + height}
-        left={180}
+        top={top + height}
+        left={left + width}
         width={width}
         height={height}
         UCID={255}

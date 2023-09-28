@@ -3,37 +3,63 @@ import { useState } from 'react';
 import { Button, VStack } from '../../src';
 
 export function ButtonTypeIn() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('Martin');
+  const [lastName, setLastName] = useState('Kapal');
+
+  const top = 165;
+  const left = 142;
 
   return (
-    <VStack top={170} left={170} width={20} height={4} UCID={255}>
-      <Button color="title" align="left">
-        First name
+    <>
+      <Button
+        top={160}
+        left={left}
+        width={20}
+        height={4}
+        color="title"
+        align="left"
+        UCID={255}
+      >
+        onType event
       </Button>
       <Button
-        align="left"
+        top={top}
+        left={left}
+        width={17}
+        height={18}
         variant="light"
-        color="unselected"
-        caption="Enter your first name"
-        maxTypeInChars={10}
-        onType={(packet) => setFirstName(packet._raw.Text)}
-      >
-        {firstName}
-      </Button>
-      <Button color="title" align="left">
-        Last name
-      </Button>
-      <Button
-        align="left"
-        variant="light"
-        color="unselected"
-        caption="Enter your first name"
-        maxTypeInChars={10}
-        onType={(packet) => setLastName(packet._raw.Text)}
-      >
-        {lastName}
-      </Button>
-    </VStack>
+        UCID={255}
+      />
+      <VStack top={top + 1} left={left + 1} width={15} height={4} UCID={255}>
+        <Button color="unselected" align="left">
+          First name
+        </Button>
+        <Button
+          align="left"
+          variant="dark"
+          color="textstring"
+          caption="Enter your first name"
+          maxTypeInChars={10}
+          onType={(packet) => setFirstName(packet._raw.Text)}
+          initializeDialogWithButtonText
+        >
+          {firstName}
+        </Button>
+        <Button color="unselected" align="left">
+          Last name
+        </Button>
+        <Button
+          align="left"
+          variant="dark"
+          color="textstring"
+          caption="Enter your first name"
+          maxTypeInChars={10}
+          onType={(packet) => setLastName(packet._raw.Text)}
+          initializeDialogWithButtonText
+        >
+          {lastName}
+        </Button>
+      </VStack>
+    </>
   );
 }

@@ -11,6 +11,7 @@ import {
   FlexLayout,
   GridLayout,
   PlayersAndConnectionsButtons,
+  StackLayout,
 } from './apps';
 
 const root = createRoot({
@@ -25,9 +26,10 @@ root.render(
     <PlayersProvider>
       <ConnectionsProvider>
         <PlayersAndConnectionsButtons />
-        <ButtonTypeIn />
         <FlexLayout />
         <GridLayout />
+        <StackLayout />
+        <ButtonTypeIn />
       </ConnectionsProvider>
     </PlayersProvider>
   </React.StrictMode>,
