@@ -83,14 +83,14 @@ type ButtonBaseProps = {
   shouldClearAllButtons: boolean;
 
   /** A function to be called when a user clicks the button */
-  onClick?: (packet: IS_BTC) => void;
+  onClick?: (packet: IS_BTC, inSim: InSim) => void;
 
   /**
    * A function to be called when a user enters a value in the button's dialog.
    *
    * {@link maxTypeInChars} must be set to a value greater than 0.
    */
-  onType?: (packet: IS_BTT) => void;
+  onType?: (packet: IS_BTT, inSim: InSim) => void;
 
   flex?: number;
 };
@@ -403,9 +403,9 @@ export class Button extends InSimElement {
 
     this.log(`add onClick listener`);
 
-    const onClickListener = (btcPacket: IS_BTC) => {
+    const onClickListener = (btcPacket: IS_BTC, inSim: InSim) => {
       if (this.packet.ClickID === btcPacket.ClickID) {
-        onClick(btcPacket);
+        onClick(btcPacket, inSim);
       }
     };
 
@@ -420,9 +420,9 @@ export class Button extends InSimElement {
 
     this.log(`add onType listener`);
 
-    const onTypeListener = (bttPacket: IS_BTT) => {
+    const onTypeListener = (bttPacket: IS_BTT, inSim: InSim) => {
       if (this.packet.ClickID === bttPacket.ClickID) {
-        onType(bttPacket);
+        onType(bttPacket, inSim);
       }
     };
 
@@ -438,20 +438,24 @@ export class Button extends InSimElement {
 
   private clearOnClickListeners(): void {
     if (this.onClickListeners && this.onClickListeners.length > 0) {
-      this.onClickListeners.forEach((listener: (packet: IS_BTC) => void) => {
-        this.log(`remove onClick listener`);
-        this.container.inSim.off(PacketType.ISP_BTC, listener);
-      });
+      this.onClickListeners.forEach(
+        (listener: (packet: IS_BTC, inSim: InSim) => void) => {
+          this.log(`remove onClick listener`);
+          this.container.inSim.off(PacketType.ISP_BTC, listener);
+        },
+      );
       this.onClickListeners = [];
     }
   }
 
   private clearOnTypeListeners(): void {
     if (this.onTypeListeners && this.onTypeListeners.length > 0) {
-      this.onTypeListeners.forEach((listener: (packet: IS_BTT) => void) => {
-        this.log(`remove onType listener`);
-        this.container.inSim.off(PacketType.ISP_BTT, listener);
-      });
+      this.onTypeListeners.forEach(
+        (listener: (packet: IS_BTT, inSim: InSim) => void) => {
+          this.log(`remove onType listener`);
+          this.container.inSim.off(PacketType.ISP_BTT, listener);
+        },
+      );
       this.onTypeListeners = [];
     }
   }
