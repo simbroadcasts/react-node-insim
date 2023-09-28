@@ -1,9 +1,12 @@
 import { InSimFlags } from 'node-insim/packets';
 import React from 'react';
-import { createRoot } from 'react-node-insim';
+import {
+  ConnectionsProvider,
+  createRoot,
+  PlayersProvider,
+} from 'react-node-insim';
 
 import { App } from './App';
-import { ErrorBoundary } from './ErrorBoundary';
 
 const root = createRoot({
   name: 'React InSim',
@@ -14,9 +17,11 @@ const root = createRoot({
 
 root.render(
   <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <PlayersProvider>
+      <ConnectionsProvider>
+        <App />
+      </ConnectionsProvider>
+    </PlayersProvider>
   </React.StrictMode>,
 );
 
