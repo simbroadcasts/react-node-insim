@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useInSim } from './useInSim';
+import { useOnConnect } from './useOnConnect';
 
 type Player = Pick<
   IS_NPL,
@@ -15,13 +16,13 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
   const [players, setPlayers] = useState<Record<string, Player>>({});
   const inSim = useInSim();
 
-  useEffect(() => {
+  useOnConnect(() => {
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
-  }, []);
+  });
 
   useEffect(() => {
     const onNewPlayer = (packet: IS_NPL) => {
-      setPlayers({
+      setPlayers((players) => ({
         ...players,
         [packet.PLID]: {
           UCID: packet.UCID,
@@ -31,7 +32,7 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
           PType: packet.PType,
           Plate: packet.Plate,
         },
-      });
+      }));
     };
     inSim.on(PacketType.ISP_NPL, onNewPlayer);
 
@@ -42,11 +43,13 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const onPlayerLeave = (packet: IS_PLL) => {
-      const newPlayers = { ...players };
+      setPlayers((players) => {
+        const newPlayers = { ...players };
 
-      delete newPlayers[packet.PLID];
+        delete newPlayers[packet.PLID];
 
-      setPlayers(newPlayers);
+        return newPlayers;
+      });
     };
     inSim.on(PacketType.ISP_PLL, onPlayerLeave);
 

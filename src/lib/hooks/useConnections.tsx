@@ -2,7 +2,7 @@ import type { IS_CNL, IS_CPR, IS_NCN } from 'node-insim/packets';
 import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useInSim } from 'react-node-insim';
+import { useInSim, useOnConnect } from 'react-node-insim';
 
 type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
 
@@ -16,9 +16,9 @@ export function ConnectionsProvider({ children }: { children: ReactNode }) {
   );
   const inSim = useInSim();
 
-  useEffect(() => {
+  useOnConnect(() => {
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
-  }, []);
+  });
 
   useEffect(() => {
     const onNewConnection = (packet: IS_NCN) => {
