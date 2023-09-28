@@ -108,16 +108,12 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   wrap: wrapOptions,
 };
 
-type FlexLayoutProps = {
-  showFlexPropsEditor?: boolean;
-};
-
-export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
+export function FlexExample() {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
     top: 126,
-    left: 5,
+    left: 2,
     width: 90,
     height: 30,
     borderSize: 1,
@@ -126,14 +122,16 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
     alignItems: 'center',
     justifyContent: 'space-evenly',
   });
+  const [isEditorVisible, setIsEditorVisible] = useState(false);
 
   const left = 0;
   const top = 0;
   const rowHeight = 4;
+  const editorWidth = 135;
 
   return (
     <>
-      {showFlexPropsEditor && (
+      {isEditorVisible && (
         <>
           <Button
             top={top}
@@ -150,7 +148,7 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
           <Button
             top={top + rowHeight}
             left={left}
-            width={160}
+            width={editorWidth}
             height={114}
             UCID={255}
             variant="dark"
@@ -158,7 +156,7 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
           <Button
             top={top + rowHeight}
             left={left}
-            width={160}
+            width={editorWidth}
             height={114}
             UCID={255}
             variant="dark"
@@ -166,7 +164,7 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
           <Button
             top={top + rowHeight}
             left={left}
-            width={160}
+            width={editorWidth}
             height={114}
             UCID={255}
             variant="light"
@@ -185,7 +183,7 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
             return (
               <Fragment key={key}>
                 <Button
-                  width={20}
+                  width={17}
                   height={rowHeight}
                   top={top + rowHeight * (index + 1) + 1}
                   left={left}
@@ -196,10 +194,10 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
                   {key}
                 </Button>
                 <HStack
-                  width={15}
+                  width={13}
                   height={rowHeight}
                   top={top + rowHeight * (index + 1) + 1}
-                  left={left + 20}
+                  left={left + 17}
                   variant="light"
                 >
                   {allOptions.map((value, index, array) => {
@@ -291,6 +289,18 @@ export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
         UCID={255}
       >
         Flex
+      </Button>
+
+      <Button
+        top={(flexProps.top ?? 0) - rowHeight - 1}
+        left={(flexProps.left ?? 0) + (flexProps.width ?? 0) - 8}
+        width={8}
+        height={rowHeight}
+        variant="dark"
+        UCID={255}
+        onClick={() => setIsEditorVisible(!isEditorVisible)}
+      >
+        Edit
       </Button>
 
       <Flex top={0} left={0} UCID={255} {...flexProps}>

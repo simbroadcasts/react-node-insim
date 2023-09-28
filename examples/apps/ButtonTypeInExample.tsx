@@ -2,12 +2,12 @@ import { useState } from 'react';
 
 import { Button, VStack } from '../../src';
 
-export function ButtonTypeIn() {
+export function ButtonTypeInExample() {
   const [firstName, setFirstName] = useState('Martin');
   const [lastName, setLastName] = useState('Kapal');
 
   const top = 165;
-  const left = 142;
+  const left = 93;
 
   return (
     <>

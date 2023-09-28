@@ -13,7 +13,7 @@ export function ToggleButtonGroupExample() {
   const [selectedOption, setSelectedOption] = useState(options[0]);
 
   const top = 175;
-  const left = 160;
+  const left = 113;
   const width = 24;
 
   return (

@@ -1,11 +1,14 @@
 import { Button, Grid, GridButton } from '../../src';
 
-export function GridLayout() {
+export function GridExample() {
+  const top = 160;
+  const left = 2;
+
   return (
     <>
       <Button
-        top={160}
-        left={5}
+        top={top}
+        left={left}
         width={10}
         height={4}
         color="title"
@@ -15,9 +18,9 @@ export function GridLayout() {
         Grid
       </Button>
       <Grid
-        top={165}
-        left={5}
-        width={60}
+        top={top + 5}
+        left={left}
+        width={30}
         height={30}
         variant="dark"
         backgroundColor="light"

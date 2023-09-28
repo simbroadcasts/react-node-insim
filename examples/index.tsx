@@ -7,11 +7,11 @@ import {
 } from 'react-node-insim';
 
 import {
-  ButtonTypeIn,
-  FlexLayout,
-  GridLayout,
-  PlayersAndConnectionsButtons,
-  StackLayout,
+  ButtonTypeInExample,
+  FlexExample,
+  GridExample,
+  PlayersAndConnectionsExample,
+  StackExample,
   ToggleButtonExample,
   ToggleButtonGroupExample,
 } from './apps';
@@ -27,11 +27,11 @@ root.render(
   <React.StrictMode>
     <PlayersProvider>
       <ConnectionsProvider>
-        <PlayersAndConnectionsButtons />
-        <FlexLayout showFlexPropsEditor={false} />
-        <GridLayout />
-        <StackLayout />
-        <ButtonTypeIn />
+        <PlayersAndConnectionsExample />
+        <FlexExample />
+        <GridExample />
+        <StackExample />
+        <ButtonTypeInExample />
         <ToggleButtonExample />
         <ToggleButtonGroupExample />
       </ConnectionsProvider>

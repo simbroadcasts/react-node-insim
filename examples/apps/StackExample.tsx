@@ -1,11 +1,14 @@
 import { Button, HStack, VStack } from '../../src';
 
-export function StackLayout() {
+export function StackExample() {
+  const top = 160;
+  const left = 33;
+
   return (
     <>
       <Button
-        top={160}
-        left={70}
+        top={top}
+        left={left}
         width={20}
         height={4}
         color="title"
@@ -15,9 +18,9 @@ export function StackLayout() {
         VStack
       </Button>
       <VStack
-        top={165}
-        left={70}
-        width={20}
+        top={top + 5}
+        left={left}
+        width={16}
         height={4}
         variant="dark"
         UCID={255}
@@ -27,15 +30,21 @@ export function StackLayout() {
         <Button>Stacked button 3</Button>
         <Button>Stacked button 4</Button>
       </VStack>
-      <VStack top={165} left={92} width={25} variant="dark" UCID={255}>
+      <VStack
+        top={top + 5}
+        left={left + 16}
+        width={20}
+        variant="dark"
+        UCID={255}
+      >
         <Button height={4}>Height: 4</Button>
         <Button height={10}>Height: 10</Button>
         <Button height={14}>Height: 14</Button>
         <Button height={6}>Height: 6</Button>
       </VStack>
       <Button
-        top={160}
-        left={118}
+        top={top}
+        left={left + 38}
         width={20}
         height={4}
         color="title"
@@ -45,8 +54,8 @@ export function StackLayout() {
         HStack
       </Button>
       <HStack
-        top={165}
-        left={118}
+        top={top + 5}
+        left={left + 38}
         width={3}
         height={4}
         variant="dark"
@@ -60,8 +69,8 @@ export function StackLayout() {
         <Button>6</Button>
       </HStack>
       <HStack
-        top={171}
-        left={118}
+        top={top + 12}
+        left={left + 38}
         width={4}
         height={4}
         variant="dark"

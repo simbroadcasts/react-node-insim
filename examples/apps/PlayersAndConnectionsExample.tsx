@@ -10,7 +10,7 @@ import {
   VStack,
 } from 'react-node-insim';
 
-export function PlayersAndConnectionsButtons() {
+export function PlayersAndConnectionsExample() {
   const players = usePlayers();
   const connections = useConnections();
 
@@ -31,9 +31,9 @@ export function PlayersAndConnectionsButtons() {
     inSim.send(new IS_MST({ Msg: `/echo UCID ${ucid}` }));
   };
 
-  const top = 20;
-  const left = 160;
-  const width = 20;
+  const top = 0;
+  const left = 164;
+  const width = 18;
   const height = 4;
 
   return (
@@ -46,7 +46,7 @@ export function PlayersAndConnectionsButtons() {
         UCID={255}
         color="title"
       >
-        Players
+        Players ({players.size})
       </Button>
       <VStack
         variant="dark"
@@ -70,7 +70,7 @@ export function PlayersAndConnectionsButtons() {
         UCID={255}
         color="title"
       >
-        Connections
+        Connections ({connections.size})
       </Button>
       <VStack
         variant="dark"
