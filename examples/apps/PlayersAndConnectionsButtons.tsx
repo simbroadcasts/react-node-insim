@@ -10,7 +10,7 @@ import {
   VStack,
 } from 'react-node-insim';
 
-export function App() {
+export function PlayersAndConnectionsButtons() {
   const players = usePlayers();
   const connections = useConnections();
 
@@ -20,7 +20,7 @@ export function App() {
   });
 
   useOnPacket(PacketType.ISP_NCN, (packet) => {
-    console.log(`New connection: ${packet.UName}`);
+    console.log(`New connection: ${packet.UName} (${packet.UCID})`);
   });
 
   const handlePlayerClick = (plid: number) => (_: IS_BTC, inSim: InSim) => {
@@ -31,17 +31,27 @@ export function App() {
     inSim.send(new IS_MST({ Msg: `/echo UCID ${ucid}` }));
   };
 
+  const width = 20;
+  const height = 4;
+
   return (
     <>
-      <Button top={10} left={40} width={30} height={5} UCID={255} color="title">
+      <Button
+        top={5}
+        left={160}
+        width={width}
+        height={height}
+        UCID={255}
+        color="title"
+      >
         Players
       </Button>
       <VStack
         variant="dark"
-        top={15}
-        left={40}
-        width={30}
-        height={5}
+        top={5 + height}
+        left={160}
+        width={width}
+        height={height}
         UCID={255}
       >
         {players.map((player) => (
@@ -50,15 +60,22 @@ export function App() {
           </Button>
         ))}
       </VStack>
-      <Button top={10} left={70} width={30} height={5} UCID={255} color="title">
+      <Button
+        top={5}
+        left={160 + width}
+        width={width}
+        height={height}
+        UCID={255}
+        color="title"
+      >
         Connections
       </Button>
       <VStack
         variant="dark"
-        top={15}
-        left={70}
-        width={30}
-        height={5}
+        top={5 + height}
+        left={180}
+        width={width}
+        height={height}
         UCID={255}
       >
         {connections.map((connection) => (

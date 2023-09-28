@@ -19,7 +19,9 @@ import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
 export type FlexProps = PositionProps &
-  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> &
+  Partial<
+    Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color' | 'UCID'>
+  > &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
@@ -98,6 +100,7 @@ export const Flex = forwardRef(function FlexWithRef(
     backgroundColor,
     borderSize = 0,
     borderColor,
+    UCID,
   }: FlexProps,
   ref: ForwardedRef<FlexElement>,
 ) {
@@ -199,6 +202,7 @@ export const Flex = forwardRef(function FlexWithRef(
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left)}
             variant={borderColor}
+            UCID={UCID}
           />
           <Button
             width={borderSize}
@@ -206,6 +210,7 @@ export const Flex = forwardRef(function FlexWithRef(
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left) + (rootLayout.width - borderSize)}
             variant={borderColor}
+            UCID={UCID}
           />
           <Button
             width={rootLayout.width}
@@ -213,6 +218,7 @@ export const Flex = forwardRef(function FlexWithRef(
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left)}
             variant={borderColor}
+            UCID={UCID}
           />
           <Button
             width={rootLayout.width}
@@ -220,6 +226,7 @@ export const Flex = forwardRef(function FlexWithRef(
             top={Math.abs(rootLayout.top) + rootLayout.height - borderSize}
             left={Math.abs(rootLayout.left)}
             variant={borderColor}
+            UCID={UCID}
           />
         </>
       )}
@@ -230,6 +237,7 @@ export const Flex = forwardRef(function FlexWithRef(
           top={Math.abs(rootLayout.top) + borderSize}
           left={Math.abs(rootLayout.left) + borderSize}
           variant={backgroundColor}
+          UCID={UCID}
         />
       )}
       <Fragment key={backgroundColor}>
@@ -255,6 +263,7 @@ export const Flex = forwardRef(function FlexWithRef(
             height: childHeight,
             variant: child.props.variant ?? variant,
             color: child.props.color ?? color,
+            UCID: child.props.UCID ?? UCID,
           });
         })}
       </Fragment>

@@ -112,14 +112,31 @@ export function FlexLayout() {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
-    top: 120,
-    left: 50,
+    top: 125,
+    left: 5,
+    width: 90,
+    height: 30,
+    borderSize: 1,
+    borderColor: 'dark',
   });
 
+  const left = 0;
+  const top = 0;
   const rowHeight = 4;
 
   return (
     <>
+      <Button
+        top={top}
+        left={left}
+        width={10}
+        height={rowHeight}
+        color="title"
+        align="left"
+        UCID={255}
+      >
+        Flex props
+      </Button>
       {Object.entries(rows).map(([key, options], index) => {
         const flexPropValue = flexProps[key as keyof FlexProps];
 
@@ -135,8 +152,8 @@ export function FlexLayout() {
             <Button
               width={20}
               height={rowHeight}
-              top={5 + rowHeight * index}
-              left={5}
+              top={top + rowHeight * (index + 1)}
+              left={left}
               UCID={255}
               align="left"
             >
@@ -146,7 +163,7 @@ export function FlexLayout() {
               width={15}
               height={rowHeight}
               top={5 + rowHeight * index}
-              left={25}
+              left={left + 20}
               variant="light"
             >
               {allOptions.map((value, index, array) => {
@@ -222,33 +239,46 @@ export function FlexLayout() {
         );
       })}
 
-      <Flex top={0} left={0} {...flexProps}>
-        <Button width={20} height={10} UCID={255}>
-          Hello
+      <Button
+        top={(flexProps.top ?? 0) - rowHeight}
+        left={flexProps.left}
+        width={10}
+        height={rowHeight}
+        color="title"
+        align="left"
+        UCID={255}
+      >
+        Preview
+      </Button>
+
+      <Flex top={0} left={0} UCID={255} {...flexProps}>
+        <Button width={10} height={12}>
+          Outer
         </Button>
-        <Button width={35} height={8} UCID={255}>
+        <Button width={20} height={8}>
           Flex
         </Button>
-        <Button width={8} height={5} UCID={255}>
+        <Button width={8} height={5}>
           Box
         </Button>
 
         <Flex
           top={1}
           left={1}
-          width={40}
-          height={13}
+          width={30}
+          height={15}
           backgroundColor="dark"
           variant="light"
+          UCID={255}
         >
-          <Button width={20} height={10} UCID={255}>
-            seges
+          <Button width={5} height={12}>
+            Inner
           </Button>
-          <Button width={35} height={8} UCID={255}>
-            sestee
+          <Button width={10} height={8}>
+            Flex
           </Button>
-          <Button width={8} height={5} UCID={255}>
-            etestBox
+          <Button width={10} height={5}>
+            Box
           </Button>
         </Flex>
       </Flex>

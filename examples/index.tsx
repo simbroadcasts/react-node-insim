@@ -6,7 +6,12 @@ import {
   PlayersProvider,
 } from 'react-node-insim';
 
-import { App } from './App';
+import {
+  ButtonTypeIn,
+  FlexLayout,
+  GridLayout,
+  PlayersAndConnectionsButtons,
+} from './apps';
 
 const root = createRoot({
   name: 'React InSim',
@@ -19,7 +24,10 @@ root.render(
   <React.StrictMode>
     <PlayersProvider>
       <ConnectionsProvider>
-        <App />
+        <PlayersAndConnectionsButtons />
+        <ButtonTypeIn />
+        <FlexLayout />
+        <GridLayout />
       </ConnectionsProvider>
     </PlayersProvider>
   </React.StrictMode>,

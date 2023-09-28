@@ -7,9 +7,9 @@ import { Button } from './Button';
 import type { GridButtonProps } from './GridButton';
 import { GridButton } from './GridButton';
 
-export type FlexProps = PositionProps &
-  Partial<Pick<ButtonProps, 'variant' | 'color'>> &
-  GridProps & {
+export type GridProps = PositionProps &
+  Partial<Pick<ButtonProps, 'variant' | 'color' | 'UCID'>> &
+  GridConfigProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
   };
@@ -20,7 +20,7 @@ type PositionProps = Required<
   Pick<ButtonProps, 'top' | 'left' | 'width' | 'height'>
 >;
 
-type GridProps = Container['config'];
+type GridConfigProps = Container['config'];
 
 export function Grid({
   children,
@@ -43,7 +43,8 @@ export function Grid({
   justifyContent,
   alignContent,
   justifyItems,
-}: FlexProps) {
+  UCID,
+}: GridProps) {
   const container = new Container({
     width,
     height,
@@ -88,8 +89,6 @@ export function Grid({
       marginRight: child.props.marginRight ?? 0,
     });
 
-    console.log('padding', child.props.padding);
-
     container.appendChild(node);
   });
 
@@ -105,6 +104,7 @@ export function Grid({
           top={top}
           left={left}
           variant={backgroundColor}
+          UCID={UCID}
         />
       )}
       <Fragment key={backgroundColor}>
@@ -133,6 +133,7 @@ export function Grid({
             height: Math.round(childHeight),
             variant: child.props.variant ?? variant,
             color: child.props.color ?? color,
+            UCID: child.props.UCID ?? UCID,
           });
         })}
       </Fragment>
