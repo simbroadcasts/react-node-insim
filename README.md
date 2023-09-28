@@ -1,6 +1,6 @@
 # React Node InSim
 
-React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It also provides hooks for handling incoming packets.
+React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and for getting a live list of connections & players.
 
 It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library for InSim communication.
 
@@ -40,18 +40,22 @@ root.render(
 );
 
 export function App() {
+  // Get the list of current players and connections
   const players = usePlayers();
   const connections = useConnections();
 
+  // Do something after the InSim app has been connected to LFS
   useOnConnect((packet, inSim) => {
     console.log(`Connected to LFS ${packet.Product} ${packet.Version}`);
     inSim.send(new IS_MST({ Msg: `React Node InSim connected` }));
   });
 
+  // Handle incoming packets
   useOnPacket(PacketType.ISP_NCN, (packet) => {
     console.log(`New connection: ${packet.UName}`);
   });
 
+  // Clickable buttons
   const handlePlayerClick = (plid: number) => (_: IS_BTC, inSim: InSim) => {
     inSim.send(new IS_MST({ Msg: `/echo PLID ${plid}` }));
   };
