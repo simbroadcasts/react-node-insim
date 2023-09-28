@@ -4,24 +4,26 @@
   "description": "React Node InSim",
   "author": "Martin Kapal <flamecze@gmail.com>",
   "license": "MIT",
-  "type": "module",
-  "main": "dist/index.js",
-  "source": "src/index.ts",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
-      "import": "./dist/index.esm.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
-    }
+      "types": "./dist/types/index.d.ts",
+      "node": "./dist/cjs/index.js",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
   },
-  "typings": "dist/index.d.ts",
   "repository": "git@github.com:simbroadcasts/react-node-insim.git",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "run-s build:js build:ts",
-    "build:js": "microbundle --tsconfig tsconfig.lib.json",
-    "build:ts": "tsc -p tsconfig.lib.json",
-    "start": "tsx watch src/example/index.tsx",
+    "build": "tsc -b ./src/tsconfig.cjs.json ./src/tsconfig.esm.json ./src/tsconfig.types.json",
+    "start": "tsx watch example/index.tsx",
     "format": "run-s \"format:no-write --write\"",
     "format:no-write": "prettier \"./**/*.{js,ts,md,json,yml,yaml}\"",
     "format:check": "run-s \"format:no-write --check\"",
@@ -45,6 +47,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@types/debug": "^4.1.7",
     "@types/node": "^18.11.9",
+    "@types/react": "^18.2.23",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
     "esbuild": "^0.15.13",
@@ -52,17 +55,12 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
-    "microbundle": "^0.15.1",
     "node-insim": "^3.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.6.2",
-    "rimraf": "^5.0.0",
-    "react": "18.2.0",
+    "react": "^18.2.0",
+    "rimraf": "^5.0.5",
     "tsx": "^3.12.6",
     "typescript": "^4.9.5"
-  },
-  "files": [
-    "**/*.js",
-    "**/*.d.ts"
-  ]
+  }
 }

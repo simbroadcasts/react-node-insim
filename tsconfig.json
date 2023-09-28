@@ -1,25 +1,22 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
     "strict": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "target": "es2015",
-    "module": "commonjs",
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "module": "NodeNext",
     "skipLibCheck": true,
-    "lib": ["es2022"],
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "noEmit": true,
     "allowJs": true,
+    "stripInternal": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
     "jsx": "react-jsx",
     "paths": {
-      "react-node-insim": ["./src/index.ts"]
+      "react-node-insim": ["./src/index"]
     }
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  }
 }
