@@ -124,6 +124,8 @@ export class Button extends InSimElement {
     this.addOnClickListener(props);
     this.addOnTypeListener(props);
 
+    this.reinitializeButtonAfterNewConnection();
+
     this.log('instance created');
   }
 
@@ -143,7 +145,6 @@ export class Button extends InSimElement {
     }
 
     this.sendNewButton();
-    this.reinitializeButtonAfterNewConnection();
   }
 
   commitUpdate(
@@ -273,8 +274,9 @@ export class Button extends InSimElement {
   private reinitializeButtonAfterNewConnection(): void {
     this.onNewConnectionListener = (packet: IS_NCN) => {
       if (
-        this.packet.UCID === packet.UCID ||
-        this.packet.UCID === Button.UCID_ALL
+        packet.ReqI === 0 &&
+        (this.packet.UCID === packet.UCID ||
+          this.packet.UCID === Button.UCID_ALL)
       ) {
         this.log('reinitialize existing button');
         this.sendNewButton();
