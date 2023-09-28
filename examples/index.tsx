@@ -7,12 +7,12 @@ import {
 } from 'react-node-insim';
 
 import {
-  ButtonTypeInExample,
+  ButtonExample,
   FlexExample,
   GridExample,
   PlayersAndConnectionsExample,
   StackExample,
-  TextAreaExample,
+  TextBoxExample,
   ToggleButtonExample,
   ToggleButtonGroupExample,
 } from './apps';
@@ -30,12 +30,12 @@ root.render(
       <ConnectionsProvider>
         <PlayersAndConnectionsExample />
         <FlexExample />
+        <ButtonExample />
         <GridExample />
         <StackExample />
-        <ButtonTypeInExample />
         <ToggleButtonExample />
         <ToggleButtonGroupExample />
-        <TextAreaExample />
+        <TextBoxExample />
       </ConnectionsProvider>
     </PlayersProvider>
   </React.StrictMode>,

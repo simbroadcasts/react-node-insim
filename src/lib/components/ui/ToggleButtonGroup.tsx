@@ -8,7 +8,10 @@ type Option = {
   isDisabled?: boolean;
 };
 
-type Props<TOption extends Option> = Omit<ButtonProps, 'color' | 'onClick'> & {
+type Props<TOption extends Option> = Omit<
+  ButtonProps,
+  'color' | 'onClick' | 'background'
+> & {
   options: TOption[];
   selectedOption: TOption;
   onChange: (option: TOption) => void;
@@ -41,20 +44,16 @@ export function ToggleButtonGroup<TOption extends Option>({
       {options.map((option) => {
         const { label, value } = option;
         const isButtonDisabled = isDisabled || option.isDisabled;
-        let color: ButtonProps['color'];
-
-        if (isButtonDisabled) {
-          color = 'unavailable';
-        } else {
-          color = value === selectedOption.value ? 'selected' : 'unselected';
-        }
+        const color =
+          value === selectedOption.value ? 'selected' : 'unselected';
 
         return (
           <Button
             key={value}
             color={color}
             variant={variant}
-            onClick={isButtonDisabled ? undefined : handleChange(option)}
+            onClick={handleChange(option)}
+            isDisabled={isButtonDisabled}
             {...props}
           >
             {label}

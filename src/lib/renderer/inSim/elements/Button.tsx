@@ -51,14 +51,17 @@ type ButtonBaseProps = {
   /** Left offset (0 to 200) */
   left: number;
 
+  /** Preset color variants for text and background */
+  variant?: 'light' | 'dark';
+
   /** Background color */
-  variant: 'transparent' | 'light' | 'dark';
+  background: 'transparent' | 'light' | 'dark';
 
   /** Label text alignment */
   align: 'left' | 'right' | 'center';
 
   /** Label text color */
-  color:
+  color?:
     | 'lightgrey'
     | 'title'
     | 'unselected'
@@ -67,6 +70,9 @@ type ButtonBaseProps = {
     | 'cancel'
     | 'textstring'
     | 'unavailable';
+
+  /** If set, the button text color will appear dimmed and the button will not be clickable */
+  isDisabled: boolean;
 
   /**
    * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95)
@@ -264,7 +270,7 @@ export class Button extends InSimElement {
       H: props.height,
       Text: buttonText,
       BStyle: buttonStyle,
-      TypeIn: props.maxTypeInChars + initValueButtonText,
+      TypeIn: props.onType ? props.maxTypeInChars + initValueButtonText : 0,
       Inst: 0,
     };
 
@@ -351,7 +357,10 @@ export class Button extends InSimElement {
   private getButtonStyleFromProps(props: ButtonElementProps): number {
     let buttonStyle = 0;
 
-    if (props.onClick || props.maxTypeInChars) {
+    if (
+      !props.isDisabled &&
+      (props.onClick || (props.onType && props.maxTypeInChars > 0))
+    ) {
       buttonStyle |= ButtonStyle.ISB_CLICK;
     }
 
@@ -359,12 +368,18 @@ export class Button extends InSimElement {
       buttonStyle |= buttonVariantMap[props.variant];
     }
 
-    if (props.align) {
-      buttonStyle |= buttonAlignmentMap[props.align];
-    }
-
     if (props.color) {
       buttonStyle |= buttonColorMap[props.color];
+    }
+
+    if (props.background) {
+      buttonStyle |= buttonBackgroundMap[props.background];
+    }
+
+    buttonStyle |= buttonAlignmentMap[props.align];
+
+    if (props.isDisabled) {
+      buttonStyle |= ButtonTextColour.UNAVAILABLE;
     }
 
     return buttonStyle;
@@ -582,8 +597,8 @@ export class Button extends InSimElement {
   }
 }
 
-const buttonVariantMap: Record<
-  Required<ButtonElementProps>['variant'],
+const buttonBackgroundMap: Record<
+  Required<ButtonElementProps>['background'],
   ButtonStyle
 > = {
   dark: ButtonStyle.ISB_DARK,
@@ -612,4 +627,12 @@ const buttonColorMap: Record<
   cancel: ButtonTextColour.CANCEL,
   textstring: ButtonTextColour.TEXT_STRING,
   unavailable: ButtonTextColour.UNAVAILABLE,
+};
+
+const buttonVariantMap: Record<
+  Required<ButtonElementProps>['variant'],
+  ButtonStyle
+> = {
+  light: ButtonStyle.ISB_LIGHT | ButtonTextColour.UNSELECTED_TEXT,
+  dark: ButtonStyle.ISB_DARK | ButtonTextColour.LIGHT_GREY,
 };

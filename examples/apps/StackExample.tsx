@@ -22,7 +22,7 @@ export function StackExample() {
         left={left}
         width={16}
         height={4}
-        variant="dark"
+        background="dark"
         UCID={255}
       >
         <Button>Stacked button 1</Button>
@@ -34,7 +34,7 @@ export function StackExample() {
         top={top + 5}
         left={left + 16}
         width={20}
-        variant="dark"
+        background="dark"
         UCID={255}
       >
         <Button height={4}>Height: 4</Button>
@@ -58,7 +58,7 @@ export function StackExample() {
         left={left + 38}
         width={3}
         height={4}
-        variant="dark"
+        background="dark"
         UCID={255}
       >
         <Button>1</Button>
@@ -69,11 +69,11 @@ export function StackExample() {
         <Button>6</Button>
       </HStack>
       <HStack
-        top={top + 12}
+        top={top + 10}
         left={left + 38}
         width={4}
         height={4}
-        variant="dark"
+        background="dark"
         UCID={255}
       >
         <Button width={3}>3</Button>

@@ -20,7 +20,7 @@ import { Button } from '../Button';
 
 export type FlexProps = PositionProps &
   Partial<
-    Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color' | 'UCID'>
+    Pick<ButtonProps, 'width' | 'height' | 'background' | 'color' | 'UCID'>
   > &
   FlexboxProps & {
     children: ButtonChild | ButtonChild[];
@@ -95,7 +95,7 @@ export const Flex = forwardRef(function FlexWithRef(
     left: leftOffset,
     width,
     height,
-    variant,
+    background,
     color,
     backgroundColor,
     borderSize = 0,
@@ -201,7 +201,7 @@ export const Flex = forwardRef(function FlexWithRef(
             height={rootLayout.height}
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left)}
-            variant={borderColor}
+            background={borderColor}
             UCID={UCID}
           />
           <Button
@@ -209,7 +209,7 @@ export const Flex = forwardRef(function FlexWithRef(
             height={rootLayout.height}
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left) + (rootLayout.width - borderSize)}
-            variant={borderColor}
+            background={borderColor}
             UCID={UCID}
           />
           <Button
@@ -217,7 +217,7 @@ export const Flex = forwardRef(function FlexWithRef(
             height={borderSize}
             top={Math.abs(rootLayout.top)}
             left={Math.abs(rootLayout.left)}
-            variant={borderColor}
+            background={borderColor}
             UCID={UCID}
           />
           <Button
@@ -225,7 +225,7 @@ export const Flex = forwardRef(function FlexWithRef(
             height={borderSize}
             top={Math.abs(rootLayout.top) + rootLayout.height - borderSize}
             left={Math.abs(rootLayout.left)}
-            variant={borderColor}
+            background={borderColor}
             UCID={UCID}
           />
         </>
@@ -236,7 +236,7 @@ export const Flex = forwardRef(function FlexWithRef(
           height={rootLayout.height - borderSize * 2}
           top={Math.abs(rootLayout.top) + borderSize}
           left={Math.abs(rootLayout.left) + borderSize}
-          variant={backgroundColor}
+          background={backgroundColor}
           UCID={UCID}
         />
       )}
@@ -261,7 +261,7 @@ export const Flex = forwardRef(function FlexWithRef(
             left: Math.abs(rootLayout.left) + left,
             width: childWidth,
             height: childHeight,
-            variant: child.props.variant ?? variant,
+            background: child.props.background ?? background,
             color: child.props.color ?? color,
             UCID: child.props.UCID ?? UCID,
           });

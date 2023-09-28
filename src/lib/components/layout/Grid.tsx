@@ -8,7 +8,7 @@ import type { GridButtonProps } from './GridButton';
 import { GridButton } from './GridButton';
 
 export type GridProps = PositionProps &
-  Partial<Pick<ButtonProps, 'variant' | 'color' | 'UCID'>> &
+  Partial<Pick<ButtonProps, 'background' | 'color' | 'UCID'>> &
   GridConfigProps & {
     children: ButtonChild | ButtonChild[];
     backgroundColor?: 'light' | 'dark';
@@ -28,7 +28,7 @@ export function Grid({
   left,
   width,
   height,
-  variant,
+  background,
   color,
   backgroundColor,
   gridTemplateColumns,
@@ -103,7 +103,7 @@ export function Grid({
           height={height}
           top={top}
           left={left}
-          variant={backgroundColor}
+          background={backgroundColor}
           UCID={UCID}
         />
       )}
@@ -131,7 +131,7 @@ export function Grid({
             left: Math.round(buttonLeft) + (left ?? 0),
             width: Math.round(childWidth),
             height: Math.round(childHeight),
-            variant: child.props.variant ?? variant,
+            background: child.props.background ?? background,
             color: child.props.color ?? color,
             UCID: child.props.UCID ?? UCID,
           });

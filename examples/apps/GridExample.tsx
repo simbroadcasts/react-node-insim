@@ -22,7 +22,7 @@ export function GridExample() {
         left={left}
         width={30}
         height={30}
-        variant="dark"
+        background="dark"
         backgroundColor="light"
         gridTemplateColumns="1fr 2fr 1fr"
         gridTemplateRows="1fr 3fr 2fr"
@@ -43,7 +43,7 @@ export function GridExample() {
           // paddingLeft={3}
           // paddingTop={3}
           color="title"
-          variant="light"
+          background="light"
         >
           2
         </GridButton>

@@ -49,7 +49,7 @@ export function PlayersAndConnectionsExample() {
         Players ({players.size})
       </Button>
       <VStack
-        variant="dark"
+        background="dark"
         top={top + height}
         left={left}
         width={width}
@@ -73,7 +73,7 @@ export function PlayersAndConnectionsExample() {
         Connections ({connections.size})
       </Button>
       <VStack
-        variant="dark"
+        background="dark"
         top={top + height}
         left={left + width}
         width={width}

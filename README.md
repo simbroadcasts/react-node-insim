@@ -74,7 +74,7 @@ function App() {
         Players
       </Button>
       <VStack
-        variant="dark"
+        background="dark"
         top={15}
         left={40}
         width={30}
@@ -91,7 +91,7 @@ function App() {
         Connections
       </Button>
       <VStack
-        variant="dark"
+        background="dark"
         top={15}
         left={70}
         width={30}

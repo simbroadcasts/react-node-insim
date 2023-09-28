@@ -68,7 +68,7 @@ const colorOptions: FlexProps['color'][] = [
   'unavailable',
 ];
 
-const variantOptions: FlexProps['variant'][] = [
+const backgroundOptions: FlexProps['background'][] = [
   undefined,
   'dark',
   'light',
@@ -85,8 +85,8 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   color: colorOptions,
   backgroundColor: backgroundColorOptions,
   borderSize: plusMinusOptions,
-  borderColor: variantOptions,
-  variant: variantOptions,
+  borderColor: backgroundOptions,
+  background: backgroundOptions,
   alignContent: alignContentOptions,
   alignItems: alignItemsOptions,
   direction: directionOptions,
@@ -108,10 +108,14 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   wrap: wrapOptions,
 };
 
-export function FlexExample() {
+export function FlexExample({
+  isEditorVisible,
+}: {
+  isEditorVisible?: boolean;
+}) {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
-    variant: 'dark',
+    background: 'dark',
     top: 126,
     left: 2,
     width: 90,
@@ -122,8 +126,6 @@ export function FlexExample() {
     alignItems: 'center',
     justifyContent: 'space-evenly',
   });
-  const [isEditorVisible, setIsEditorVisible] = useState(false);
-
   const left = 0;
   const top = 0;
   const rowHeight = 4;
@@ -151,7 +153,7 @@ export function FlexExample() {
             width={editorWidth}
             height={114}
             UCID={255}
-            variant="dark"
+            background="dark"
           />
           <Button
             top={top + rowHeight}
@@ -159,7 +161,7 @@ export function FlexExample() {
             width={editorWidth}
             height={114}
             UCID={255}
-            variant="dark"
+            background="dark"
           />
           <Button
             top={top + rowHeight}
@@ -167,7 +169,7 @@ export function FlexExample() {
             width={editorWidth}
             height={114}
             UCID={255}
-            variant="light"
+            background="light"
           />
 
           {Object.entries(rows).map(([key, options], index) => {
@@ -198,7 +200,7 @@ export function FlexExample() {
                   height={rowHeight}
                   top={top + rowHeight * (index + 1) + 1}
                   left={left + 17}
-                  variant="light"
+                  background="light"
                 >
                   {allOptions.map((value, index, array) => {
                     const isPlusMinus =
@@ -219,7 +221,7 @@ export function FlexExample() {
                     return (
                       <Button
                         key={`${valueString}-${variant}`}
-                        variant={variant}
+                        background={variant}
                         color={color}
                         UCID={255}
                         onClick={
@@ -291,18 +293,6 @@ export function FlexExample() {
         Flex
       </Button>
 
-      <Button
-        top={(flexProps.top ?? 0) - rowHeight - 1}
-        left={(flexProps.left ?? 0) + (flexProps.width ?? 0) - 8}
-        width={8}
-        height={rowHeight}
-        variant="dark"
-        UCID={255}
-        onClick={() => setIsEditorVisible(!isEditorVisible)}
-      >
-        Edit
-      </Button>
-
       <Flex top={0} left={0} UCID={255} {...flexProps}>
         <Button width={10} height={12}>
           Outer
@@ -320,7 +310,7 @@ export function FlexExample() {
           width={30}
           height={15}
           backgroundColor="dark"
-          variant="light"
+          background="light"
           UCID={255}
         >
           <Button width={5} height={12}>

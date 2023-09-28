@@ -1,8 +1,8 @@
-import { Button, TextArea } from '../../src';
+import { Button, TextBox } from '../../src';
 
-export function TextAreaExample() {
+export function TextBoxExample() {
   const top = 160;
-  const left = 138;
+  const left = 120;
   const width = 20;
 
   return (
@@ -16,21 +16,21 @@ export function TextAreaExample() {
         align="left"
         UCID={255}
       >
-        TextArea
+        TextBox
       </Button>
-      <TextArea
+      <TextBox
         top={top + 5}
         left={left}
         cols={25}
         width={width}
         rowHeight={4}
         UCID={255}
-        variant="dark"
+        background="dark"
       >
         Hello world this is a text area lorem ipsum dolor sit amet consectetur
         adipisicing elit sed do eiusmod
-      </TextArea>
-      <TextArea
+      </TextBox>
+      <TextBox
         top={top + 5}
         left={left + width}
         rows={3}
@@ -38,11 +38,11 @@ export function TextAreaExample() {
         width={width}
         rowHeight={4}
         UCID={255}
-        variant="dark"
+        background="dark"
       >
         Hello world this is a text area lorem ipsum dolor sit amet consectetur
         adipisicing elit sed do eiusmod
-      </TextArea>
+      </TextBox>
     </>
   );
 }

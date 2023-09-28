@@ -14,7 +14,9 @@ export type ButtonProps = WithPartial<
   | 'UCID'
   | 'align'
   | 'color'
+  | 'background'
   | 'variant'
+  | 'isDisabled'
   | 'initializeDialogWithButtonText'
   | 'caption'
   | 'maxTypeInChars'
@@ -29,10 +31,12 @@ export const Button = forwardRef(function Button(
     UCID = 0,
     align = 'center',
     color = 'lightgrey',
-    variant = 'transparent',
+    background = 'transparent',
+    variant,
+    isDisabled = false,
     initializeDialogWithButtonText = false,
     caption = '',
-    maxTypeInChars = 0,
+    maxTypeInChars = 95,
     ...props
   }: ButtonProps,
   ref: ForwardedRef<ButtonElement>,
@@ -49,7 +53,9 @@ export const Button = forwardRef(function Button(
     UCID,
     align,
     color,
+    background,
     variant,
+    isDisabled,
     initializeDialogWithButtonText,
     caption,
     maxTypeInChars,

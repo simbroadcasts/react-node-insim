@@ -7,7 +7,7 @@ type Props = Omit<ButtonProps, 'height'> & {
   rowHeight: number;
 };
 
-export function TextArea({
+export function TextBox({
   rows,
   cols,
   rowHeight,
@@ -16,7 +16,7 @@ export function TextArea({
   width,
   children,
   align = 'left',
-  variant,
+  background,
   ...props
 }: Props) {
   const chunks = split((children ?? '').toString(), cols);
@@ -29,7 +29,7 @@ export function TextArea({
         left={left}
         width={width}
         height={length * rowHeight}
-        variant={variant}
+        background={background}
       />
       {Array.from({ length }).map((_, i) => (
         <Button
@@ -38,7 +38,7 @@ export function TextArea({
           left={left}
           width={width}
           height={rowHeight}
-          variant="transparent"
+          background="transparent"
           align={align}
           {...props}
         >
