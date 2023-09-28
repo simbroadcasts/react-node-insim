@@ -31,7 +31,7 @@
     "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix"
   },
   "peerDependencies": {
-    "node-insim": "^0.10.2",
+    "node-insim": "^0.9.1 || 1 || 2 || 3",
     "react": ">=18"
   },
   "dependencies": {
