@@ -27,7 +27,7 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
     }
 
     setPlayers({});
-    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
+    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
   });
 
   useOnPacket(PacketType.ISP_TINY, (packet) => {
