@@ -35,7 +35,11 @@ const root = createRoot({
 
 root.render(
   <StrictMode>
-    <App />
+    <PlayersProvider>
+      <ConnectionsProvider>
+        <App />
+      </ConnectionsProvider>
+    </PlayersProvider>
   </StrictMode>,
 );
 
