@@ -1,4 +1,4 @@
-import type { FlexProps } from '../components';
+import type { FlexProps } from '../../../components';
 import { InSimElement } from '../InSimElement';
 import type { Container, HostContext, Instance, Type } from '../types';
 

@@ -1,5 +1,5 @@
 export type { FlexProps } from './lib/components';
 export * from './lib/components';
-export type { ButtonElement } from './lib/elements';
 export * from './lib/hooks';
-export { createRoot } from './lib/ReactInSim';
+export type { ButtonElement } from './lib/renderer/inSim';
+export { createRoot } from './lib/renderer/inSim';

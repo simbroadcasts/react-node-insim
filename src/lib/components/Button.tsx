@@ -1,8 +1,8 @@
 import type { ForwardedRef } from 'react';
 import { createElement, forwardRef } from 'react';
 
-import type { ButtonElement, ButtonElementProps } from '../elements';
 import { useInSimContext } from '../internals/InSimContext';
+import type { ButtonElement, ButtonElementProps } from '../renderer/inSim';
 import type { WithPartial } from '../types';
 
 export type ButtonProps = WithPartial<

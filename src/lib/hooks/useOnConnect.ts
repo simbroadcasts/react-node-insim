@@ -4,7 +4,7 @@ import { PacketType } from 'node-insim/packets';
 import { useEffect, useRef } from 'react';
 import { useInSim } from 'react-node-insim';
 
-import { CONNECT_REQUEST_ID } from '../ReactInSim';
+import { CONNECT_REQUEST_ID } from '../renderer/inSim';
 
 export function useOnConnect(handler: InSimEvents[PacketType.ISP_VER]) {
   const handlerRef = useRef(handler);

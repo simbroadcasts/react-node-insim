@@ -1,4 +1,4 @@
-import type { TextChildren } from '../types';
+import type { TextChildren } from '../renderer/inSim';
 
 /** @internal */
 export function childrenToString(children?: TextChildren): string {

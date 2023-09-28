@@ -10,10 +10,10 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 
+import { log as baseLog } from '../../../internals/logger';
+import { childrenToString } from '../../../internals/utils';
 import type { InSimElementProps } from '../InSimElement';
 import { InSimElement } from '../InSimElement';
-import { log as baseLog } from '../internals/logger';
-import { childrenToString } from '../internals/utils';
 import type {
   Container,
   HostContext,

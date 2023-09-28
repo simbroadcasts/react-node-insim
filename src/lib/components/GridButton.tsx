@@ -2,7 +2,7 @@ import type { Node } from '@welefen/grid-layout';
 import type { ForwardedRef } from 'react';
 import { forwardRef } from 'react';
 
-import type { ButtonElement } from '../elements';
+import type { ButtonElement } from '../renderer/inSim';
 import type { ButtonProps } from './Button';
 import { Button } from './Button';
 
