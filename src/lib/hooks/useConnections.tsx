@@ -6,14 +6,12 @@ import { useInSim, useOnConnect, useOnPacket } from 'react-node-insim';
 
 type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
 
-const ConnectionsContext = createContext<Record<number, Connection> | null>(
-  null,
-);
+type Connections = Map<number, Connection>;
+
+const ConnectionsContext = createContext<Connections | null>(null);
 
 export function ConnectionsProvider({ children }: { children: ReactNode }) {
-  const [connections, setConnections] = useState<Record<number, Connection>>(
-    {},
-  );
+  const [connections, setConnections] = useState<Connections>(new Map());
   const inSim = useInSim();
 
   useOnConnect(() => {
@@ -25,46 +23,47 @@ export function ConnectionsProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    setConnections({});
+    setConnections(new Map());
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
   });
 
   useOnPacket(PacketType.ISP_NCN, (packet) => {
-    setConnections((connections) => ({
-      ...connections,
-      [packet.UCID]: {
+    setConnections((prevConnections) =>
+      new Map(prevConnections).set(packet.UCID, {
         UCID: packet.UCID,
         UName: packet.UName,
         PName: packet.PName,
         Flags: packet.Flags,
         Admin: packet.Admin,
-      },
-    }));
+      }),
+    );
   });
 
   useOnPacket(PacketType.ISP_CNL, (packet) => {
-    setConnections((connections) => {
-      const newConnections = { ...connections };
+    setConnections((prevConnections) => {
+      const newConnections = new Map(prevConnections);
 
-      delete newConnections[packet.UCID];
+      newConnections.delete(packet.UCID);
 
       return newConnections;
     });
   });
 
   useOnPacket(PacketType.ISP_CPR, (packet) => {
-    setConnections((connections) => {
-      if (!connections[packet.UCID]) {
-        return connections;
+    setConnections((prevConnections) => {
+      const foundConnection = prevConnections.get(packet.UCID);
+
+      if (!foundConnection) {
+        return prevConnections;
       }
 
-      return {
-        ...connections,
-        [packet.UCID]: {
-          ...connections[packet.UCID],
-          PName: packet.PName,
-        },
-      };
+      const newConnections = new Map(prevConnections);
+      newConnections.set(packet.UCID, {
+        ...foundConnection,
+        PName: packet.PName,
+      });
+
+      return newConnections;
     });
   });
 
@@ -75,7 +74,11 @@ export function ConnectionsProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useConnections() {
+export function useConnections(): ReadonlyMap<number, Connection> & {
+  map: <Item>(
+    callback: (connection: Connection, key: number, map: Connection[]) => Item,
+  ) => Item[];
+} {
   const connections = useContext(ConnectionsContext);
 
   if (!connections) {
@@ -84,5 +87,21 @@ export function useConnections() {
     );
   }
 
-  return connections;
+  return Object.freeze({
+    entries: connections.entries.bind(connections),
+    forEach: connections.forEach.bind(connections),
+    get: connections.get.bind(connections),
+    has: connections.has.bind(connections),
+    keys: connections.keys.bind(connections),
+    size: connections.size,
+    values: connections.values.bind(connections),
+    map: <Item,>(
+      callback: (
+        connection: Connection,
+        key: number,
+        map: Connection[],
+      ) => Item,
+    ) => Array.from(connections.values()).map(callback),
+    [Symbol.iterator]: connections[Symbol.iterator].bind(connections),
+  });
 }
