@@ -33,6 +33,7 @@ type CreateRootOptions = {
   port: number;
   adminPassword?: string;
   flags?: InSimFlags;
+  prefix?: string;
   appendButtonIDs?: boolean;
 };
 
@@ -454,6 +455,7 @@ export function createRoot({
   port,
   adminPassword,
   flags,
+  prefix,
   appendButtonIDs = false,
 }: CreateRootOptions) {
   const inSim = new InSim();
@@ -490,6 +492,7 @@ export function createRoot({
     Port: port,
     Admin: adminPassword,
     Flags: flags,
+    Prefix: prefix,
   });
 
   inSim.on(PacketType.ISP_CNL, (packet) => {
