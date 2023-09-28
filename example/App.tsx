@@ -16,7 +16,7 @@ export function App() {
 
   useOnConnect((packet, inSim) => {
     console.log(`Connected to LFS ${packet.Product} ${packet.Version}`);
-    inSim.send(new IS_MST({ Msg: `React Node InSim connected` }));
+    inSim.send(new IS_MST({ Msg: `/echo React Node InSim connected` }));
   });
 
   useOnPacket(PacketType.ISP_NCN, (packet) => {
