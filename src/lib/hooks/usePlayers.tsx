@@ -1,10 +1,11 @@
-import type { IS_NPL, IS_PLL } from 'node-insim/packets';
-import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
+import type { IS_NPL } from 'node-insim/packets';
+import { IS_TINY, PacketType, PlayerType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 import { useInSim } from './useInSim';
 import { useOnConnect } from './useOnConnect';
+import { useOnPacket } from './useOnPacket';
 
 type Player = Pick<
   IS_NPL,
@@ -20,43 +21,77 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
   });
 
-  useEffect(() => {
-    const onNewPlayer = (packet: IS_NPL) => {
-      setPlayers((players) => ({
-        ...players,
-        [packet.PLID]: {
-          UCID: packet.UCID,
-          PLID: packet.PLID,
-          PName: packet.PName,
-          Flags: packet.Flags,
-          PType: packet.PType,
-          Plate: packet.Plate,
-        },
-      }));
-    };
-    inSim.on(PacketType.ISP_NPL, onNewPlayer);
+  useOnPacket(PacketType.ISP_ISM, (packet) => {
+    if (packet.ReqI > 0) {
+      return;
+    }
 
-    return () => {
-      inSim.off(PacketType.ISP_NPL, onNewPlayer);
-    };
-  }, []);
+    setPlayers({});
+    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
+  });
 
-  useEffect(() => {
-    const onPlayerLeave = (packet: IS_PLL) => {
-      setPlayers((players) => {
-        const newPlayers = { ...players };
+  useOnPacket(PacketType.ISP_TINY, (packet) => {
+    if (packet.SubT === TinyType.TINY_CLR) {
+      setPlayers({});
+    }
+  });
 
-        delete newPlayers[packet.PLID];
+  useOnPacket(PacketType.ISP_NPL, (packet) => {
+    setPlayers((players) => ({
+      ...players,
+      [packet.PLID]: {
+        UCID: packet.UCID,
+        PLID: packet.PLID,
+        PName: packet.PName,
+        Flags: packet.Flags,
+        PType: packet.PType,
+        Plate: packet.Plate,
+      },
+    }));
+  });
 
-        return newPlayers;
-      });
-    };
-    inSim.on(PacketType.ISP_PLL, onPlayerLeave);
+  useOnPacket(PacketType.ISP_PLL, (packet) => {
+    setPlayers((players) => {
+      const newPlayers = { ...players };
 
-    return () => {
-      inSim.off(PacketType.ISP_PLL, onPlayerLeave);
-    };
-  }, []);
+      delete newPlayers[packet.PLID];
+
+      return newPlayers;
+    });
+  });
+
+  useOnPacket(PacketType.ISP_CPR, (packet) => {
+    setPlayers((players) => {
+      const matchingPlayer = Object.values(players).find(
+        (player) =>
+          player.UCID === packet.UCID && (player.PType & PlayerType.AI) === 0,
+      );
+
+      if (!matchingPlayer) {
+        return players;
+      }
+
+      const newPlayers = { ...players };
+
+      newPlayers[matchingPlayer.PLID] = {
+        ...matchingPlayer,
+        PName: packet.PName,
+        Plate: packet.Plate,
+      };
+
+      return newPlayers;
+    });
+  });
+
+  useOnPacket(PacketType.ISP_TOC, (packet) => {
+    setPlayers((players) => ({
+      ...players,
+      [packet.PLID]: {
+        ...players[packet.PLID],
+        UCID: packet.NewUCID,
+      },
+    }));
+  });
 
   return (
     <PlayersContext.Provider value={players}>
