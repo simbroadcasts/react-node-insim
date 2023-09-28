@@ -26,7 +26,7 @@ root.render(
     <PlayersProvider>
       <ConnectionsProvider>
         <PlayersAndConnectionsButtons />
-        <FlexLayout />
+        <FlexLayout showFlexPropsEditor={false} />
         <GridLayout />
         <StackLayout />
         <ButtonTypeIn />

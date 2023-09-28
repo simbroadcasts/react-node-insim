@@ -108,7 +108,11 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   wrap: wrapOptions,
 };
 
-export function FlexLayout() {
+type FlexLayoutProps = {
+  showFlexPropsEditor?: boolean;
+};
+
+export function FlexLayout({ showFlexPropsEditor }: FlexLayoutProps) {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
     variant: 'dark',
@@ -129,145 +133,153 @@ export function FlexLayout() {
 
   return (
     <>
-      <Button
-        top={top}
-        left={left}
-        width={10}
-        height={rowHeight}
-        color="title"
-        align="left"
-        UCID={255}
-      >
-        Flex props
-      </Button>
+      {showFlexPropsEditor && (
+        <>
+          <Button
+            top={top}
+            left={left}
+            width={10}
+            height={rowHeight}
+            color="title"
+            align="left"
+            UCID={255}
+          >
+            Flex props
+          </Button>
 
-      <Button
-        top={top + rowHeight}
-        left={left}
-        width={160}
-        height={114}
-        UCID={255}
-        variant="dark"
-      />
-      <Button
-        top={top + rowHeight}
-        left={left}
-        width={160}
-        height={114}
-        UCID={255}
-        variant="dark"
-      />
-      <Button
-        top={top + rowHeight}
-        left={left}
-        width={160}
-        height={114}
-        UCID={255}
-        variant="light"
-      />
+          <Button
+            top={top + rowHeight}
+            left={left}
+            width={160}
+            height={114}
+            UCID={255}
+            variant="dark"
+          />
+          <Button
+            top={top + rowHeight}
+            left={left}
+            width={160}
+            height={114}
+            UCID={255}
+            variant="dark"
+          />
+          <Button
+            top={top + rowHeight}
+            left={left}
+            width={160}
+            height={114}
+            UCID={255}
+            variant="light"
+          />
 
-      {Object.entries(rows).map(([key, options], index) => {
-        const flexPropValue = flexProps[key as keyof FlexProps];
+          {Object.entries(rows).map(([key, options], index) => {
+            const flexPropValue = flexProps[key as keyof FlexProps];
 
-        const isPlusMinus =
-          options.length === 2 && options[0] === '-' && options[1] === '+';
+            const isPlusMinus =
+              options.length === 2 && options[0] === '-' && options[1] === '+';
 
-        const allOptions = isPlusMinus
-          ? [(flexPropValue ?? '[none]').toString(), ...options]
-          : options;
+            const allOptions = isPlusMinus
+              ? [(flexPropValue ?? '[none]').toString(), ...options]
+              : options;
 
-        return (
-          <Fragment key={key}>
-            <Button
-              width={20}
-              height={rowHeight}
-              top={top + rowHeight * (index + 1) + 1}
-              left={left}
-              UCID={255}
-              align="left"
-              color="unselected"
-            >
-              {key}
-            </Button>
-            <HStack
-              width={15}
-              height={rowHeight}
-              top={top + rowHeight * (index + 1) + 1}
-              left={left + 20}
-              variant="light"
-            >
-              {allOptions.map((value, index, array) => {
-                const isPlusMinus =
-                  array.length === 3 && array[1] === '-' && array[2] === '+';
+            return (
+              <Fragment key={key}>
+                <Button
+                  width={20}
+                  height={rowHeight}
+                  top={top + rowHeight * (index + 1) + 1}
+                  left={left}
+                  UCID={255}
+                  align="left"
+                  color="unselected"
+                >
+                  {key}
+                </Button>
+                <HStack
+                  width={15}
+                  height={rowHeight}
+                  top={top + rowHeight * (index + 1) + 1}
+                  left={left + 20}
+                  variant="light"
+                >
+                  {allOptions.map((value, index, array) => {
+                    const isPlusMinus =
+                      array.length === 3 &&
+                      array[1] === '-' &&
+                      array[2] === '+';
 
-                const valueString =
-                  value !== undefined ? (value as string).toString() : '[none]';
+                    const valueString =
+                      value !== undefined
+                        ? (value as string).toString()
+                        : '[none]';
 
-                const variant =
-                  isPlusMinus && index === 0 ? 'transparent' : undefined;
-                const color =
-                  flexPropValue === value ? 'selected' : 'unselected';
+                    const variant =
+                      isPlusMinus && index === 0 ? 'transparent' : undefined;
+                    const color =
+                      flexPropValue === value ? 'selected' : 'unselected';
 
-                return (
-                  <Button
-                    key={`${valueString}-${variant}`}
-                    variant={variant}
-                    color={color}
-                    UCID={255}
-                    onClick={
-                      isPlusMinus && index === 0
-                        ? undefined
-                        : () => {
-                            if (
-                              typeof flexPropValue === 'number' ||
-                              flexPropValue === undefined
-                            ) {
-                              if (value === '+') {
-                                setFlexProps((prevState) => {
-                                  const prevValue =
-                                    prevState[key as keyof FlexProps];
-                                  return {
-                                    ...prevState,
-                                    [key]:
-                                      prevValue === undefined
-                                        ? 1
-                                        : Number(prevValue) + 1,
-                                  };
-                                });
-                                return;
+                    return (
+                      <Button
+                        key={`${valueString}-${variant}`}
+                        variant={variant}
+                        color={color}
+                        UCID={255}
+                        onClick={
+                          isPlusMinus && index === 0
+                            ? undefined
+                            : () => {
+                                if (
+                                  typeof flexPropValue === 'number' ||
+                                  flexPropValue === undefined
+                                ) {
+                                  if (value === '+') {
+                                    setFlexProps((prevState) => {
+                                      const prevValue =
+                                        prevState[key as keyof FlexProps];
+                                      return {
+                                        ...prevState,
+                                        [key]:
+                                          prevValue === undefined
+                                            ? 1
+                                            : Number(prevValue) + 1,
+                                      };
+                                    });
+                                    return;
+                                  }
+
+                                  if (value === '-') {
+                                    setFlexProps((prevState) => {
+                                      const prevValue =
+                                        prevState[key as keyof FlexProps];
+                                      return {
+                                        ...prevState,
+                                        [key]:
+                                          prevValue === undefined
+                                            ? 0
+                                            : Number(prevValue) - 1,
+                                      };
+                                    });
+                                    return;
+                                  }
+                                }
+
+                                setFlexProps((prevState) => ({
+                                  ...prevState,
+                                  [key]: value,
+                                }));
                               }
-
-                              if (value === '-') {
-                                setFlexProps((prevState) => {
-                                  const prevValue =
-                                    prevState[key as keyof FlexProps];
-                                  return {
-                                    ...prevState,
-                                    [key]:
-                                      prevValue === undefined
-                                        ? 0
-                                        : Number(prevValue) - 1,
-                                  };
-                                });
-                                return;
-                              }
-                            }
-
-                            setFlexProps((prevState) => ({
-                              ...prevState,
-                              [key]: value,
-                            }));
-                          }
-                    }
-                  >
-                    {valueString}
-                  </Button>
-                );
-              })}
-            </HStack>
-          </Fragment>
-        );
-      })}
+                        }
+                      >
+                        {valueString}
+                      </Button>
+                    );
+                  })}
+                </HStack>
+              </Fragment>
+            );
+          })}
+        </>
+      )}
 
       <Button
         top={(flexProps.top ?? 0) - rowHeight - 1}
