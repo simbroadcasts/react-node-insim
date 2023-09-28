@@ -3,5 +3,5 @@
   "compilerOptions": {
     "stripInternal": true
   },
-  "exclude": ["node_modules", "example", "src/lib/internals"]
+  "exclude": ["node_modules", "examples", "src/lib/internals"]
 }

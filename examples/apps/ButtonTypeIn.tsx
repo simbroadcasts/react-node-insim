@@ -7,7 +7,7 @@ export function ButtonTypeIn() {
   const [lastName, setLastName] = useState('');
 
   return (
-    <VStack top={130} left={120} width={20} height={4} UCID={255}>
+    <VStack top={170} left={170} width={20} height={4} UCID={255}>
       <Button color="title" align="left">
         First name
       </Button>

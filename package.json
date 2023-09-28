@@ -23,7 +23,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -b ./src/tsconfig.cjs.json ./src/tsconfig.esm.json ./src/tsconfig.types.json",
-    "start": "tsx watch example/index.tsx",
+    "start": "tsx watch examples/index.tsx",
     "format": "run-s \"format:no-write --write\"",
     "format:no-write": "prettier \"./**/*.{js,ts,md,json,yml,yaml}\"",
     "format:check": "run-s \"format:no-write --check\"",

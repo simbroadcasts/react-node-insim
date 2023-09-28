@@ -137,6 +137,32 @@ export function FlexLayout() {
       >
         Flex props
       </Button>
+
+      <Button
+        top={top + rowHeight}
+        left={left}
+        width={160}
+        height={114}
+        UCID={255}
+        variant="dark"
+      />
+      <Button
+        top={top + rowHeight}
+        left={left}
+        width={160}
+        height={114}
+        UCID={255}
+        variant="dark"
+      />
+      <Button
+        top={top + rowHeight}
+        left={left}
+        width={160}
+        height={114}
+        UCID={255}
+        variant="light"
+      />
+
       {Object.entries(rows).map(([key, options], index) => {
         const flexPropValue = flexProps[key as keyof FlexProps];
 
@@ -152,17 +178,18 @@ export function FlexLayout() {
             <Button
               width={20}
               height={rowHeight}
-              top={top + rowHeight * (index + 1)}
+              top={top + rowHeight * (index + 1) + 1}
               left={left}
               UCID={255}
               align="left"
+              color="unselected"
             >
               {key}
             </Button>
             <HStack
               width={15}
               height={rowHeight}
-              top={5 + rowHeight * index}
+              top={top + rowHeight * (index + 1) + 1}
               left={left + 20}
               variant="light"
             >
