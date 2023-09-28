@@ -5,6 +5,5 @@ export { Flex } from './Flex';
 export { Grid } from './Grid';
 export { GridButton } from './GridButton';
 export { HStack } from './HStack';
-export { InSim } from './InSim';
 export { Stack } from './Stack';
 export { VStack } from './VStack';
