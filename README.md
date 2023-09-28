@@ -8,7 +8,7 @@ It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node
 
 The following example displays a live list of players and connections as InSim buttons:
 
-<img src="./insim-buttons-preview.png" width="400" />
+<img src="./insim-buttons-preview.gif" width="400" />
 
 ```tsx
 import type { InSim } from 'node-insim';
