@@ -43,7 +43,7 @@ root.render(
   </StrictMode>,
 );
 
-export function App() {
+function App() {
   // Get the list of current players and connections
   const players = usePlayers();
   const connections = useConnections();
@@ -81,7 +81,7 @@ export function App() {
         height={5}
         UCID={255}
       >
-        {Object.values(players).map((player) => (
+        {players.map((player) => (
           <Button key={player.PLID} onClick={handlePlayerClick(player.PLID)}>
             {player.PName}
           </Button>
@@ -98,7 +98,7 @@ export function App() {
         height={5}
         UCID={255}
       >
-        {Object.values(connections).map((connection) => (
+        {connections.map((connection) => (
           <Button
             key={connection.UCID}
             onClick={handleConnectionClick(connection.UCID)}
