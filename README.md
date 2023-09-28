@@ -123,19 +123,19 @@ function App() {
 NPM
 
 ```shell
-npm install --save react-node-insim node-insim react
+npm install --save react-node-insim node-insim react@18
 ```
 
 Yarn
 
 ```shell
-yarn add react-node-insim node-insim react
+yarn add react-node-insim node-insim react@18
 ```
 
 pnpm
 
 ```shell
-pnpm add react-node-insim node-insim react
+pnpm add react-node-insim node-insim react@18
 ```
 
 ## Development
