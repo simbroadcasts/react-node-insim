@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button } from 'react-node-insim';
+
+import { Button } from '../../src';
 
 export function TypeIn() {
   const [typeIn, setTypeIn] = useState('');

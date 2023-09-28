@@ -26,7 +26,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
       return null;
     }
 

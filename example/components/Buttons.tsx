@@ -1,6 +1,7 @@
 import type { IS_BTT } from 'node-insim/packets';
 import { useCallback, useState } from 'react';
-import { Button, useConnections, VStack } from 'react-node-insim';
+
+import { Button, useConnections, VStack } from '../../src';
 
 export function Buttons() {
   const connections = useConnections();
