@@ -1,12 +1,16 @@
 # React Node InSim
 
-React Node InSim is a React renderer for Live for Speed InSim buttons. It also provides hooks for handling incoming packets.
+React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It also provides hooks for handling incoming packets.
+
+It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library for InSim communication.
 
 ## What can it do?
 
-The following example displays a list of players and connections as InSim buttons:
+The following example displays a live list of players and connections as InSim buttons:
 
-```typescript jsx
+<img src="./insim-buttons-preview.png" width="400" />
+
+```tsx
 import type { InSim } from 'node-insim';
 import { InSimFlags, IS_BTC, IS_MST, PacketType } from 'node-insim/packets';
 import { StrictMode } from 'react';
@@ -103,7 +107,7 @@ export function App() {
 ## Requirements
 
 - Node.js
-- React
+- React 18
 - Node InSim
 
 ## Installation
