@@ -7,7 +7,9 @@ import { Button } from './Button';
 type ButtonChild = ReactElement<ButtonProps>;
 
 export type StackProps = Required<Pick<ButtonProps, 'top' | 'left'>> &
-  Partial<Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color'>> & {
+  Partial<
+    Pick<ButtonProps, 'width' | 'height' | 'variant' | 'color' | 'UCID'>
+  > & {
     direction: 'horizontal' | 'vertical';
     children: ButtonChild | ButtonChild[];
   };
@@ -21,6 +23,7 @@ export function Stack({
   height,
   variant,
   color,
+  UCID,
 }: StackProps) {
   return (
     <>
@@ -54,6 +57,7 @@ export function Stack({
             height: buttonHeight,
             variant: child.props.variant ?? variant,
             color: child.props.color ?? color,
+            UCID: child.props.UCID ?? UCID,
           });
         });
       })()}
