@@ -1,18 +1,22 @@
 import type { IS_CNL, IS_CPR, IS_NCN } from 'node-insim/packets';
 import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useInSim } from 'react-node-insim';
 
 type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
 
-export function useConnections() {
+const ConnectionsContext = createContext<Record<number, Connection> | null>(
+  null,
+);
+
+export function ConnectionsProvider({ children }: { children: ReactNode }) {
   const [connections, setConnections] = useState<Record<number, Connection>>(
     {},
   );
   const inSim = useInSim();
 
   useEffect(() => {
-    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
   }, []);
 
@@ -75,6 +79,22 @@ export function useConnections() {
       inSim.off(PacketType.ISP_CPR, onPlayerRename);
     };
   }, []);
+
+  return (
+    <ConnectionsContext.Provider value={connections}>
+      {children}
+    </ConnectionsContext.Provider>
+  );
+}
+
+export function useConnections() {
+  const connections = useContext(ConnectionsContext);
+
+  if (!connections) {
+    throw new Error(
+      'useConnections must be called within <ConnectionsProvider>.',
+    );
+  }
 
   return connections;
 }

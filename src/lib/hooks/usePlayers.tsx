@@ -1,16 +1,23 @@
 import type { IS_NPL, IS_PLL } from 'node-insim/packets';
-import { PacketType } from 'node-insim/packets';
-import { useEffect, useState } from 'react';
-import { useInSim } from 'react-node-insim';
+import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+
+import { useInSim } from './useInSim';
 
 type Player = Pick<
   IS_NPL,
   'UCID' | 'PLID' | 'PName' | 'Flags' | 'PType' | 'Plate'
 >;
+const PlayersContext = createContext<Record<number, Player> | null>(null);
 
-export function usePlayers() {
+export function PlayersProvider({ children }: { children: ReactNode }) {
   const [players, setPlayers] = useState<Record<string, Player>>({});
   const inSim = useInSim();
+
+  useEffect(() => {
+    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
+  }, []);
 
   useEffect(() => {
     const onNewPlayer = (packet: IS_NPL) => {
@@ -47,6 +54,20 @@ export function usePlayers() {
       inSim.off(PacketType.ISP_PLL, onPlayerLeave);
     };
   }, []);
+
+  return (
+    <PlayersContext.Provider value={players}>
+      {children}
+    </PlayersContext.Provider>
+  );
+}
+
+export function usePlayers() {
+  const players = useContext(PlayersContext);
+
+  if (!players) {
+    throw new Error('usePlayers must be called within <PlayersProvider>.');
+  }
 
   return players;
 }

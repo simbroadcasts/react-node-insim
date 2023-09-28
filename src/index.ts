@@ -1,16 +1,5 @@
 export type { FlexProps } from './lib/components';
-export {
-  Button,
-  Flex,
-  Grid,
-  GridButton,
-  HStack,
-  InSim,
-  Stack,
-  VStack,
-} from './lib/components';
+export * from './lib/components';
 export type { ButtonElement } from './lib/elements';
-export { useConnections, useInSim, usePlayers } from './lib/hooks';
-import { ReactInSim } from './lib/ReactInSim';
-
-export default ReactInSim;
+export * from './lib/hooks';
+export { createRoot } from './lib/ReactInSim';

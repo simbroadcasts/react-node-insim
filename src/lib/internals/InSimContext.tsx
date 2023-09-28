@@ -1,5 +1,5 @@
 import type { InSim } from 'node-insim';
-import type { IS_BFN } from 'node-insim/packets';
+import type { IS_BFN, IS_VER } from 'node-insim/packets';
 import { ButtonFunction, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
@@ -8,6 +8,7 @@ import { log } from './logger';
 
 type InSimContextAPI = {
   inSim: InSim;
+  isConnected: boolean;
   shouldClearAllButtons: boolean;
 };
 
@@ -28,11 +29,17 @@ export function useInSimContext(): InSimContextAPI {
 type RootProps = {
   inSim: InSim;
   children: ReactNode;
+  connectRequestId: number;
 };
 
 /** @internal */
-export function InSimContextProvider({ inSim, children }: RootProps) {
+export function InSimContextProvider({
+  inSim,
+  children,
+  connectRequestId,
+}: RootProps) {
   const [shouldClearAllButtons, setShouldClearAllButtons] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const bfnListener = (packet: IS_BFN) => {
@@ -56,12 +63,27 @@ export function InSimContextProvider({ inSim, children }: RootProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const onVersion = (packet: IS_VER) => {
+      if (packet.ReqI === connectRequestId) {
+        setIsConnected(true);
+      }
+    };
+
+    inSim.on(PacketType.ISP_VER, onVersion);
+
+    return () => {
+      inSim.off(PacketType.ISP_VER, onVersion);
+    };
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       inSim,
+      isConnected,
       shouldClearAllButtons,
     }),
-    [shouldClearAllButtons],
+    [shouldClearAllButtons, isConnected],
   );
 
   return (

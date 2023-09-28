@@ -20,10 +20,6 @@ root.render(
   </React.StrictMode>,
 );
 
-// inSim.on('connect', () => console.log('Connected'));
-//
-// inSim.on('disconnect', () => console.log('Disconnected'));
-
 process.on('uncaughtException', (error) => {
   console.log(error.message);
 });

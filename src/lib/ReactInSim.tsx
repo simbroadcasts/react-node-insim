@@ -1,7 +1,8 @@
-import type { InSim } from 'node-insim';
+import { InSim } from 'node-insim';
+import type { InSimFlags } from 'node-insim/packets';
 import { PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
-import type { Fiber, HostConfig, OpaqueRoot } from 'react-reconciler';
+import type { HostConfig, OpaqueRoot } from 'react-reconciler';
 import ReactReconciler from 'react-reconciler';
 import {
   ConcurrentRoot,
@@ -27,12 +28,19 @@ import type {
 } from './types';
 
 type CreateRootOptions = {
+  name: string;
+  host: string;
+  port: number;
+  adminPassword?: string;
+  flags?: InSimFlags;
   appendButtonIDs?: boolean;
 };
 
 const NO_CONTEXT = {};
 
 let instanceCounter = 0;
+
+export const CONNECT_REQUEST_ID = 255;
 
 function appendChildToContainerOrInstance(
   parentInstance: Container | Instance,
@@ -326,9 +334,9 @@ const hostConfig: HostConfig<
     instance.detachDeletedInstance();
   },
 
-  commitMount(instance: Instance, type: Type): void {
+  commitMount(instance: Instance, type: Type, props: Props): void {
     log('commitMount', type, instance.id);
-    instance.commitMount();
+    instance.commitMount(props);
   },
 
   commitUpdate(
@@ -437,116 +445,78 @@ const InSimRenderer = ReactReconciler(hostConfig);
 
 const rootContainers = new Map<string, Container>();
 const roots = new Map<string, OpaqueRoot>();
-const DEFAULT_ROOT_ID = '<default>';
 
 let idCounter = 0;
 
-export const ReactInSim = {
-  createRoot(
-    inSim: InSim,
-    { appendButtonIDs = false }: CreateRootOptions = {},
-  ) {
-    const rootID = '' + idCounter++;
-    const container: Container = {
-      rootID,
-      inSim,
-      pendingChildren: [],
-      children: [],
-      buttonUCIDsByClickID: [],
-      appendButtonIDs,
-    };
-    rootContainers.set(rootID, container);
-    const fiberRoot = InSimRenderer.createContainer(
-      container,
-      ConcurrentRoot,
-      null,
-      false,
-      false,
-      '',
-      function (error: unknown) {
-        console.error(error);
-      },
-      null,
-    );
+export function createRoot({
+  name,
+  host,
+  port,
+  adminPassword,
+  flags,
+  appendButtonIDs = false,
+}: CreateRootOptions) {
+  const inSim = new InSim();
 
-    roots.set(rootID, fiberRoot);
+  const rootID = '' + idCounter++;
+  const container: Container = {
+    rootID,
+    inSim,
+    pendingChildren: [],
+    children: [],
+    buttonUCIDsByClickID: [],
+    appendButtonIDs,
+  };
+  rootContainers.set(rootID, container);
+  const fiberRoot = InSimRenderer.createContainer(
+    container,
+    ConcurrentRoot,
+    null,
+    false,
+    false,
+    '',
+    function (error: unknown) {
+      console.error(error);
+    },
+    null,
+  );
 
-    inSim.on(PacketType.ISP_CNL, (packet) => {
-      container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
-        if (ucIds.has(packet.UCID)) {
-          log(`removing UCID ${packet.UCID} from clickID ${clickID}`);
-          ucIds.delete(packet.UCID);
-        }
-      });
+  roots.set(rootID, fiberRoot);
+
+  inSim.connect({
+    ReqI: CONNECT_REQUEST_ID,
+    IName: name,
+    Host: host,
+    Port: port,
+    Admin: adminPassword,
+    Flags: flags,
+  });
+
+  inSim.on(PacketType.ISP_CNL, (packet) => {
+    container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
+      if (ucIds.has(packet.UCID)) {
+        log(`removing UCID ${packet.UCID} from clickID ${clickID}`);
+        ucIds.delete(packet.UCID);
+      }
     });
+  });
 
-    return {
-      render(children: ReactNode | ReactNode[]) {
-        InSimRenderer.updateContainer(
-          <InSimContextProvider inSim={inSim}>{children}</InSimContextProvider>,
-          fiberRoot,
-          null,
-          null,
-        );
-      },
-    };
-  },
-
-  /** Logs the current state of the tree. */
-  dumpTree(rootID: string = DEFAULT_ROOT_ID) {
-    const root = roots.get(rootID);
-    const rootContainer = rootContainers.get(rootID);
-    if (!root || !rootContainer) {
-      log('Nothing rendered yet.');
-      return;
-    }
-
-    const bufferedLog: unknown[] = [];
-    function log(...args: unknown[]) {
-      bufferedLog.push(...args, '\n');
-    }
-
-    function logHostInstances(children: Instance[], depth: number) {
-      for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-        const indent = '  '.repeat(depth);
-        log(indent + '- ' + (child as Instance).type + '#' + child.id);
-        logHostInstances((child as Instance).children, depth + 1);
-      }
-    }
-    function logContainer(container: Container, depth: number) {
-      log('  '.repeat(depth) + '- [root#' + container.rootID + ']');
-      logHostInstances(container.children, depth + 1);
-    }
-
-    function logFiber(fiber: Fiber, depth: number) {
-      log(
-        '  '.repeat(depth) +
-          '- ' +
-          // need to explicitly coerce Symbol to a string
-          (fiber.type ? fiber.type.name || fiber.type.toString() : '[root]'),
-        '[' + (fiber.pendingProps ? '*' : '') + ']',
+  return {
+    render(children: ReactNode) {
+      InSimRenderer.updateContainer(
+        <InSimContextProvider
+          inSim={inSim}
+          connectRequestId={CONNECT_REQUEST_ID}
+        >
+          {children}
+        </InSimContextProvider>,
+        fiberRoot,
+        null,
+        null,
       );
-      if (fiber.child) {
-        logFiber(fiber.child, depth + 1);
-      }
-      if (fiber.sibling) {
-        logFiber(fiber.sibling, depth);
-      }
-    }
-
-    log('HOST INSTANCES:');
-    logContainer(rootContainer, 0);
-    log('FIBERS:');
-    logFiber(root.current, 0);
-
-    log(...bufferedLog);
-  },
-
-  getRoot(rootID: string = DEFAULT_ROOT_ID) {
-    return roots.get(rootID);
-  },
-};
+    },
+  };
+}
 
 function shallowDiff(
   oldObj: Record<string, unknown>,

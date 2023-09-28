@@ -13,6 +13,7 @@ export type InSimElementProps<PublicInstance, Props> = Props & {
   ref?: Ref<PublicInstance>;
   key?: Key;
   shouldClearAllButtons?: boolean;
+  isConnected?: boolean;
 };
 
 export abstract class InSimElement {
@@ -39,7 +40,7 @@ export abstract class InSimElement {
     this.container = container;
   }
 
-  abstract commitMount(): void;
+  abstract commitMount(props: Props): void;
 
   abstract commitUpdate(
     oldProps: Props,

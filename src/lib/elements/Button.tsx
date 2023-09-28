@@ -116,11 +116,6 @@ export class Button extends InSimElement {
 
     this.assertButtonCount(props);
 
-    if (props.shouldClearAllButtons) {
-      this.log(`user has hidden all buttons - do not create`);
-      return;
-    }
-
     this.assertTextLength(props);
     this.assertDimensions(props, { checkWidthAndHeight: true });
 
@@ -132,9 +127,20 @@ export class Button extends InSimElement {
     this.log('instance created');
   }
 
-  commitMount(): void {
-    this.generateClickIdForUCID(this.packet.UCID);
+  commitMount(props: ButtonElementProps): void {
     this.log(`mount`);
+
+    this.generateClickIdForUCID(this.packet.UCID);
+
+    if (props.shouldClearAllButtons) {
+      this.log('do not commit mount - user has hidden all buttons');
+      return;
+    }
+
+    if (!props.isConnected) {
+      this.log('do not commit mount - not connected');
+      return;
+    }
 
     this.sendNewButton();
     this.reinitializeButtonAfterNewConnection();
@@ -148,7 +154,12 @@ export class Button extends InSimElement {
     this.log('update', `[${changedPropNames.join()}]`);
 
     if (newProps.shouldClearAllButtons) {
-      this.log(`user has hidden all buttons - do not update`);
+      this.log(`do not update - user has hidden all buttons - `);
+      return;
+    }
+
+    if (!newProps.isConnected) {
+      this.log(`do not update - not connected`);
       return;
     }
 
@@ -214,9 +225,6 @@ export class Button extends InSimElement {
     ) {
       throw new Error(
         `Invalid button dimensions: W=${props.width} H=${props.height}`,
-        {
-          cause: this,
-        },
       );
     }
   }

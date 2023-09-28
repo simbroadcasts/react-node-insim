@@ -6,7 +6,7 @@ import { useInSimContext } from '../internals/InSimContext';
 import type { WithPartial } from '../types';
 
 export type ButtonProps = WithPartial<
-  Omit<ButtonElementProps, 'shouldClearAllButtons'>,
+  Omit<ButtonElementProps, 'shouldClearAllButtons' | 'isConnected'>,
   | 'top'
   | 'left'
   | 'width'
@@ -37,10 +37,11 @@ export const Button = forwardRef(function Button(
   }: ButtonProps,
   ref: ForwardedRef<ButtonElement>,
 ) {
-  const { shouldClearAllButtons } = useInSimContext();
+  const { shouldClearAllButtons, isConnected } = useInSimContext();
 
   return createElement<ButtonElementProps>('btn', {
     shouldClearAllButtons,
+    isConnected,
     top,
     left,
     width,
