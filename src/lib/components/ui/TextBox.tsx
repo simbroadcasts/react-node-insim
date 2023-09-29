@@ -1,51 +1,144 @@
+import { useState } from 'react';
 import type { ButtonProps } from 'react-node-insim';
 import { Button } from 'react-node-insim';
 
 type Props = Omit<ButtonProps, 'height'> & {
   rows?: number;
+
+  /** Maximum number of characters per row */
   cols: number;
+
+  /** Height of each row of text */
   rowHeight: number;
 };
 
 export function TextBox({
-  rows,
+  rows: rowsProp,
   cols,
   rowHeight,
-  top,
-  left,
-  width,
+  top = 0,
+  left = 0,
+  width = 0,
   children,
   align = 'left',
   background,
+  color,
+  variant,
+  UCID,
   ...props
 }: Props) {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
   const chunks = split((children ?? '').toString(), cols);
-  const length = rows ?? chunks.length;
+  const rows = rowsProp ?? chunks.length;
+
+  const isScrollbarVisible = rows && chunks.length > rows;
+  const canScrollUp = scrollPosition > 0;
+  const canScrollDown = scrollPosition + rows <= chunks.length - 1;
+
+  const commonProps: ButtonProps = {
+    UCID,
+  };
+
+  const scrollbarWidth = Math.round(rowHeight * 0.75);
+  const textAreaWidth = isScrollbarVisible ? width - scrollbarWidth : width;
+
+  const textAreaHeight = rows * rowHeight;
+  const scrollbarHeightWithButtons = textAreaHeight - 2 * rowHeight;
+  const scrollbarHeight = Math.floor(
+    scrollbarHeightWithButtons * (rows / chunks.length),
+  );
+  const scrollButtonHeight = rows === 1 ? Math.round(rowHeight / 2) : rowHeight;
+  const scrollbarLeft = left + textAreaWidth;
 
   return (
     <>
       <Button
         top={top}
         left={left}
-        width={width}
-        height={length * rowHeight}
+        width={textAreaWidth}
+        height={textAreaHeight}
         background={background}
+        variant={variant}
+        {...commonProps}
       />
-      {Array.from({ length }).map((_, i) => (
+      {Array.from({ length: rows }).map((_, i) => (
         <Button
           key={i}
-          top={(top ?? 0) + i * rowHeight}
+          top={top + i * rowHeight}
           left={left}
-          width={width}
+          width={textAreaWidth}
           height={rowHeight}
-          background="transparent"
           align={align}
+          variant={variant}
+          color={color}
+          background="transparent"
           {...props}
+          {...commonProps}
         >
-          {chunks[i] ?? ''}
-          {i === length - 1 && chunks.length > length ? '...' : ''}
+          {chunks[i + scrollPosition] ?? ''}
+          {i === rows - 1 && canScrollDown ? '...' : ''}
         </Button>
       ))}
+      {isScrollbarVisible && (
+        <>
+          <Button
+            top={top}
+            left={scrollbarLeft}
+            width={scrollbarWidth}
+            height={scrollButtonHeight}
+            variant={variant}
+            background={background}
+            color={color}
+            isDisabled={!canScrollUp}
+            onClick={() => {
+              if (canScrollUp) {
+                setScrollPosition(scrollPosition - 1);
+              }
+            }}
+            {...commonProps}
+          >
+            ▲
+          </Button>
+          {rows > 2 && (
+            <>
+              <Button
+                top={
+                  top + rowHeight + (scrollPosition / rows) * scrollbarHeight
+                }
+                left={scrollbarLeft}
+                width={scrollbarWidth}
+                height={scrollbarHeight}
+                variant={variant}
+                background={background}
+                {...commonProps}
+              />
+            </>
+          )}
+          <Button
+            top={
+              top +
+              textAreaHeight -
+              (rows === 1 ? Math.round(rowHeight / 2) : rowHeight)
+            }
+            left={scrollbarLeft}
+            width={scrollbarWidth}
+            height={scrollButtonHeight}
+            variant={variant}
+            background={background}
+            color={color}
+            isDisabled={!canScrollDown}
+            onClick={() => {
+              if (canScrollDown) {
+                setScrollPosition(scrollPosition + 1);
+              }
+            }}
+            {...commonProps}
+          >
+            ▼
+          </Button>
+        </>
+      )}
     </>
   );
 }

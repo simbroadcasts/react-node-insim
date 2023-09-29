@@ -1,47 +1,85 @@
-import { Button, TextBox } from '../../src';
+import { useState } from 'react';
+
+import { Button, HStack, TextBox } from '../../src';
 
 export function TextBoxExample() {
+  const [rows, setRows] = useState<number | undefined>(4);
+  const [cols, setCols] = useState(20);
+  const [rowHeight, setRowHeight] = useState(4);
+
   const top = 160;
   const left = 120;
-  const width = 20;
 
   return (
     <>
-      <Button
-        top={top}
+      <HStack top={top} left={left} height={4} UCID={255}>
+        <Button width={8} color="title" align="left">
+          TextBox
+        </Button>
+        <Button
+          width={8}
+          variant="light"
+          onType={(packet) => {
+            if (!packet.Text) {
+              setRows(undefined);
+              return;
+            }
+
+            const number = parseInt(packet.Text, 10);
+
+            if (isNaN(number) || number < 1) {
+              return;
+            }
+
+            setRows(number);
+          }}
+        >
+          Rows: {rows ?? '-'}
+        </Button>
+        <Button
+          width={8}
+          variant="light"
+          onType={(packet) => {
+            const number = parseInt(packet.Text, 10);
+
+            if (isNaN(number) || number < 1) {
+              return;
+            }
+
+            setCols(number);
+          }}
+        >
+          Cols: {cols}
+        </Button>
+        <Button
+          width={12}
+          variant="light"
+          onType={(packet) => {
+            const number = parseInt(packet.Text, 10);
+
+            if (isNaN(number) || number < 1) {
+              return;
+            }
+
+            setRowHeight(number);
+          }}
+        >
+          Row height: {rowHeight}
+        </Button>
+      </HStack>
+      <TextBox
+        top={top + 5}
         left={left}
+        cols={cols}
+        rows={rows}
         width={20}
-        height={4}
-        color="title"
-        align="left"
+        rowHeight={rowHeight}
         UCID={255}
-      >
-        TextBox
-      </Button>
-      <TextBox
-        top={top + 5}
-        left={left}
-        cols={25}
-        width={width}
-        rowHeight={4}
-        UCID={255}
-        background="dark"
+        variant="light"
       >
         Hello world this is a text area lorem ipsum dolor sit amet consectetur
-        adipisicing elit sed do eiusmod
-      </TextBox>
-      <TextBox
-        top={top + 5}
-        left={left + width}
-        rows={3}
-        cols={25}
-        width={width}
-        rowHeight={4}
-        UCID={255}
-        background="dark"
-      >
-        Hello world this is a text area lorem ipsum dolor sit amet consectetur
-        adipisicing elit sed do eiusmod
+        adipisicing elitrea lorem ipsum dolor sit amet consectetur adipisicing
+        elit
       </TextBox>
     </>
   );
