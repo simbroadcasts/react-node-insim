@@ -1,14 +1,15 @@
 # React Node InSim
 
-React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and for getting a live list of connections & players.
+React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and tracking server connections & players.
 
 It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library for InSim communication.
 
-## What can it do?
+It allows you to create things like this:
 
-The following example displays a live list of players and connections as InSim buttons:
+<img src="docs/insim-buttons-preview.gif" width="400" />
 
-<img src="./insim-buttons-preview.gif" width="400" />
+<details>
+  <summary>Show source code</summary>
 
 ```tsx
 import type { InSim } from 'node-insim';
@@ -112,39 +113,104 @@ function App() {
 }
 ```
 
-## Requirements
-
-- Node.js
-- React 18
-- Node InSim
+</details>
 
 ## Installation
+
+### Requirements
+
+- [Node.js](https://nodejs.org/)
+- [Node InSim](https://github.com/simbroadcasts/node-insim)
+- [React 18](https://github.com/facebook/react)
 
 NPM
 
 ```shell
-npm install --save react-node-insim node-insim react@18
+npm install react@18 node-insim react-node-insim
 ```
 
 Yarn
 
 ```shell
-yarn add react-node-insim node-insim react@18
+yarn add react@18 node-insim react-node-insim
 ```
 
 pnpm
 
 ```shell
-pnpm add react-node-insim node-insim react@18
+pnpm add react@18 node-insim react-node-insim
 ```
+
+## Basic usage
+
+Displaying an InSim button on a local computer
+
+```tsx
+import { InSimFlags } from 'node-insim/packets';
+import { Button, createRoot } from 'react-node-insim';
+
+const root = createRoot({
+  name: 'React InSim',
+  host: '127.0.0.1',
+  port: 29999,
+  flags: InSimFlags.ISF_LOCAL,
+});
+
+root.render(
+  <Button top={100} left={80} width={30} height={10}>
+    Hello InSim!
+  </Button>,
+);
+```
+
+## Buttons
+
+To render an InSim button, use the `<Button>` component.
+
+- InSim buttons are drawn on a 200 by 200 canvas
+- The maximum number of rendered buttons on a screen is 240
+
+### Import
+
+```ts
+import { Button } from 'react-node-insim';
+```
+
+### Usage
+
+<img src="docs/button-usage.png" />
+
+```tsx
+<Button top={100} left={80} width={30} height={10}>
+  Button
+</Button>
+```
+
+### Props
+
+🚧
+
+#### `children`
+
+`string | number | (string | number)[]`
+
+0 to 240 characters of text
+
+## Layout
+
+🚧
+
+## Hooks
+
+🚧
 
 ## Development
 
 ### Requirements
 
-- Node.js 18
-- Yarn 1
-- LFS
+- [Node.js 18](https://nodejs.org/)
+- [Yarn v1](https://classic.yarnpkg.com/)
+- [Live for Speed](https://www.lfs.net/)
 
 ### Installation
 
