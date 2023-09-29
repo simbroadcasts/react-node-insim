@@ -11,6 +11,10 @@ export type StackProps = Required<Pick<ButtonProps, 'top' | 'left'>> &
     Pick<ButtonProps, 'width' | 'height' | 'background' | 'color' | 'UCID'>
   > & {
     direction: 'horizontal' | 'vertical';
+
+    /** Gap between each button */
+    gap?: number;
+
     children: ButtonChild | ButtonChild[];
   };
 
@@ -24,6 +28,7 @@ export function Stack({
   background,
   color,
   UCID,
+  gap = 0,
 }: StackProps) {
   return (
     <>
@@ -45,9 +50,9 @@ export function Stack({
           const buttonLeft = left + widthBefore;
 
           if (isVertical) {
-            heightBefore += buttonHeight;
+            heightBefore += buttonHeight + gap;
           } else {
-            widthBefore += buttonWidth;
+            widthBefore += buttonWidth + gap;
           }
 
           return cloneElement(child, {

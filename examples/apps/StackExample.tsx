@@ -1,29 +1,59 @@
+import { useState } from 'react';
+
 import { Button, HStack, VStack } from '../../src';
 
 export function StackExample() {
+  const [gap, setGap] = useState(0);
+  const [height, setHeight] = useState(4);
+
   const top = 160;
   const left = 33;
 
   return (
     <>
-      <Button
-        top={top}
-        left={left}
-        width={20}
-        height={4}
-        color="title"
-        align="left"
-        UCID={255}
-      >
-        VStack
-      </Button>
+      <HStack top={top} left={left} height={4} UCID={255}>
+        <Button width={7} color="title" align="left">
+          VStack
+        </Button>
+        <Button
+          width={7}
+          variant="light"
+          onType={(packet) => {
+            const number = parseInt(packet.Text, 10);
+
+            if (isNaN(number)) {
+              return;
+            }
+
+            setGap(number);
+          }}
+        >
+          Gap: {gap}
+        </Button>
+        <Button
+          width={8}
+          variant="light"
+          onType={(packet) => {
+            const number = parseInt(packet.Text, 10);
+
+            if (isNaN(number) || number < 1) {
+              return;
+            }
+
+            setHeight(number);
+          }}
+        >
+          Height: {height}
+        </Button>
+      </HStack>
       <VStack
         top={top + 5}
         left={left}
         width={16}
-        height={4}
+        height={height}
         background="dark"
         UCID={255}
+        gap={gap}
       >
         <Button>Stacked button 1</Button>
         <Button>Stacked button 2</Button>
