@@ -3,111 +3,6 @@ import { Fragment, useState } from 'react';
 import type { FlexProps } from '../../src';
 import { Button, Flex, HStack } from '../../src';
 
-const alignContentOptions: FlexProps['alignContent'][] = [
-  undefined,
-  'start',
-  'center',
-  'end',
-  'stretch',
-  'auto',
-  'baseline',
-  'space-between',
-  'space-around',
-];
-
-const alignItemsOptions: FlexProps['alignItems'][] = [
-  undefined,
-  'start',
-  'center',
-  'end',
-  'stretch',
-  'auto',
-  'baseline',
-];
-
-const backgroundColorOptions: FlexProps['backgroundColor'][] = [
-  undefined,
-  'light',
-  'dark',
-];
-
-const directionOptions: FlexProps['direction'][] = [
-  undefined,
-  'row',
-  'row-reverse',
-  'column',
-  'column-reverse',
-];
-
-const justifyContentOptions: FlexProps['justifyContent'][] = [
-  undefined,
-  'start',
-  'center',
-  'end',
-  'space-evenly',
-  'space-around',
-  'space-between',
-];
-
-const wrapOptions: FlexProps['wrap'][] = [
-  undefined,
-  'no-wrap',
-  'wrap',
-  'wrap-reverse',
-];
-
-const colorOptions: FlexProps['color'][] = [
-  undefined,
-  'lightgrey',
-  'title',
-  'unselected',
-  'selected',
-  'ok',
-  'cancel',
-  'textstring',
-  'unavailable',
-];
-
-const backgroundOptions: FlexProps['background'][] = [
-  undefined,
-  'dark',
-  'light',
-  'transparent',
-];
-
-const plusMinusOptions = ['-', '+'];
-
-const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
-  top: plusMinusOptions,
-  left: plusMinusOptions,
-  width: [undefined, 30, 50, 90],
-  height: [undefined, 30, 50, 90],
-  color: colorOptions,
-  backgroundColor: backgroundColorOptions,
-  borderSize: plusMinusOptions,
-  borderColor: backgroundOptions,
-  background: backgroundOptions,
-  alignContent: alignContentOptions,
-  alignItems: alignItemsOptions,
-  direction: directionOptions,
-  justifyContent: justifyContentOptions,
-  margin: plusMinusOptions,
-  marginBottom: plusMinusOptions,
-  marginHorizontal: plusMinusOptions,
-  marginLeft: plusMinusOptions,
-  marginRight: plusMinusOptions,
-  marginTop: plusMinusOptions,
-  marginVertical: plusMinusOptions,
-  padding: plusMinusOptions,
-  paddingBottom: plusMinusOptions,
-  paddingHorizontal: plusMinusOptions,
-  paddingLeft: plusMinusOptions,
-  paddingRight: plusMinusOptions,
-  paddingTop: plusMinusOptions,
-  paddingVertical: plusMinusOptions,
-  wrap: wrapOptions,
-};
-
 export function FlexExample({
   isEditorVisible,
 }: {
@@ -327,3 +222,108 @@ export function FlexExample({
     </>
   );
 }
+
+const alignContentOptions: FlexProps['alignContent'][] = [
+  undefined,
+  'start',
+  'center',
+  'end',
+  'stretch',
+  'auto',
+  'baseline',
+  'space-between',
+  'space-around',
+];
+
+const alignItemsOptions: FlexProps['alignItems'][] = [
+  undefined,
+  'start',
+  'center',
+  'end',
+  'stretch',
+  'auto',
+  'baseline',
+];
+
+const backgroundColorOptions: FlexProps['backgroundColor'][] = [
+  undefined,
+  'light',
+  'dark',
+];
+
+const directionOptions: FlexProps['direction'][] = [
+  undefined,
+  'row',
+  'row-reverse',
+  'column',
+  'column-reverse',
+];
+
+const justifyContentOptions: FlexProps['justifyContent'][] = [
+  undefined,
+  'start',
+  'center',
+  'end',
+  'space-evenly',
+  'space-around',
+  'space-between',
+];
+
+const wrapOptions: FlexProps['wrap'][] = [
+  undefined,
+  'no-wrap',
+  'wrap',
+  'wrap-reverse',
+];
+
+const colorOptions: FlexProps['color'][] = [
+  undefined,
+  'lightgrey',
+  'title',
+  'unselected',
+  'selected',
+  'ok',
+  'cancel',
+  'textstring',
+  'unavailable',
+];
+
+const backgroundOptions: FlexProps['background'][] = [
+  undefined,
+  'dark',
+  'light',
+  'transparent',
+];
+
+const plusMinusOptions = ['-', '+'];
+
+const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
+  top: plusMinusOptions,
+  left: plusMinusOptions,
+  width: [undefined, 30, 50, 90],
+  height: [undefined, 30, 50, 90],
+  color: colorOptions,
+  backgroundColor: backgroundColorOptions,
+  borderSize: plusMinusOptions,
+  borderColor: backgroundOptions,
+  background: backgroundOptions,
+  alignContent: alignContentOptions,
+  alignItems: alignItemsOptions,
+  direction: directionOptions,
+  justifyContent: justifyContentOptions,
+  margin: plusMinusOptions,
+  marginBottom: plusMinusOptions,
+  marginHorizontal: plusMinusOptions,
+  marginLeft: plusMinusOptions,
+  marginRight: plusMinusOptions,
+  marginTop: plusMinusOptions,
+  marginVertical: plusMinusOptions,
+  padding: plusMinusOptions,
+  paddingBottom: plusMinusOptions,
+  paddingHorizontal: plusMinusOptions,
+  paddingLeft: plusMinusOptions,
+  paddingRight: plusMinusOptions,
+  paddingTop: plusMinusOptions,
+  paddingVertical: plusMinusOptions,
+  wrap: wrapOptions,
+};
