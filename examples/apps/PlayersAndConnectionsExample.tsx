@@ -1,35 +1,73 @@
 import type { InSim } from 'node-insim';
 import type { IS_BTC } from 'node-insim/packets';
-import { IS_MST, PacketType } from 'node-insim/packets';
+import { IS_MST, MessageSound } from 'node-insim/packets';
 import {
   Button,
   useConnections,
-  useOnConnect,
-  useOnPacket,
+  useMessage,
   usePlayers,
+  useRaceControlMessage,
   VStack,
 } from 'react-node-insim';
 
 export function PlayersAndConnectionsExample() {
   const players = usePlayers();
   const connections = useConnections();
+  const { sendRaceControlMessageToConnection, sendRaceControlMessageToPlayer } =
+    useRaceControlMessage();
+  const { sendMessageToConnection, sendMessageToPlayer } = useMessage();
 
-  useOnConnect((packet, inSim) => {
-    console.log(`Connected to LFS ${packet.Product} ${packet.Version}`);
-    inSim.send(new IS_MST({ Msg: `/echo React Node InSim connected` }));
-  });
+  const handlePlayerClick =
+    (PLID: number) => (packet: IS_BTC, inSim: InSim) => {
+      inSim.send(new IS_MST({ Msg: `/echo PLID ${PLID}` }));
+      sendRaceControlMessageToConnection(
+        packet.UCID,
+        `Clicked PLID ${PLID}`,
+        2000,
+      );
+      sendMessageToConnection(
+        packet.UCID,
+        `Clicked PLID ${PLID}`,
+        MessageSound.SND_SYSMESSAGE,
+      );
 
-  useOnPacket(PacketType.ISP_NCN, (packet) => {
-    console.log(`New connection: ${packet.UName} (${packet.UCID})`);
-  });
+      sendRaceControlMessageToPlayer(
+        PLID,
+        'Someone clicked your player name',
+        2000,
+      );
+      sendMessageToPlayer(
+        PLID,
+        'Someone clicked your player name',
+        MessageSound.SND_SYSMESSAGE,
+      );
+    };
 
-  const handlePlayerClick = (plid: number) => (_: IS_BTC, inSim: InSim) => {
-    inSim.send(new IS_MST({ Msg: `/echo PLID ${plid}` }));
-  };
+  const handleConnectionClick =
+    (UCID: number) => (packet: IS_BTC, inSim: InSim) => {
+      inSim.send(new IS_MST({ Msg: `/echo UCID ${UCID}` }));
+      sendRaceControlMessageToConnection(
+        packet.UCID,
+        `Clicked UCID ${UCID}`,
+        2000,
+      );
+      sendMessageToConnection(
+        packet.UCID,
+        `Clicked UCID ${UCID}`,
+        MessageSound.SND_SYSMESSAGE,
+      );
 
-  const handleConnectionClick = (ucid: number) => (_: IS_BTC, inSim: InSim) => {
-    inSim.send(new IS_MST({ Msg: `/echo UCID ${ucid}` }));
-  };
+      sendRaceControlMessageToConnection(
+        UCID,
+        'Someone clicked your connection name',
+        2000,
+      );
+      sendMessageToConnection(
+        UCID,
+        'Someone clicked your connection name',
+        MessageSound.SND_SYSMESSAGE,
+      );
+    };
 
   const top = 0;
   const left = 164;
