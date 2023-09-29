@@ -31,7 +31,7 @@ root.render(
       <ConnectionsProvider>
         <PlayersAndConnectionsExample />
         <PacketHooksExample />
-        <FlexExample />
+        <FlexExample isEditorVisible={false} />
         <ButtonExample />
         <GridExample />
         <StackExample />
