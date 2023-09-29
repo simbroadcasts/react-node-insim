@@ -10,6 +10,7 @@ import {
   ButtonExample,
   FlexExample,
   GridExample,
+  PacketHooksExample,
   PlayersAndConnectionsExample,
   StackExample,
   TextBoxExample,
@@ -29,6 +30,7 @@ root.render(
     <PlayersProvider>
       <ConnectionsProvider>
         <PlayersAndConnectionsExample />
+        <PacketHooksExample />
         <FlexExample />
         <ButtonExample />
         <GridExample />

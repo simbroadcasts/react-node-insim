@@ -1,6 +1,7 @@
 export { ButtonExample } from './ButtonExample';
 export { FlexExample } from './FlexExample';
 export { GridExample } from './GridExample';
+export { PacketHooksExample } from './PacketHooksExample';
 export { PlayersAndConnectionsExample } from './PlayersAndConnectionsExample';
 export { StackExample } from './StackExample';
 export { TextBoxExample } from './TextBoxExample';
