@@ -55,10 +55,7 @@ type ButtonBaseProps = {
   variant?: 'light' | 'dark';
 
   /** Background color */
-  background: 'transparent' | 'light' | 'dark';
-
-  /** Label text alignment */
-  align: 'left' | 'right' | 'center';
+  background?: 'transparent' | 'light' | 'dark';
 
   /** Label text color */
   color?:
@@ -70,6 +67,9 @@ type ButtonBaseProps = {
     | 'cancel'
     | 'textstring'
     | 'unavailable';
+
+  /** Label text alignment */
+  align: 'left' | 'right' | 'center';
 
   /** If set, the button text color will appear dimmed and the button will not be clickable */
   isDisabled: boolean;
@@ -364,16 +364,16 @@ export class Button extends InSimElement {
       buttonStyle |= ButtonStyle.ISB_CLICK;
     }
 
-    if (props.variant) {
-      buttonStyle |= buttonVariantMap[props.variant];
-    }
-
     if (props.color) {
       buttonStyle |= buttonColorMap[props.color];
+    } else if (props.variant) {
+      buttonStyle |= buttonVariantColorMap[props.variant];
     }
 
     if (props.background) {
       buttonStyle |= buttonBackgroundMap[props.background];
+    } else if (props.variant) {
+      buttonStyle |= buttonVariantBackgroundMap[props.variant];
     }
 
     buttonStyle |= buttonAlignmentMap[props.align];
@@ -629,10 +629,18 @@ const buttonColorMap: Record<
   unavailable: ButtonTextColour.UNAVAILABLE,
 };
 
-const buttonVariantMap: Record<
+const buttonVariantColorMap: Record<
   Required<ButtonElementProps>['variant'],
-  ButtonStyle
+  Required<IS_BTN_Data>['BStyle']
 > = {
-  light: ButtonStyle.ISB_LIGHT | ButtonTextColour.UNSELECTED_TEXT,
-  dark: ButtonStyle.ISB_DARK | ButtonTextColour.LIGHT_GREY,
+  light: ButtonTextColour.UNSELECTED_TEXT,
+  dark: ButtonTextColour.LIGHT_GREY,
+};
+
+const buttonVariantBackgroundMap: Record<
+  Required<ButtonElementProps>['variant'],
+  Required<IS_BTN_Data>['BStyle']
+> = {
+  light: ButtonStyle.ISB_LIGHT,
+  dark: ButtonStyle.ISB_DARK,
 };
