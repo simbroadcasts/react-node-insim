@@ -1,5 +1,5 @@
 import { InSimFlags } from 'node-insim/packets';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import {
   ConnectionsProvider,
   createRoot,
@@ -25,7 +25,7 @@ const root = createRoot({
 });
 
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <PlayersProvider>
       <ConnectionsProvider>
         <PlayersAndConnectionsExample />
@@ -38,7 +38,7 @@ root.render(
         <TextBoxExample />
       </ConnectionsProvider>
     </PlayersProvider>
-  </React.StrictMode>,
+  </StrictMode>,
 );
 
 process.on('uncaughtException', (error) => {
