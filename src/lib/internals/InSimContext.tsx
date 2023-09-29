@@ -83,7 +83,7 @@ export function InSimContextProvider({
       isConnected,
       shouldClearAllButtons,
     }),
-    [shouldClearAllButtons, isConnected],
+    [inSim, isConnected, shouldClearAllButtons],
   );
 
   return (

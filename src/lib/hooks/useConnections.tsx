@@ -1,7 +1,7 @@
 import type { IS_NCN } from 'node-insim/packets';
 import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 import { useInSim, useOnConnect, useOnPacket } from 'react-node-insim';
 
 type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
@@ -87,21 +87,25 @@ export function useConnections(): ReadonlyMap<number, Connection> & {
     );
   }
 
-  return Object.freeze({
-    entries: connections.entries.bind(connections),
-    forEach: connections.forEach.bind(connections),
-    get: connections.get.bind(connections),
-    has: connections.has.bind(connections),
-    keys: connections.keys.bind(connections),
-    size: connections.size,
-    values: connections.values.bind(connections),
-    map: <Item,>(
-      callback: (
-        connection: Connection,
-        key: number,
-        map: Connection[],
-      ) => Item,
-    ) => Array.from(connections.values()).map(callback),
-    [Symbol.iterator]: connections[Symbol.iterator].bind(connections),
-  });
+  return useMemo(
+    () =>
+      Object.freeze({
+        entries: connections.entries.bind(connections),
+        forEach: connections.forEach.bind(connections),
+        get: connections.get.bind(connections),
+        has: connections.has.bind(connections),
+        keys: connections.keys.bind(connections),
+        size: connections.size,
+        values: connections.values.bind(connections),
+        map: <Item,>(
+          callback: (
+            connection: Connection,
+            key: number,
+            map: Connection[],
+          ) => Item,
+        ) => Array.from(connections.values()).map(callback),
+        [Symbol.iterator]: connections[Symbol.iterator].bind(connections),
+      }),
+    [connections],
+  );
 }

@@ -1,7 +1,7 @@
 import type { IS_NPL } from 'node-insim/packets';
 import { IS_TINY, PacketType, PlayerType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
 import { useInSim } from './useInSim';
 import { useOnConnect } from './useOnConnect';
@@ -112,17 +112,21 @@ export function usePlayers(): ReadonlyMap<number, Player> & {
     throw new Error('usePlayers must be called within <PlayersProvider>.');
   }
 
-  return Object.freeze({
-    entries: players.entries.bind(players),
-    forEach: players.forEach.bind(players),
-    get: players.get.bind(players),
-    has: players.has.bind(players),
-    keys: players.keys.bind(players),
-    size: players.size,
-    values: players.values.bind(players),
-    map: <Item,>(
-      callback: (player: Player, key: number, map: Player[]) => Item,
-    ) => Array.from(players.values()).map(callback),
-    [Symbol.iterator]: players[Symbol.iterator].bind(players),
-  });
+  return useMemo(
+    () =>
+      Object.freeze({
+        entries: players.entries.bind(players),
+        forEach: players.forEach.bind(players),
+        get: players.get.bind(players),
+        has: players.has.bind(players),
+        keys: players.keys.bind(players),
+        size: players.size,
+        values: players.values.bind(players),
+        map: <Item,>(
+          callback: (player: Player, key: number, map: Player[]) => Item,
+        ) => Array.from(players.values()).map(callback),
+        [Symbol.iterator]: players[Symbol.iterator].bind(players),
+      }),
+    [players],
+  );
 }
