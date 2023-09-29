@@ -6,7 +6,7 @@ It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node
 
 It allows you to create things like this:
 
-<img src="docs/insim-buttons-preview.gif" width="400" />
+<img src="docs/insim-buttons-preview.gif" width="400" alt="Live list of connections and players" />
 
 <details>
   <summary>Show source code</summary>
@@ -163,11 +163,11 @@ root.render(
 );
 ```
 
-## Buttons
+## Button
 
-To render an InSim button, use the `<Button>` component.
+The Button component is used to display a button in LFS.
 
-- InSim buttons are drawn on a 200 by 200 canvas
+- Buttons are drawn on a 200 by 200 canvas using absolute positioning
 - The maximum number of rendered buttons on a screen is 240
 
 ### Import
@@ -178,12 +178,127 @@ import { Button } from 'react-node-insim';
 
 ### Usage
 
-<img src="docs/button-usage.png" />
+<img src="docs/button.png" alt="Button" />
 
 ```tsx
 <Button top={100} left={80} width={30} height={10}>
   Button
 </Button>
+```
+
+#### Button placement
+
+Buttons use XY coordinates to position themselves on the screen. The `top` and `left` props control the button's X and Y position on the screen. The allowed range of values is 0 to 200.
+
+<img src="docs/button-placement.png" alt="Button placement" />
+
+```tsx
+<>
+  <Button width={12} height={6} top={100} left={40}>
+    Button
+  </Button>
+  <Button width={12} height={6} top={100} left={53}>
+    Button
+  </Button>
+  <Button width={12} height={6} top={106} left={40}>
+    Button
+  </Button>
+  <Button width={12} height={6} top={106} left={53}>
+    Button
+  </Button>
+</>
+```
+
+#### Button sizes
+
+Use the `width` and `height` props to change the dimensions of the button. The allowed range of values is 0 to 200.
+
+<img src="docs/button-sizes.png" alt="Button sizes" />
+
+```tsx
+<>
+  <Button variant="light" top={100} left={40} width={6} height={4}>
+    Button
+  </Button>
+  <Button variant="light" top={99} left={47} width={10} height={6}>
+    Button
+  </Button>
+  <Button variant="light" top={97} left={58} width={14} height={10}>
+    Button
+  </Button>
+</>
+```
+
+#### Button variants
+
+Use the `variant` prop to change the button's visual style. You can use `light` or `dark`. If you don't specify a variant, the button will have transparent background and a light gray text color.
+
+<img src="docs/button-variants.png" alt="Button variants" />
+
+```tsx
+<>
+  <Button top={100} left={40} width={12} height={6} variant="light">
+    Button
+  </Button>
+  <Button top={100} left={53} width={12} height={6} variant="dark">
+    Button
+  </Button>
+</>
+```
+
+#### Button text colors
+
+Use the `color` prop to customize the button's text color. If you don't specify a color, the button text will be `lightgrey`.
+
+<img src="docs/button-text-colors.png" alt="Button text colors" />
+
+```tsx
+<>
+  <Button top={73} left={40} width={12} height={6} color="lightgrey">
+    lightgrey
+  </Button>
+  <Button top={73} left={53} width={12} height={6} color="title">
+    title
+  </Button>
+  <Button top={73} left={66} width={12} height={6} color="unselected">
+    unselected
+  </Button>
+  <Button top={73} left={79} width={12} height={6} color="selected">
+    selected
+  </Button>
+  <Button top={80} left={40} width={12} height={6} color="ok">
+    ok
+  </Button>
+  <Button top={80} left={53} width={12} height={6} color="cancel">
+    cancel
+  </Button>
+  <Button top={80} left={66} width={12} height={6} color="textstring">
+    textstring
+  </Button>
+  <Button top={80} left={79} width={12} height={6} color="unavailable">
+    unavailable
+  </Button>
+</>
+```
+
+#### Button background colors
+
+Use the `background` prop to customize the button's background color. If you don't specify a color, the background will be transparent.
+
+<img src="docs/button-background-colors.png" alt="Button background colors" />
+
+```tsx
+<>
+  <Button top={67} left={40} width={12} height={6} background="light">
+    light
+  </Button>
+  <Button top={67} left={53} width={12} height={6} background="dark">
+    dark
+  </Button>
+  <Button top={67} left={66} width={12} height={6} background="transparent">
+    transparent
+  </Button>
+</>
 ```
 
 ### Props
