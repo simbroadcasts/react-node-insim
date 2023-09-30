@@ -163,6 +163,47 @@ root.render(
 );
 ```
 
+### Adding state
+
+You can use [React hooks](https://react.dev/reference/react) as usual to display stateful data via InSim.
+
+<img src="docs/button-current-time.gif" width="300" alt="Button showing current time" />
+
+```tsx
+import { InSimFlags } from 'node-insim/packets';
+import { useEffect, useState } from 'react';
+import { Button, createRoot } from 'react-node-insim';
+
+const root = createRoot({
+  name: 'React InSim',
+  host: '127.0.0.1',
+  port: 29999,
+  flags: InSimFlags.ISF_LOCAL,
+});
+
+root.render(<App />);
+
+function App() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
+
+  return (
+    <Button top={100} left={80} width={40} height={10}>
+      Current time: {time.toLocaleTimeString()}
+    </Button>
+  );
+}
+```
+
 ## Button
 
 The Button component is used to display a button in LFS.
