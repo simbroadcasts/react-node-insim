@@ -63,12 +63,10 @@ export const hostConfig: HostConfig<
   supportsHydration: false,
 
   getRootHostContext(): HostContext {
-    log('getRootHostContext');
     return NO_CONTEXT;
   },
 
-  getChildHostContext(parentHostContext: HostContext, type: Type) {
-    log('getChildHostContext', type);
+  getChildHostContext() {
     return NO_CONTEXT;
   },
 
