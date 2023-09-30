@@ -410,7 +410,7 @@ export class Button extends InSimElement {
 
     this.logClickIds();
 
-    this.packet.ClickID = clickId;
+    this.packet.ClickID = clickId + this.container.buttonClickIDStart;
   }
 
   private addOnClickListener({ onClick }: ButtonElementProps): void {

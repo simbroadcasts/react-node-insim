@@ -1,6 +1,6 @@
 import { InSim } from 'node-insim';
 import type { InSimFlags } from 'node-insim/packets';
-import { PacketType } from 'node-insim/packets';
+import { IS_BTN, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import type { OpaqueRoot } from 'react-reconciler';
 import { ConcurrentRoot } from 'react-reconciler/constants';
@@ -18,6 +18,7 @@ type CreateRootOptions = {
   flags?: InSimFlags;
   prefix?: string;
   appendButtonIDs?: boolean;
+  buttonClickIDStart?: number;
 };
 
 export const CONNECT_REQUEST_ID = 255;
@@ -35,7 +36,20 @@ export function createRoot({
   flags,
   prefix,
   appendButtonIDs = false,
+  buttonClickIDStart = 0,
 }: CreateRootOptions) {
+  if (buttonClickIDStart < 0) {
+    throw new Error(
+      `Failed to create root - 'buttonClickIDStart' cannot be negative.`,
+    );
+  }
+
+  if (buttonClickIDStart > IS_BTN.MAX_CLICK_ID) {
+    throw new Error(
+      `Failed to create root - 'buttonClickIDStart' must be smaller than ${IS_BTN.MAX_CLICK_ID}.`,
+    );
+  }
+
   const inSim = new InSim();
 
   const rootID = '' + idCounter++;
@@ -45,6 +59,7 @@ export function createRoot({
     pendingChildren: [],
     children: [],
     buttonUCIDsByClickID: [],
+    buttonClickIDStart,
     appendButtonIDs,
   };
   rootContainers.set(rootID, container);

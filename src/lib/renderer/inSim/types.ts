@@ -16,6 +16,7 @@ export type Container = {
    * ClickID2: [              UCID3, UCID4]
    */
   buttonUCIDsByClickID: Set<UCID>[];
+  buttonClickIDStart: number;
   appendButtonIDs: boolean;
 };
 
