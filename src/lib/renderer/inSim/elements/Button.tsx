@@ -98,6 +98,13 @@ type ButtonBaseProps = {
    */
   onType?: (packet: IS_BTT, inSim: InSim) => void;
 
+  /**
+   * NOTE: You should not use this flag for most buttons.
+   *
+   * This is a special flag for buttons that really must be on in all screens (including the garage and options screens). You will probably need to confine these buttons to the top or bottom edge of the screen, to avoid overwriting LFS buttons. Most buttons should be defined without this flag, and positioned in the recommended area so LFS can keep a space clear in the main screens.
+   **/
+  isAlwaysOnScreen: boolean;
+
   flex?: number;
 };
 
@@ -271,7 +278,7 @@ export class Button extends InSimElement {
       Text: buttonText,
       BStyle: buttonStyle,
       TypeIn: props.onType ? props.maxTypeInChars + initValueButtonText : 0,
-      Inst: 0,
+      Inst: props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0,
     };
 
     this.packet = new IS_BTN(buttonData);

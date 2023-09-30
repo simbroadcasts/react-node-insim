@@ -17,6 +17,7 @@ export type ButtonProps = WithPartial<
   | 'initializeDialogWithButtonText'
   | 'caption'
   | 'maxTypeInChars'
+  | 'isAlwaysOnScreen'
 >;
 
 export const Button = forwardRef(function Button(
@@ -31,6 +32,7 @@ export const Button = forwardRef(function Button(
     initializeDialogWithButtonText = false,
     caption = '',
     maxTypeInChars = 95,
+    isAlwaysOnScreen = false,
     ...props
   }: ButtonProps,
   ref: ForwardedRef<ButtonElement>,
@@ -50,6 +52,7 @@ export const Button = forwardRef(function Button(
     initializeDialogWithButtonText,
     caption,
     maxTypeInChars,
+    isAlwaysOnScreen,
     ...props,
     ref,
   });
