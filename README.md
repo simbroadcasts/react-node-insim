@@ -1,5 +1,7 @@
 # React Node InSim
 
+> 🚧 This project is still under development. Any API may change as needed.
+
 React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and tracking server connections & players.
 
 It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library for InSim communication.
@@ -26,23 +28,6 @@ import {
   usePlayers,
   VStack,
 } from 'react-node-insim';
-
-const root = createRoot({
-  name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
-});
-
-root.render(
-  <StrictMode>
-    <PlayersProvider>
-      <ConnectionsProvider>
-        <App />
-      </ConnectionsProvider>
-    </PlayersProvider>
-  </StrictMode>,
-);
 
 function App() {
   // Get the list of current players and connections
@@ -111,6 +96,23 @@ function App() {
     </>
   );
 }
+
+const root = createRoot({
+  name: 'React InSim',
+  host: '127.0.0.1',
+  port: 29999,
+  flags: InSimFlags.ISF_LOCAL,
+});
+
+root.render(
+  <StrictMode>
+    <PlayersProvider>
+      <ConnectionsProvider>
+        <App />
+      </ConnectionsProvider>
+    </PlayersProvider>
+  </StrictMode>,
+);
 ```
 
 </details>
@@ -174,15 +176,6 @@ import { InSimFlags } from 'node-insim/packets';
 import { useEffect, useState } from 'react';
 import { Button, createRoot } from 'react-node-insim';
 
-const root = createRoot({
-  name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
-});
-
-root.render(<App />);
-
 function App() {
   const [time, setTime] = useState(new Date());
 
@@ -202,6 +195,15 @@ function App() {
     </Button>
   );
 }
+
+const root = createRoot({
+  name: 'React InSim',
+  host: '127.0.0.1',
+  port: 29999,
+  flags: InSimFlags.ISF_LOCAL,
+});
+
+root.render(<App />);
 ```
 
 ## Button
@@ -342,23 +344,397 @@ Use the `background` prop to customize the button's background color. If you don
 </>
 ```
 
-### Props
-
-🚧
-
-#### `children`
-
-`string | number | (string | number)[]`
-
-0 to 240 characters of text
-
 ## Layout
 
-🚧
+### Horizontal stack
+
+#### Import
+
+```ts
+import { HStack } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  return (
+    <HStack top={10} left={20} width={7} height={4} variant="dark">
+      <Button>Stacked button</Button>
+      <Button color="title">Button with custom color</Button>
+      <Button height={10}>Button with custom height</Button>
+    </HStack>
+  );
+}
+```
+
+### Vertical stack
+
+`VStack` and `HStack` allow displaying buttons right next to each other without having to specify each button's position manually. You can also override button colors and sizes.
+
+#### Import
+
+```ts
+import { VStack } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  return (
+    <VStack top={10} left={20} width={7} height={4} variant="dark">
+      <Button>Stacked button</Button>
+      <Button color="title">Button with custom color</Button>
+      <Button height={10}>Button with custom height</Button>
+    </VStack>
+  );
+}
+```
+
+### Flex
+
+Flex layout allows displaying buttons in a row or column with flexbox options.
+
+#### Import
+
+```ts
+import { Flex } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  return (
+    <Flex
+      top={10}
+      left={20}
+      width={30}
+      height={20}
+      alignItems="center"
+      justifyContent="space-between"
+    >
+      <Button width={8} height={4}>
+        Left
+      </Button>
+      <Button width={10} height={6}>
+        Center
+      </Button>
+      <Button width={8} height={4}>
+        Right
+      </Button>
+    </Flex>
+  );
+}
+```
+
+### Grid
+
+Grid layout allows displaying buttons in a grid.
+
+#### Import
+
+```ts
+import { Grid, GridButton } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  return (
+    <Grid
+      top={5}
+      left={10}
+      width={30}
+      height={30}
+      background="dark"
+      backgroundColor="light"
+      gridTemplateColumns="1fr 2fr 1fr"
+      gridTemplateRows="1fr 3fr 2fr"
+      gridColumnGap={1}
+      gridRowGap={1}
+      variant="dark"
+    >
+      <GridButton>1</GridButton>
+      <GridButton
+        gridColumnStart={2}
+        gridRowStart={1}
+        gridRowEnd={3}
+        color="title"
+        background="light"
+      >
+        2
+      </GridButton>
+      <GridButton
+        gridColumnStart={3}
+        gridColumnEnd={4}
+        gridRowStart={1}
+        gridRowEnd={4}
+      >
+        3
+      </GridButton>
+    </Grid>
+  );
+}
+```
 
 ## Hooks
 
-🚧
+### `useOnConnect`
+
+Execute code after the InSim app has been connected.
+
+The first parameter is an `IS_VER` packet callback executed when `IS_VER` is received upon successful InSim connection to LFS.
+
+#### Import
+
+```ts
+import { useOnConnect } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  useOnConnect((packet, inSim) => {
+    console.log(`Connected to LFS ${packet.Product} ${packet.Version}`);
+    inSim.send(new IS_MST({ Msg: `React Node InSim connected` }));
+  });
+
+  return null;
+}
+```
+
+### `useOnDisconnect`
+
+Execute code after the InSim app has been disconnected.
+
+The first parameter is the "disconnect" event callback from Node InSim.
+
+#### Import
+
+```ts
+import { useOnDisconnect } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  useOnDisconnect(() => {
+    console.log('Disconnected from LFS');
+  });
+
+  return null;
+}
+```
+
+### `useOnPacket`
+
+Execute code when an InSim packet is received
+
+#### Import
+
+```ts
+import { useOnPacket } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  useOnPacket(PacketType.ISP_NCN, (packet) => {
+    console.log(`New connection: ${packet.UName}`);
+  });
+
+  return null;
+}
+```
+
+### `useConnections`
+
+Get a live list of all connected guests.
+
+#### Import
+
+```ts
+import { useConnections } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const connections = useConnections();
+
+  return (
+    <VStack background="dark" top={10} left={10} width={20} height={4}>
+      {connections.map((connection) => (
+        <Button key={connection.UCID}>{connection.UName}</Button>
+      ))}
+    </VStack>
+  );
+}
+```
+
+### `usePlayers`
+
+Get a live list of all players on track.
+
+#### Import
+
+```ts
+import { usePlayers } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const players = usePlayers();
+
+  return (
+    <VStack background="dark" top={10} left={10} width={20} height={4}>
+      {players.map((player) => (
+        <Button key={player.PLID}>{player.PName}</Button>
+      ))}
+    </VStack>
+  );
+}
+```
+
+### `useMessage`
+
+Send a message to a connection or a player.
+
+#### Import
+
+```ts
+import { useMessage } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const { sendMessageToConnection, sendMessageToPlayer } = useMessage();
+
+  return (
+    <>
+      <Button
+        top={5}
+        left={10}
+        width={15}
+        height={5}
+        onClick={(packet) => {
+          sendMessageToConnection(
+            packet.UCID,
+            'Hello from React Node InSim',
+            MessageSound.SND_SYSMESSAGE,
+          );
+        }}
+      >
+        Send message to a connection
+      </Button>
+      <Button
+        top={10}
+        left={10}
+        width={15}
+        height={5}
+        onClick={(packet) => {
+          sendMessageToPlayer(
+            12, // PLID
+            'Hello from React Node InSim',
+            MessageSound.SND_SYSMESSAGE,
+          );
+        }}
+      >
+        Send message to a player
+      </Button>
+    </>
+  );
+}
+```
+
+### `useRaceControlMessage`
+
+Send a race control message (RCM) to a connection or a player.
+
+#### Import
+
+```ts
+import { useRaceControlMessage } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const { sendRaceControlMessageToConnection, sendRaceControlMessageToPlayer } =
+    useRaceControlMessage();
+
+  return (
+    <>
+      <Button
+        top={5}
+        left={10}
+        width={15}
+        height={5}
+        onClick={(packet) => {
+          sendRaceControlMessageToConnection(
+            packet.UCID,
+            'Hello from React Node InSim',
+            2000,
+          );
+        }}
+      >
+        Send message to a connection
+      </Button>
+      <Button
+        top={10}
+        left={10}
+        width={15}
+        height={5}
+        onClick={(packet) => {
+          sendRaceControlMessageToPlayer(
+            12, // PLID
+            'Hello from React Node InSim',
+            2000,
+          );
+        }}
+      >
+        Send message to a player
+      </Button>
+    </>
+  );
+}
+```
+
+### `useInSim`
+
+Access to Node InSim API of the current InSim client instance.
+
+#### Import
+
+```ts
+import { useInSim } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const inSim = useInSim();
+
+  useEffect(() => {
+    inSim.send(new IS_MST({ Msg: 'App mounted' }));
+  }, []);
+
+  return null;
+}
+```
 
 ## Development
 
