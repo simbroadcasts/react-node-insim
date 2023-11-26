@@ -168,7 +168,7 @@ export class Button extends InSimElement {
     this.log('update', `[${changedPropNames.join()}]`);
 
     if (newProps.shouldClearAllButtons) {
-      this.log(`do not update - user has hidden all buttons - `);
+      this.log(`do not update - user has hidden all buttons`);
       return;
     }
 
