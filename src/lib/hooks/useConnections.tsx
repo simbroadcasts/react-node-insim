@@ -2,7 +2,7 @@ import type { IS_NCN } from 'node-insim/packets';
 import { IS_TINY, PacketType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useMemo, useState } from 'react';
-import { useInSim, useOnConnect, useOnPacket } from 'react-node-insim';
+import { useOnConnect, useOnPacket } from 'react-node-insim';
 
 type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
 
@@ -12,13 +12,12 @@ const ConnectionsContext = createContext<Connections | null>(null);
 
 export function ConnectionsProvider({ children }: { children: ReactNode }) {
   const [connections, setConnections] = useState<Connections>(new Map());
-  const inSim = useInSim();
 
-  useOnConnect(() => {
+  useOnConnect((_, inSim) => {
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NCN }));
   });
 
-  useOnPacket(PacketType.ISP_ISM, (packet) => {
+  useOnPacket(PacketType.ISP_ISM, (packet, inSim) => {
     if (packet.ReqI > 0) {
       return;
     }

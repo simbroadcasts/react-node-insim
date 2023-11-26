@@ -3,7 +3,6 @@ import { IS_TINY, PacketType, PlayerType, TinyType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useMemo, useState } from 'react';
 
-import { useInSim } from './useInSim';
 import { useOnConnect } from './useOnConnect';
 import { useOnPacket } from './useOnPacket';
 
@@ -18,13 +17,12 @@ const PlayersContext = createContext<Players | null>(null);
 
 export function PlayersProvider({ children }: { children: ReactNode }) {
   const [players, setPlayers] = useState<Players>(new Map());
-  const inSim = useInSim();
 
-  useOnConnect(() => {
+  useOnConnect((_, inSim) => {
     inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
   });
 
-  useOnPacket(PacketType.ISP_ISM, (packet) => {
+  useOnPacket(PacketType.ISP_ISM, (packet, inSim) => {
     if (packet.ReqI > 0) {
       return;
     }
