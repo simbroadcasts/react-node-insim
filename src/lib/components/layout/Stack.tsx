@@ -8,7 +8,10 @@ type ButtonChild = ReactElement<ButtonProps>;
 
 export type StackProps = Required<Pick<ButtonProps, 'top' | 'left'>> &
   Partial<
-    Pick<ButtonProps, 'width' | 'height' | 'background' | 'color' | 'UCID'>
+    Pick<
+      ButtonProps,
+      'width' | 'height' | 'variant' | 'background' | 'color' | 'UCID'
+    >
   > & {
     direction: 'horizontal' | 'vertical';
 
@@ -27,6 +30,7 @@ export function Stack({
   height,
   background,
   color,
+  variant,
   UCID,
   gap = 0,
 }: StackProps) {
@@ -60,6 +64,7 @@ export function Stack({
             left: buttonLeft,
             width: buttonWidth,
             height: buttonHeight,
+            variant: child.props.variant ?? variant,
             background: child.props.background ?? background,
             color: child.props.color ?? color,
             UCID: child.props.UCID ?? UCID,
