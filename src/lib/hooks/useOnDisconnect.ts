@@ -2,7 +2,7 @@ import type { InSim, InSimEvents } from 'node-insim';
 import { useEffect, useRef } from 'react';
 import { useInSim } from 'react-node-insim';
 
-export function useOnDisconnect(handler: InSimEvents['connect']) {
+export function useOnDisconnect(handler: InSimEvents['disconnect']) {
   const handlerRef = useRef(handler);
   const inSim = useInSim();
 
@@ -15,10 +15,10 @@ export function useOnDisconnect(handler: InSimEvents['connect']) {
       handlerRef.current(inSim);
     };
 
-    inSim.on('connect', listener);
+    inSim.on('disconnect', listener);
 
     return () => {
-      inSim.off('connect', listener);
+      inSim.off('disconnect', listener);
     };
   }, []);
 }
