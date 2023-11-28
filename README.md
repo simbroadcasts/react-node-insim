@@ -117,27 +117,58 @@ root.render(
 
 </details>
 
+## Table of contents
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Basic usage](#basic-usage)
+- [Button](#button)
+  - [Placement](#placement)
+  - [Sizes](#sizes)
+  - [Variants](#variants)
+  - [Text colors](#text-colors)
+  - [Background colors](#background-colors)
+- [Layout](#layout)
+  - [Horizontal stack](#horizontal-stack)
+  - [Vertical stack](#vertical-stack)
+  - [Flex](#flex)
+  - [Grid](#grid)
+- [Reusable components](#reusable-components)
+  - [Toggle button](#toggle-button)
+  - [Toggle button group](#toggle-button-group)
+  - [Text box](#text-box)
+- [Hooks](#hooks)
+  - [`useOnConnect`](#useonconnect)
+  - [`useOnDisconnect`](#useondisconnect)
+  - [`useOnPacket`](#useonpacket)
+  - [`useConnections`](#useconnections)
+  - [`usePlayers`](#useplayers)
+  - [`useMessage`](#usemessage)
+  - [`useRaceControlMessage`](#useracecontrolmessage)
+  - [`useInSim`](#useinsim)
+- [Development](#development)
+
+## Requirements
+
+- [Node.js](https://nodejs.org/) 14 or higher
+- [Node InSim](https://github.com/simbroadcasts/node-insim)
+- [React](https://github.com/facebook/react) 18
+
 ## Installation
 
-### Requirements
-
-- [Node.js](https://nodejs.org/)
-- [Node InSim](https://github.com/simbroadcasts/node-insim)
-- [React 18](https://github.com/facebook/react)
-
-NPM
+[NPM](https://www.npmjs.com/)
 
 ```shell
 npm install react@18 node-insim react-node-insim
 ```
 
-Yarn
+[Yarn](https://classic.yarnpkg.com/en/docs)
 
 ```shell
 yarn add react@18 node-insim react-node-insim
 ```
 
-pnpm
+[pnpm](https://pnpm.io/)
 
 ```shell
 pnpm add react@18 node-insim react-node-insim
@@ -164,8 +195,6 @@ root.render(
   </Button>,
 );
 ```
-
-### Adding state
 
 You can use [React hooks](https://react.dev/reference/react) as usual to display stateful data via InSim.
 
@@ -229,7 +258,7 @@ import { Button } from 'react-node-insim';
 </Button>
 ```
 
-#### Button placement
+#### Placement
 
 Buttons use XY coordinates to position themselves on the screen. The `top` and `left` props control the button's X and Y position on the screen. The allowed range of values is 0 to 200.
 
@@ -252,7 +281,7 @@ Buttons use XY coordinates to position themselves on the screen. The `top` and `
 </>
 ```
 
-#### Button sizes
+#### Sizes
 
 Use the `width` and `height` props to change the dimensions of the button. The allowed range of values is 0 to 200.
 
@@ -272,7 +301,7 @@ Use the `width` and `height` props to change the dimensions of the button. The a
 </>
 ```
 
-#### Button variants
+#### Variants
 
 Use the `variant` prop to change the button's visual style. You can use `light` or `dark`. If you don't specify a variant, the button will have transparent background and a light gray text color.
 
@@ -289,7 +318,7 @@ Use the `variant` prop to change the button's visual style. You can use `light` 
 </>
 ```
 
-#### Button text colors
+#### Text colors
 
 Use the `color` prop to customize the button's text color. If you don't specify a color, the button text will be `lightgrey`.
 
@@ -324,7 +353,7 @@ Use the `color` prop to customize the button's text color. If you don't specify 
 </>
 ```
 
-#### Button background colors
+#### Background colors
 
 Use the `background` prop to customize the button's background color. If you don't specify a color, the background will be transparent.
 
@@ -348,6 +377,8 @@ Use the `background` prop to customize the button's background color. If you don
 
 ### Horizontal stack
 
+`HStack` displays buttons in a column without having to specify each button's position manually. You can also override button colors and sizes.
+
 #### Import
 
 ```ts
@@ -370,7 +401,7 @@ function App() {
 
 ### Vertical stack
 
-`VStack` and `HStack` allow displaying buttons right next to each other without having to specify each button's position manually. You can also override button colors and sizes.
+`VStack` displays buttons in a row without having to specify each button's position manually. You can also override button colors and sizes.
 
 #### Import
 
@@ -394,7 +425,7 @@ function App() {
 
 ### Flex
 
-Flex layout allows displaying buttons in a row or column with flexbox options.
+Flex layout displays buttons in a row or column with flexbox options.
 
 #### Import
 
@@ -431,7 +462,7 @@ function App() {
 
 ### Grid
 
-Grid layout allows displaying buttons in a grid.
+Grid layout displays buttons in a grid.
 
 #### Import
 
@@ -480,6 +511,111 @@ function App() {
 }
 ```
 
+## Reusable components
+
+Reusable components composed of multiple [`<Button>`](#button)s.
+
+### Toggle button
+
+A button that can be toggled on and off by clicking it.
+
+#### Import
+
+```ts
+import { ToggleButton } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const [isOn, setIsOn] = useState(false);
+
+  return (
+    <ToggleButton
+      top={100}
+      left={80}
+      width={30}
+      height={10}
+      isOn={isOn}
+      onToggle={setIsOn}
+    >
+      Toggle button
+    </ToggleButton>
+  );
+}
+```
+
+### Toggle button group
+
+A group of buttons that can be toggled on and off by clicking them.
+
+#### Import
+
+```ts
+import { ToggleButtonGroup } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+const options = [
+  { label: 'low', value: 1 },
+  { label: 'medium', value: 2 },
+  { label: 'high', value: 3 },
+];
+
+function App() {
+  const [selectedOption, setSelectedOption] = useState(options[0]);
+
+  return (
+    <ToggleButtonGroup
+      top={30}
+      left={50}
+      width={25}
+      height={4}
+      options={options}
+      selectedOption={selectedOption}
+      onChange={setSelectedOption}
+    />
+  );
+}
+```
+
+### Text box
+
+A text box whose content can span multiple rows. If the content is too long, the text box will show a scrollbar.
+
+#### Import
+
+```ts
+import { TextBox } from 'react-node-insim';
+```
+
+#### Usage
+
+```tsx
+function App() {
+  const [text, setText] = useState('');
+
+  return (
+    <TextBox
+      top={40}
+      left={50}
+      cols={20}
+      rows={4}
+      width={20}
+      rowHeight={4}
+      variant="light"
+    >
+      Hello world this is a text box lorem ipsum dolor sit amet consectetur
+      adipisicing elitrea lorem ipsum dolor sit amet consectetur adipisicing
+      elit
+    </TextBox>
+  );
+}
+```
+
 ## Hooks
 
 ### `useOnConnect`
@@ -488,15 +624,9 @@ Execute code after the InSim app has been connected.
 
 The first parameter is an `IS_VER` packet callback executed when `IS_VER` is received upon successful InSim connection to LFS.
 
-#### Import
-
-```ts
-import { useOnConnect } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useOnConnect } from 'react-node-insim';
+
 function App() {
   useOnConnect((packet, inSim) => {
     console.log(`Connected to LFS ${packet.Product} ${packet.Version}`);
@@ -513,15 +643,9 @@ Execute code after the InSim app has been disconnected.
 
 The first parameter is the "disconnect" event callback from Node InSim.
 
-#### Import
-
-```ts
-import { useOnDisconnect } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useOnDisconnect } from 'react-node-insim';
+
 function App() {
   useOnDisconnect(() => {
     console.log('Disconnected from LFS');
@@ -535,15 +659,9 @@ function App() {
 
 Execute code when an InSim packet is received
 
-#### Import
-
-```ts
-import { useOnPacket } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useOnPacket } from 'react-node-insim';
+
 function App() {
   useOnPacket(PacketType.ISP_NCN, (packet) => {
     console.log(`New connection: ${packet.UName}`);
@@ -557,15 +675,9 @@ function App() {
 
 Get a live list of all connected guests.
 
-#### Import
-
-```ts
-import { useConnections } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useConnections } from 'react-node-insim';
+
 function App() {
   const connections = useConnections();
 
@@ -583,15 +695,9 @@ function App() {
 
 Get a live list of all players on track.
 
-#### Import
-
-```ts
-import { usePlayers } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { usePlayers } from 'react-node-insim';
+
 function App() {
   const players = usePlayers();
 
@@ -609,15 +715,9 @@ function App() {
 
 Send a message to a connection or a player.
 
-#### Import
-
-```ts
-import { useMessage } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useMessage } from 'react-node-insim';
+
 function App() {
   const { sendMessageToConnection, sendMessageToPlayer } = useMessage();
 
@@ -662,15 +762,9 @@ function App() {
 
 Send a race control message (RCM) to a connection or a player.
 
-#### Import
-
-```ts
-import { useRaceControlMessage } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useRaceControlMessage } from 'react-node-insim';
+
 function App() {
   const { sendRaceControlMessageToConnection, sendRaceControlMessageToPlayer } =
     useRaceControlMessage();
@@ -716,15 +810,9 @@ function App() {
 
 Access to Node InSim API of the current InSim client instance.
 
-#### Import
-
-```ts
-import { useInSim } from 'react-node-insim';
-```
-
-#### Usage
-
 ```tsx
+import { useInSim } from 'react-node-insim';
+
 function App() {
   const inSim = useInSim();
 
