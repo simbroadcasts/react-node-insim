@@ -20,7 +20,7 @@ export function useInSimContext(): InSimContextAPI {
   const context = useContext(InSimContext);
 
   if (!context) {
-    throw new Error('useInSim must be called within <RootContext.Provider>.');
+    throw new Error('useInSim must be called within <InSimContext.Provider>.');
   }
 
   return context;
