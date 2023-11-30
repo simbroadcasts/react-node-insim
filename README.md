@@ -1,10 +1,19 @@
 # React Node InSim
 
+<img src="https://simbroadcasts.tv/assets/node-insim/react-node-insim-icon-256.png" width="100px" align="right" hspace="15">
+
+[![NPM Version](https://img.shields.io/npm/v/react-node-insim?style=flat-square)](https://www.npmjs.com/package/react-node-insim) <!--![Node.js CI](https://github.com/simbroadcasts/react-node-insim/actions/workflows/.github/workflows/validate.yml/badge.svg)-->
+
+A [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons, based on [Node InSim](https://github.com/simbroadcasts/node-insim).
+
+## Introduction
+
+
 > 🚧 This project is still under development. Any API may change as needed.
 
 React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and tracking server connections & players.
 
-It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library for InSim communication.
+It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library, written in TypeScript, for InSim communication.
 
 It allows you to create things like this:
 
@@ -855,3 +864,7 @@ yarn lint
 ```shell
 yarn format
 ```
+
+---
+
+![React Node Insim - An open source project by Sim Broadcasts](https://simbroadcasts.tv/assets/node-insim/react-node-insim-footer.png)
