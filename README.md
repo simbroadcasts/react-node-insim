@@ -11,7 +11,7 @@ A [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#render
 
 > 🚧 This project is still under development. Any API may change as needed.
 
-React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It provides layout components for easier button positioning, hooks for handling incoming InSim packets and tracking server connections & players.
+React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It also provides [layout components](#horizontal-stack) for easier button positioning, [hooks](#hooks) for handling incoming InSim packets and tracking server connections & players.
 
 It is based on [Node InSim](https://github.com/simbroadcasts/node-insim), a Node.js library, written in TypeScript, for InSim communication.
 
@@ -137,15 +137,15 @@ root.render(
   - [Variants](#variants)
   - [Text colors](#text-colors)
   - [Background colors](#background-colors)
-- [Layout](#layout)
-  - [Horizontal stack](#horizontal-stack)
-  - [Vertical stack](#vertical-stack)
-  - [Flex](#flex)
-  - [Grid](#grid)
-- [Reusable components](#reusable-components)
-  - [Toggle button](#toggle-button)
-  - [Toggle button group](#toggle-button-group)
-  - [Text box](#text-box)
+- [Horizontal stack](#horizontal-stack)
+- [Vertical stack](#vertical-stack)
+- [Flex](#flex)
+- [Grid](#grid)
+- [Toggle button](#toggle-button)
+  - [Variants](#variants-1)
+  - [Disabled state](#disabled-state)
+- [Toggle button group](#toggle-button-group)
+- [Text box](#text-box)
 - [Hooks](#hooks)
   - [`useOnConnect`](#useonconnect)
   - [`useOnDisconnect`](#useondisconnect)
@@ -382,159 +382,139 @@ Use the `background` prop to customize the button's background color. If you don
 </>
 ```
 
-## Layout
-
-### Horizontal stack
+## Horizontal stack
 
 `HStack` displays buttons in a column without having to specify each button's position manually. You can also override button colors and sizes.
 
-#### Import
+### Import
 
 ```ts
 import { HStack } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
-function App() {
-  return (
-    <HStack top={10} left={20} width={7} height={4} variant="dark">
-      <Button>Stacked button</Button>
-      <Button color="title">Button with custom color</Button>
-      <Button height={10}>Button with custom height</Button>
-    </HStack>
-  );
-}
+<HStack top={10} left={20} width={7} height={4} variant="dark">
+  <Button>Stacked button</Button>
+  <Button color="title">Button with custom color</Button>
+  <Button height={10}>Button with custom height</Button>
+</HStack>
 ```
 
-### Vertical stack
+## Vertical stack
 
 `VStack` displays buttons in a row without having to specify each button's position manually. You can also override button colors and sizes.
 
-#### Import
+### Import
 
 ```ts
 import { VStack } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
-function App() {
-  return (
-    <VStack top={10} left={20} width={7} height={4} variant="dark">
-      <Button>Stacked button</Button>
-      <Button color="title">Button with custom color</Button>
-      <Button height={10}>Button with custom height</Button>
-    </VStack>
-  );
-}
+<VStack top={10} left={20} width={7} height={4} variant="dark">
+  <Button>Stacked button</Button>
+  <Button color="title">Button with custom color</Button>
+  <Button height={10}>Button with custom height</Button>
+</VStack>
 ```
 
-### Flex
+## Flex
 
 Flex layout displays buttons in a row or column with flexbox options.
 
-#### Import
+### Import
 
 ```ts
 import { Flex } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
-function App() {
-  return (
-    <Flex
-      top={10}
-      left={20}
-      width={30}
-      height={20}
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      <Button width={8} height={4}>
-        Left
-      </Button>
-      <Button width={10} height={6}>
-        Center
-      </Button>
-      <Button width={8} height={4}>
-        Right
-      </Button>
-    </Flex>
-  );
-}
+<Flex
+  top={10}
+  left={20}
+  width={30}
+  height={20}
+  alignItems="center"
+  justifyContent="space-between"
+>
+  <Button width={8} height={4}>
+    Left
+  </Button>
+  <Button width={10} height={6}>
+    Center
+  </Button>
+  <Button width={8} height={4}>
+    Right
+  </Button>
+</Flex>
 ```
 
-### Grid
+## Grid
 
 Grid layout displays buttons in a grid.
 
-#### Import
+### Import
 
 ```ts
 import { Grid, GridButton } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
-function App() {
-  return (
-    <Grid
-      top={5}
-      left={10}
-      width={30}
-      height={30}
-      background="dark"
-      backgroundColor="light"
-      gridTemplateColumns="1fr 2fr 1fr"
-      gridTemplateRows="1fr 3fr 2fr"
-      gridColumnGap={1}
-      gridRowGap={1}
-      variant="dark"
-    >
-      <GridButton>1</GridButton>
-      <GridButton
-        gridColumnStart={2}
-        gridRowStart={1}
-        gridRowEnd={3}
-        color="title"
-        background="light"
-      >
-        2
-      </GridButton>
-      <GridButton
-        gridColumnStart={3}
-        gridColumnEnd={4}
-        gridRowStart={1}
-        gridRowEnd={4}
-      >
-        3
-      </GridButton>
-    </Grid>
-  );
-}
+<Grid
+  top={5}
+  left={10}
+  width={30}
+  height={30}
+  background="dark"
+  backgroundColor="light"
+  gridTemplateColumns="1fr 2fr 1fr"
+  gridTemplateRows="1fr 3fr 2fr"
+  gridColumnGap={1}
+  gridRowGap={1}
+  variant="dark"
+>
+  <GridButton>1</GridButton>
+  <GridButton
+    gridColumnStart={2}
+    gridRowStart={1}
+    gridRowEnd={3}
+    color="title"
+    background="light"
+  >
+    2
+  </GridButton>
+  <GridButton
+    gridColumnStart={3}
+    gridColumnEnd={4}
+    gridRowStart={1}
+    gridRowEnd={4}
+  >
+    3
+  </GridButton>
+</Grid>
 ```
 
-## Reusable components
-
-Reusable components composed of multiple [`<Button>`](#button)s.
-
-### Toggle button
+## Toggle button
 
 A button that can be toggled on and off by clicking it.
 
-#### Import
+### Import
 
 ```ts
 import { ToggleButton } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
+
+<img src="docs/toggle-button.gif" alt="Toggle button being toggled on and off" />
 
 ```tsx
 function App() {
@@ -544,28 +524,96 @@ function App() {
     <ToggleButton
       top={100}
       left={80}
-      width={30}
-      height={10}
+      width={12}
+      height={6}
       isOn={isOn}
       onToggle={setIsOn}
     >
-      Toggle button
+      Toggle
     </ToggleButton>
   );
 }
 ```
 
-### Toggle button group
+#### Variants
+
+Use the `variant` prop to change the button's background style. You can use `light` or `dark`. If you don't specify a variant, `light` will be used.
+
+<img src="docs/toggle-button-variants.png" alt="Toggle button variants" />
+
+```tsx
+<>
+  <ToggleButton variant="light" top={100} left={40} width={12} height={6}>
+    Toggle
+  </ToggleButton>
+  <ToggleButton variant="dark" top={100} left={53} width={12} height={6}>
+    Toggle
+  </ToggleButton>
+</>
+```
+
+#### Disabled state
+
+Use the `isDisabled` prop to prevent toggling the button on/off.
+
+<img src="docs/toggle-button-disabled.png" alt="Enabled and disabled toggle buttons" />
+
+```tsx
+<>
+  <ToggleButton
+    isDisabled={false}
+    variant="light"
+    top={100}
+    left={40}
+    width={12}
+    height={6}
+  >
+    Enabled
+  </ToggleButton>
+  <ToggleButton
+    isDisabled
+    variant="light"
+    top={100}
+    left={53}
+    width={12}
+    height={6}
+  >
+    Disabled
+  </ToggleButton>
+  <ToggleButton
+    isDisabled={false}
+    variant="dark"
+    top={106}
+    left={40}
+    width={12}
+    height={6}
+  >
+    Enabled
+  </ToggleButton>
+  <ToggleButton
+    isDisabled
+    variant="dark"
+    top={106}
+    left={53}
+    width={12}
+    height={6}
+  >
+    Disabled
+  </ToggleButton>
+</>
+```
+
+## Toggle button group
 
 A group of buttons that can be toggled on and off by clicking them.
 
-#### Import
+### Import
 
 ```ts
 import { ToggleButtonGroup } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
 const options = [
@@ -591,38 +639,31 @@ function App() {
 }
 ```
 
-### Text box
+## Text box
 
 A text box whose content can span multiple rows. If the content is too long, the text box will show a scrollbar.
 
-#### Import
+### Import
 
 ```ts
 import { TextBox } from 'react-node-insim';
 ```
 
-#### Usage
+### Usage
 
 ```tsx
-function App() {
-  const [text, setText] = useState('');
-
-  return (
-    <TextBox
-      top={40}
-      left={50}
-      cols={20}
-      rows={4}
-      width={20}
-      rowHeight={4}
-      variant="light"
-    >
-      Hello world this is a text box lorem ipsum dolor sit amet consectetur
-      adipisicing elitrea lorem ipsum dolor sit amet consectetur adipisicing
-      elit
-    </TextBox>
-  );
-}
+<TextBox
+  top={40}
+  left={50}
+  cols={20}
+  rows={4}
+  width={20}
+  rowHeight={4}
+  variant="light"
+>
+  Hello world this is a text box lorem ipsum dolor sit amet consectetur
+  adipisicing elitrea lorem ipsum dolor sit amet consectetur adipisicing elit
+</TextBox>
 ```
 
 ## Hooks
