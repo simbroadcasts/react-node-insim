@@ -8,7 +8,6 @@ A [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#render
 
 ## Introduction
 
-
 > 🚧 This project is still under development. Any API may change as needed.
 
 React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It also provides [layout components](#horizontal-stack) for easier button positioning, [hooks](#hooks) for handling incoming InSim packets and tracking server connections & players.
@@ -394,11 +393,13 @@ import { HStack } from 'react-node-insim';
 
 ### Usage
 
+<img src="docs/horizontal-stack.png" alt="Horizontal stack" />
+
 ```tsx
 <HStack top={10} left={20} width={7} height={4} variant="dark">
   <Button>Stacked button</Button>
-  <Button color="title">Button with custom color</Button>
-  <Button height={10}>Button with custom height</Button>
+  <Button color="title">Custom color</Button>
+  <Button height={6}>Custom height</Button>
 </HStack>
 ```
 
@@ -414,11 +415,13 @@ import { VStack } from 'react-node-insim';
 
 ### Usage
 
+<img src="docs/vertical-stack.png" alt="Vertical stack" />
+
 ```tsx
 <VStack top={10} left={20} width={7} height={4} variant="dark">
   <Button>Stacked button</Button>
-  <Button color="title">Button with custom color</Button>
-  <Button height={10}>Button with custom height</Button>
+  <Button color="title">Custom color</Button>
+  <Button height={6}>Custom height</Button>
 </VStack>
 ```
 
@@ -434,14 +437,18 @@ import { Flex } from 'react-node-insim';
 
 ### Usage
 
+<img src="docs/flex.png" alt="Flex" />
+
 ```tsx
 <Flex
   top={10}
   left={20}
-  width={30}
-  height={20}
+  width={36}
+  height={16}
   alignItems="center"
-  justifyContent="space-between"
+  justifyContent="space-evenly"
+  background="dark"
+  backgroundColor="light"
 >
   <Button width={8} height={4}>
     Left
@@ -467,10 +474,12 @@ import { Grid, GridButton } from 'react-node-insim';
 
 ### Usage
 
+<img src="docs/grid.png" alt="Grid" />
+
 ```tsx
 <Grid
-  top={5}
-  left={10}
+  top={30}
+  left={40}
   width={30}
   height={30}
   background="dark"
@@ -479,7 +488,6 @@ import { Grid, GridButton } from 'react-node-insim';
   gridTemplateRows="1fr 3fr 2fr"
   gridColumnGap={1}
   gridRowGap={1}
-  variant="dark"
 >
   <GridButton>1</GridButton>
   <GridButton
@@ -493,11 +501,17 @@ import { Grid, GridButton } from 'react-node-insim';
   </GridButton>
   <GridButton
     gridColumnStart={3}
-    gridColumnEnd={4}
+    gridColumnEnd={3}
     gridRowStart={1}
-    gridRowEnd={4}
+    gridRowEnd={3}
   >
     3
+  </GridButton>
+  <GridButton alignSelf="end" height={10}>
+    4
+  </GridButton>
+  <GridButton gridColumnStart={1} gridColumnEnd={4}>
+    5
   </GridButton>
 </Grid>
 ```
@@ -615,6 +629,8 @@ import { ToggleButtonGroup } from 'react-node-insim';
 
 ### Usage
 
+<img src="docs/toggle-button-group.gif" alt="Toggle button group" />
+
 ```tsx
 const options = [
   { label: 'low', value: 1 },
@@ -629,8 +645,8 @@ function App() {
     <ToggleButtonGroup
       top={30}
       left={50}
-      width={25}
-      height={4}
+      width={36}
+      height={6}
       options={options}
       selectedOption={selectedOption}
       onChange={setSelectedOption}
@@ -650,6 +666,8 @@ import { TextBox } from 'react-node-insim';
 ```
 
 ### Usage
+
+<img src="docs/text-box.gif" alt="Text box" />
 
 ```tsx
 <TextBox
