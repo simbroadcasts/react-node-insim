@@ -88,6 +88,7 @@ export function createRoot({
     Prefix: prefix,
   });
 
+  // When a connection leaves, remove their UCID from all buttons
   inSim.on(PacketType.ISP_CNL, (packet) => {
     container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
       if (ucIds.has(packet.UCID)) {
