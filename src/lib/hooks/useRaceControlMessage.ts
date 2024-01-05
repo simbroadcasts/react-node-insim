@@ -1,7 +1,8 @@
-import { log } from 'debug';
 import { IS_MST } from 'node-insim/packets';
 import { useMemo } from 'react';
 import { useConnections, useInSim, usePlayers } from 'react-node-insim';
+
+import { log } from '../internals/logger';
 
 export function useRaceControlMessage() {
   const inSim = useInSim();
