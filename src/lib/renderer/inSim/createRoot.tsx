@@ -17,6 +17,8 @@ type CreateRootOptions = {
   adminPassword?: string;
   flags?: InSimFlags;
   prefix?: string;
+  UDPPort?: number;
+  interval?: number;
   appendButtonIDs?: boolean;
   buttonClickIDStart?: number;
 };
@@ -35,6 +37,8 @@ export function createRoot({
   adminPassword,
   flags,
   prefix,
+  UDPPort,
+  interval,
   appendButtonIDs = false,
   buttonClickIDStart = 0,
 }: CreateRootOptions) {
@@ -86,6 +90,8 @@ export function createRoot({
     Admin: adminPassword,
     Flags: flags,
     Prefix: prefix,
+    UDPPort,
+    Interval: interval,
   });
 
   // When a connection leaves, remove their UCID from all buttons
