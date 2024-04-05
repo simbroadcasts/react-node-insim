@@ -10,7 +10,7 @@ import { log } from '../../internals/logger';
 import { InSimRenderer } from './InSimRenderer';
 import type { Container } from './types';
 
-type CreateRootOptions = {
+export type CreateRootOptions = {
   name: string;
   host: string;
   port: number;
