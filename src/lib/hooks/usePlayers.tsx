@@ -6,7 +6,7 @@ import { createContext, useContext, useMemo, useState } from 'react';
 import { useOnConnect } from './useOnConnect';
 import { useOnPacket } from './useOnPacket';
 
-type Player = Pick<
+export type Player = Pick<
   IS_NPL,
   'UCID' | 'PLID' | 'PName' | 'Flags' | 'PType' | 'Plate'
 >;
