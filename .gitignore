@@ -3,3 +3,4 @@ dist/
 yarn-*.log
 
 **/.DS_Store
+.npmrc
