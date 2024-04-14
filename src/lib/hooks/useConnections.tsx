@@ -4,7 +4,10 @@ import type { ReactNode } from 'react';
 import { createContext, useContext, useMemo, useState } from 'react';
 import { useOnConnect, useOnPacket } from 'react-node-insim';
 
-type Connection = Pick<IS_NCN, 'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'>;
+export type Connection = Pick<
+  IS_NCN,
+  'UCID' | 'UName' | 'PName' | 'Admin' | 'Flags'
+>;
 
 type Connections = Map<number, Connection>;
 
