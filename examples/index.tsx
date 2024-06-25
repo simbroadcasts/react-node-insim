@@ -20,9 +20,10 @@ import {
 
 const root = createRoot({
   name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
+  host: '188.122.74.155',
+  port: 52317,
+  adminPassword: 'test<password',
+  // flags: InSimFlags.ISF_LOCAL,
 });
 
 root.render(

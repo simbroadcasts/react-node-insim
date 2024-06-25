@@ -30,7 +30,7 @@ const unselectedColor: Record<
   Required<ButtonProps>['color']
 > = {
   light: 'unselected',
-  dark: 'lightgrey',
+  dark: 'default',
 };
 
 const selectedColor: Record<

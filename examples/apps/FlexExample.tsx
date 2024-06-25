@@ -278,7 +278,7 @@ const wrapOptions: FlexProps['wrap'][] = [
 
 const colorOptions: FlexProps['color'][] = [
   undefined,
-  'lightgrey',
+  'default',
   'title',
   'unselected',
   'selected',

@@ -139,7 +139,7 @@ const alignments: Required<ButtonProps['align']>[] = [
 ];
 
 const textColors: Required<ButtonProps['color']>[] = [
-  'lightgrey',
+  'default',
   'title',
   'unselected',
   'selected',
