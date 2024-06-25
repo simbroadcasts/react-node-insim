@@ -4,7 +4,7 @@ import type { ButtonProps } from '../../src';
 import { Button, VStack } from '../../src';
 
 export function ButtonExample() {
-  const top = 121;
+  const top = 122;
   const left = 95;
   const width = 10;
   const height = 4;
@@ -147,4 +147,12 @@ const textColors: Required<ButtonProps['color']>[] = [
   'cancel',
   'textstring',
   'unavailable',
+  'black',
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'magenta',
+  'cyan',
+  'white',
 ];

@@ -1,7 +1,7 @@
 import { Button, Grid, GridButton } from '../../src';
 
 export function GridExample() {
-  const top = 160;
+  const top = 157;
   const left = 2;
 
   return (

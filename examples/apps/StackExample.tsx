@@ -6,7 +6,7 @@ export function StackExample() {
   const [gap, setGap] = useState(0);
   const [height, setHeight] = useState(4);
 
-  const top = 160;
+  const top = 157;
   const left = 33;
 
   return (

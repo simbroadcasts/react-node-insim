@@ -9,6 +9,8 @@ import {
   PacketType,
   TypeIn,
 } from 'node-insim/packets';
+import { pipe } from 'ramda';
+import type { ButtonProps } from 'react-node-insim/lib/components';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
@@ -31,6 +33,32 @@ export type ButtonElementProps = InSimElementProps<
   ButtonElement,
   ButtonBaseProps
 >;
+
+const semanticColorMap = {
+  lightgrey: ButtonTextColour.LIGHT_GREY,
+  title: ButtonTextColour.TITLE_COLOUR,
+  unselected: ButtonTextColour.UNSELECTED_TEXT,
+  selected: ButtonTextColour.SELECTED_TEXT,
+  ok: ButtonTextColour.OK,
+  cancel: ButtonTextColour.CANCEL,
+  textstring: ButtonTextColour.TEXT_STRING,
+  unavailable: ButtonTextColour.UNAVAILABLE,
+} as const;
+
+type SemanticColor = keyof typeof semanticColorMap;
+
+const lfsPaletteColors = [
+  'black',
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'magenta',
+  'cyan',
+  'white',
+] as const;
+
+type LfsPaletteColor = (typeof lfsPaletteColors)[number];
 
 type ButtonBaseProps = {
   /** 0 to 240 characters of text */
@@ -58,15 +86,7 @@ type ButtonBaseProps = {
   background?: 'transparent' | 'light' | 'dark';
 
   /** Label text color */
-  color?:
-    | 'lightgrey'
-    | 'title'
-    | 'unselected'
-    | 'selected'
-    | 'ok'
-    | 'cancel'
-    | 'textstring'
-    | 'unavailable';
+  color?: SemanticColor | LfsPaletteColor;
 
   /** Label text alignment */
   align: 'left' | 'right' | 'center';
@@ -262,10 +282,8 @@ export class Button extends InSimElement {
     const initValueButtonText = props.initializeDialogWithButtonText
       ? TypeIn.INIT_VALUE_BUTTON_TEXT
       : 0;
-    const textString = childrenToString(props.children);
-    const buttonText = props.caption
-      ? `\0${props.caption}\0${textString}`
-      : textString;
+
+    const text = this.buildButtonText(props);
 
     const buttonData: Required<IS_BTN_Data> = {
       ReqI: Button.REQUEST_ID,
@@ -275,7 +293,7 @@ export class Button extends InSimElement {
       L: props.left,
       W: props.width,
       H: props.height,
-      Text: buttonText,
+      Text: text,
       BStyle: buttonStyle,
       TypeIn: props.onType ? props.maxTypeInChars + initValueButtonText : 0,
       Inst: props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0,
@@ -371,8 +389,8 @@ export class Button extends InSimElement {
       buttonStyle |= ButtonStyle.ISB_CLICK;
     }
 
-    if (props.color) {
-      buttonStyle |= buttonColorMap[props.color];
+    if (this.isSemanticColor(props.color)) {
+      buttonStyle |= semanticColorMap[props.color];
     } else if (props.variant) {
       buttonStyle |= buttonVariantColorMap[props.variant];
     }
@@ -390,6 +408,12 @@ export class Button extends InSimElement {
     }
 
     return buttonStyle;
+  }
+
+  private isSemanticColor(
+    color?: ButtonProps['color'],
+  ): color is SemanticColor {
+    return color !== undefined && color in semanticColorMap;
   }
 
   private generateClickIdForUCID(ucid: number): void {
@@ -565,13 +589,15 @@ export class Button extends InSimElement {
   }
 
   private buildButtonText(props: ButtonElementProps): string {
-    const textString = childrenToString(props.children);
+    const addCaption = (text: string): string =>
+      props.caption ? `\0${props.caption}\0${text}` : text;
 
-    if (props.caption) {
-      return `\0${props.caption}\0${textString}`;
-    }
+    const addColor = (text: string): string =>
+      props.color && !this.isSemanticColor(props.color)
+        ? `^${lfsPaletteColors.indexOf(props.color)}${text}`
+        : text;
 
-    return textString;
+    return pipe(childrenToString, addCaption, addColor)(props.children);
   }
 
   private log(...params: unknown[]) {
@@ -620,20 +646,6 @@ const buttonAlignmentMap: Record<
   left: ButtonStyle.ISB_LEFT,
   center: 0,
   right: ButtonStyle.ISB_RIGHT,
-};
-
-const buttonColorMap: Record<
-  Required<ButtonElementProps>['color'],
-  ButtonTextColour
-> = {
-  lightgrey: ButtonTextColour.LIGHT_GREY,
-  title: ButtonTextColour.TITLE_COLOUR,
-  unselected: ButtonTextColour.UNSELECTED_TEXT,
-  selected: ButtonTextColour.SELECTED_TEXT,
-  ok: ButtonTextColour.OK,
-  cancel: ButtonTextColour.CANCEL,
-  textstring: ButtonTextColour.TEXT_STRING,
-  unavailable: ButtonTextColour.UNAVAILABLE,
 };
 
 const buttonVariantColorMap: Record<

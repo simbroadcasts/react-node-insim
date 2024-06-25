@@ -7,8 +7,8 @@ export function TextBoxExample() {
   const [cols, setCols] = useState(20);
   const [rowHeight, setRowHeight] = useState(4);
 
-  const top = 160;
-  const left = 120;
+  const top = 157;
+  const left = 128;
 
   return (
     <>

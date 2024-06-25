@@ -361,6 +361,32 @@ Use the `color` prop to customize the button's text color. If you don't specify 
 </>
 ```
 
+You can choose from a set of semantic colors or use one of the colors from the LFS color palette.
+
+**Semantic colors**
+
+- lightgrey
+- title
+- unselected
+- selected
+- ok
+- cancel
+- textstring
+- unavailable
+
+> Note: The semantic color values can be customized in LFS Options -> Display -> Interface.
+
+**LFS color palette**
+
+- black
+- red
+- green
+- yellow
+- blue
+- magenta
+- cyan
+- white
+
 #### Background colors
 
 Use the `background` prop to customize the button's background color. If you don't specify a color, the background will be transparent.

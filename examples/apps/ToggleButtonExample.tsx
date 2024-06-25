@@ -6,8 +6,8 @@ export function ToggleButtonExample() {
   const [isOnLight, setIsOnLight] = useState(false);
   const [isOnDark, setIsOnDark] = useState(false);
 
-  const top = 160;
-  const left = 95;
+  const top = 172;
+  const left = 71;
   const width = 6;
 
   return (
