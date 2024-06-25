@@ -35,7 +35,7 @@ export type ButtonElementProps = InSimElementProps<
 >;
 
 const semanticColorMap = {
-  lightgrey: ButtonTextColour.LIGHT_GREY,
+  default: ButtonTextColour.LIGHT_GREY,
   title: ButtonTextColour.TITLE_COLOUR,
   unselected: ButtonTextColour.UNSELECTED_TEXT,
   selected: ButtonTextColour.SELECTED_TEXT,

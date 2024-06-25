@@ -328,14 +328,14 @@ Use the `variant` prop to change the button's visual style. You can use `light` 
 
 #### Text colors
 
-Use the `color` prop to customize the button's text color. If you don't specify a color, the button text will be `lightgrey`.
+Use the `color` prop to customize the button's text color. If you don't specify a color, the button text will be `default`.
 
 <img src="docs/button-text-colors.png" alt="Button text colors" />
 
 ```tsx
 <>
-  <Button top={73} left={40} width={12} height={6} color="lightgrey">
-    lightgrey
+  <Button top={73} left={40} width={12} height={6} color="default">
+    default
   </Button>
   <Button top={73} left={53} width={12} height={6} color="title">
     title
@@ -365,7 +365,7 @@ You can choose from a set of semantic colors or use one of the colors from the L
 
 **Semantic colors**
 
-- lightgrey
+- default
 - title
 - unselected
 - selected
