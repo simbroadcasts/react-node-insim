@@ -54,7 +54,7 @@ export function ButtonExample() {
         <Button
           onClick={(packet, inSim) => {
             inSim.send(
-              new IS_MST({ Msg: `/echo Clicked button ID ${packet.ClickID}` }),
+              new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
             );
           }}
         >
@@ -64,7 +64,7 @@ export function ButtonExample() {
           onType={(packet, inSim) => {
             inSim.send(
               new IS_MST({
-                Msg: `/echo Typed in button ID ${packet.ClickID}: ${packet.Text}`,
+                Msg: `Typed in button ID ${packet.ClickID}: ${packet.Text}`,
               }),
             );
           }}
@@ -83,7 +83,7 @@ export function ButtonExample() {
           variant="light"
           onClick={(packet, inSim) => {
             inSim.send(
-              new IS_MST({ Msg: `/echo Clicked button ID ${packet.ClickID}` }),
+              new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
             );
           }}
         >
@@ -94,7 +94,7 @@ export function ButtonExample() {
           isDisabled
           onClick={(packet, inSim) => {
             inSim.send(
-              new IS_MST({ Msg: `/echo Clicked button ID ${packet.ClickID}` }),
+              new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
             );
           }}
         >
@@ -104,7 +104,7 @@ export function ButtonExample() {
           variant="dark"
           onClick={(packet, inSim) => {
             inSim.send(
-              new IS_MST({ Msg: `/echo Clicked button ID ${packet.ClickID}` }),
+              new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
             );
           }}
         >
@@ -115,7 +115,7 @@ export function ButtonExample() {
           isDisabled
           onClick={(packet, inSim) => {
             inSim.send(
-              new IS_MST({ Msg: `/echo Clicked button ID ${packet.ClickID}` }),
+              new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
             );
           }}
         >
