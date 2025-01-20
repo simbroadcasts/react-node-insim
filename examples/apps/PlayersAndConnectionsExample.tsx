@@ -4,7 +4,7 @@ import { IS_MST, MessageSound } from 'node-insim/packets';
 import {
   Button,
   useConnections,
-  useMessage,
+  useInSim,
   usePlayers,
   useRaceControlMessage,
   VStack,
@@ -15,7 +15,7 @@ export function PlayersAndConnectionsExample() {
   const connections = useConnections();
   const { sendRaceControlMessageToConnection, sendRaceControlMessageToPlayer } =
     useRaceControlMessage();
-  const { sendMessageToConnection, sendMessageToPlayer } = useMessage();
+  const { sendMessageToConnection, sendMessageToPlayer } = useInSim();
 
   const handlePlayerClick =
     (PLID: number) => (packet: IS_BTC, inSim: InSim) => {

@@ -151,7 +151,6 @@ root.render(
   - [`useOnPacket`](#useonpacket)
   - [`useConnections`](#useconnections)
   - [`usePlayers`](#useplayers)
-  - [`useMessage`](#usemessage)
   - [`useRaceControlMessage`](#useracecontrolmessage)
   - [`useInSim`](#useinsim)
 - [Development](#development)
@@ -801,53 +800,6 @@ function App() {
         <Button key={player.PLID}>{player.PName}</Button>
       ))}
     </VStack>
-  );
-}
-```
-
-### `useMessage`
-
-Send a message to a connection or a player.
-
-```tsx
-import { useMessage } from 'react-node-insim';
-
-function App() {
-  const { sendMessageToConnection, sendMessageToPlayer } = useMessage();
-
-  return (
-    <>
-      <Button
-        top={5}
-        left={10}
-        width={15}
-        height={5}
-        onClick={(packet) => {
-          sendMessageToConnection(
-            packet.UCID,
-            'Hello from React Node InSim',
-            MessageSound.SND_SYSMESSAGE,
-          );
-        }}
-      >
-        Send message to a connection
-      </Button>
-      <Button
-        top={10}
-        left={10}
-        width={15}
-        height={5}
-        onClick={(packet) => {
-          sendMessageToPlayer(
-            12, // PLID
-            'Hello from React Node InSim',
-            MessageSound.SND_SYSMESSAGE,
-          );
-        }}
-      >
-        Send message to a player
-      </Button>
-    </>
   );
 }
 ```
