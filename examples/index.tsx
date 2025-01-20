@@ -1,10 +1,5 @@
-import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
-import {
-  ConnectionsProvider,
-  createRoot,
-  PlayersProvider,
-} from 'react-node-insim';
+import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
 
 import {
   ButtonExample,
@@ -27,19 +22,17 @@ const root = createRoot({
 
 root.render(
   <StrictMode>
-    <PlayersProvider>
-      <ConnectionsProvider>
-        <PlayersAndConnectionsExample />
-        <PacketHooksExample />
-        <FlexExample isEditorVisible={false} />
-        <ButtonExample />
-        <GridExample />
-        <StackExample />
-        <ToggleButtonExample />
-        <ToggleButtonGroupExample />
-        <TextBoxExample />
-      </ConnectionsProvider>
-    </PlayersProvider>
+    <ConnectionsPlayersProvider>
+      <PlayersAndConnectionsExample />
+      <PacketHooksExample />
+      <FlexExample isEditorVisible={false} />
+      <ButtonExample />
+      <GridExample />
+      <StackExample />
+      <ToggleButtonExample />
+      <ToggleButtonGroupExample />
+      <TextBoxExample />
+    </ConnectionsPlayersProvider>
   </StrictMode>,
 );
 

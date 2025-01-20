@@ -1,11 +1,12 @@
 export {
   type Connection,
-  ConnectionsProvider,
+  type Player,
+  ConnectionsPlayersProvider,
   useConnections,
-} from './useConnections';
+  usePlayers,
+} from './ConnectionsPlayersProvider';
 export { useInSim } from './useInSim';
 export { useOnConnect } from './useOnConnect';
 export { useOnDisconnect } from './useOnDisconnect';
 export { useOnPacket } from './useOnPacket';
-export { type Player, PlayersProvider, usePlayers } from './usePlayers';
 export { useRaceControlMessage } from './useRaceControlMessage';
