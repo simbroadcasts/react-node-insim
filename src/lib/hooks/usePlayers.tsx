@@ -1,5 +1,11 @@
 import type { IS_NPL } from 'node-insim/packets';
-import { IS_TINY, PacketType, PlayerType, TinyType } from 'node-insim/packets';
+import {
+  IS_TINY,
+  PacketType,
+  PlayerType,
+  StateFlags,
+  TinyType,
+} from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useMemo, useState } from 'react';
 
@@ -35,9 +41,14 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
     if (packet.SubT === TinyType.TINY_CLR) {
       setPlayers(new Map());
     }
+
+    if (packet.SubT === TinyType.TINY_REN) {
+      setPlayers(new Map());
+    }
   });
 
   useOnPacket(PacketType.ISP_NPL, (packet) => {
+    console.log('new player');
     setPlayers((prevPlayers) =>
       new Map(prevPlayers).set(packet.PLID, {
         UCID: packet.UCID,
@@ -90,6 +101,31 @@ export function PlayersProvider({ children }: { children: ReactNode }) {
         UCID: packet.NewUCID,
       });
     });
+  });
+
+  useOnPacket(PacketType.ISP_STA, (packet, inSim) => {
+    // if (packet.Flags & StateFlags.ISS_GAME) {
+    //   console.log('in game or MPR');
+    // }
+    // if (packet.Flags & StateFlags.ISS_REPLAY) {
+    //   console.log('SPR');
+    // }
+    // if (
+    //   !(packet.Flags & StateFlags.ISS_REPLAY) &&
+    //   !(packet.Flags & StateFlags.ISS_GAME)
+    // ) {
+    //   console.log('not in game');
+    // }
+
+    if (packet.NumP !== players.size) {
+      // setPlayers(new Map());
+      inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
+    }
+  });
+
+  useOnPacket(PacketType.ISP_REO, (_, inSim) => {
+    setPlayers(new Map());
+    inSim.send(new IS_TINY({ ReqI: 1, SubT: TinyType.TINY_NPL }));
   });
 
   return (

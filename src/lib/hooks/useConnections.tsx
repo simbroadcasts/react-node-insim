@@ -69,6 +69,12 @@ export function ConnectionsProvider({ children }: { children: ReactNode }) {
     });
   });
 
+  // useOnPacket(PacketType.ISP_STA, (packet) => {
+  //   if (packet.NumConns !== connections.size && packet.NumConns === 0) {
+  //     setConnections(new Map());
+  //   }
+  // });
+
   return (
     <ConnectionsContext.Provider value={connections}>
       {children}
