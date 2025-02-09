@@ -22,7 +22,7 @@ export type Player = Pick<
   IS_NPL,
   'UCID' | 'PLID' | 'PName' | 'Flags' | 'PType' | 'Plate'
 > & {
-  connection: Connection;
+  connection: Connection | null;
 };
 
 type Players = Map<number, Player>;
@@ -148,10 +148,6 @@ export function ConnectionsPlayersProvider({
   useOnPacket(PacketType.ISP_NPL, (packet) => {
     const connection = connections.get(packet.UCID);
 
-    if (!connection) {
-      return;
-    }
-
     setPlayers((prevPlayers) =>
       new Map(prevPlayers).set(packet.PLID, {
         UCID: packet.UCID,
@@ -160,7 +156,7 @@ export function ConnectionsPlayersProvider({
         Flags: packet.Flags,
         PType: packet.PType,
         Plate: packet.Plate,
-        connection,
+        connection: connection ?? null,
       }),
     );
   });
