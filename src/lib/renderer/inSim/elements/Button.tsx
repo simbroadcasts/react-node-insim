@@ -10,7 +10,7 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 import { pipe } from 'ramda';
-import type { ButtonProps } from 'react-node-insim/lib/components';
+import type { ButtonProps } from 'react-node-insim';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
