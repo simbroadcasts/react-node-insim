@@ -1,3 +1,4 @@
+import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
 import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
 
