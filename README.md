@@ -27,9 +27,8 @@ import { InSimFlags, IS_BTC, IS_MST, PacketType } from 'node-insim/packets';
 import { StrictMode } from 'react';
 import {
   Button,
-  ConnectionsProvider,
+  ConnectionsPlayersProvider,
   createRoot,
-  PlayersProvider,
   useConnections,
   useOnConnect,
   useOnPacket,
@@ -114,11 +113,9 @@ const root = createRoot({
 
 root.render(
   <StrictMode>
-    <PlayersProvider>
-      <ConnectionsProvider>
-        <App />
-      </ConnectionsProvider>
-    </PlayersProvider>
+    <ConnectionsPlayersProvider>
+      <App />
+    </ConnectionsPlayersProvider>
   </StrictMode>,
 );
 ```
