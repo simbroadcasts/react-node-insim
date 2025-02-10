@@ -28,7 +28,8 @@
     "format:no-write": "prettier \"./**/*.{js,ts,md,json,yml,yaml}\"",
     "format:check": "run-s \"format:no-write --check\"",
     "lint": "eslint \"./src/**/*\" --ext .js,.ts",
-    "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix"
+    "lint:fix": "eslint \"./src/**/*\" --ext .js,.ts --fix",
+    "prepack": "run-s build"
   },
   "peerDependencies": {
     "node-insim": "^0.9.1 || 1 || 2 || 3 || 4",
