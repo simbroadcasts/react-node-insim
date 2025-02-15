@@ -10,6 +10,7 @@ import {
   GridExample,
   PacketHooksExample,
   PlayersAndConnectionsExample,
+  ScopesExample,
   StackExample,
   TextBoxExample,
   ToggleButtonExample,
@@ -30,6 +31,7 @@ root.render(
   <StrictMode>
     <ConnectionsPlayersProvider>
       <PlayersAndConnectionsExample />
+      <ScopesExample />
       <PacketHooksExample />
       <FlexExample isEditorVisible={false} />
       <ButtonExample />

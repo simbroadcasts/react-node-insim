@@ -1525,6 +1525,11 @@ buffer-from@^1.0.0:
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
 
+bunshi@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/bunshi/-/bunshi-2.1.5.tgz#a8a942a482909303cd94b4dd93626d41a7d0bc4e"
+  integrity sha512-zO+qxwd2aBV+XUIf7LjL1G3lx5CtvbtXZD+WMkM9KD+RN0iFtitDVX2QDu/wzdQIj8hyXJlGDfVEfeoqhAVEfA==
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
@@ -2528,6 +2533,11 @@ jackspeak@^2.3.5:
     "@isaacs/cliui" "^8.0.2"
   optionalDependencies:
     "@pkgjs/parseargs" "^0.11.0"
+
+jotai@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/jotai/-/jotai-2.12.0.tgz#4078d774f2052d4fcf0f02c0dc9525c5bed7aa79"
+  integrity sha512-j5B4NmUw8gbuN7AG4NufWw00rfpm6hexL2CVhKD7juoP2YyD9FEUV5ar921JMvadyrxQhU1NpuKUL3QfsAlVpA==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"

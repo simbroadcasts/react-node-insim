@@ -3,6 +3,9 @@ import { createElement, forwardRef } from 'react';
 
 import { useInSimContext } from '../internals/InSimContext';
 import type { ButtonElement, ButtonElementProps } from '../renderer/inSim';
+import { useConnectionMaybeScope } from '../scopes/connectionScope';
+import { useGlobalScope } from '../scopes/globalScope';
+import { useHumanPlayerMaybeScope } from '../scopes/humanPlayerScope';
 import type { WithPartial } from '../types';
 
 export type ButtonProps = WithPartial<
@@ -26,7 +29,7 @@ export const Button = forwardRef(function Button(
     left = 0,
     width = 0,
     height = 0,
-    UCID = 0,
+    UCID: UCIDProp = 0,
     align = 'center',
     isDisabled = false,
     initializeDialogWithButtonText = false,
@@ -38,6 +41,11 @@ export const Button = forwardRef(function Button(
   ref: ForwardedRef<ButtonElement>,
 ) {
   const { shouldClearAllButtons, isConnected } = useInSimContext();
+  const isGlobal = useGlobalScope();
+  const connection = useConnectionMaybeScope();
+  const player = useHumanPlayerMaybeScope();
+
+  const UCID = isGlobal ? 255 : player?.UCID ?? connection?.UCID ?? UCIDProp;
 
   return createElement<ButtonElementProps>('btn', {
     shouldClearAllButtons,
@@ -46,7 +54,7 @@ export const Button = forwardRef(function Button(
     left,
     width,
     height,
-    UCID,
+    UCID: player?.UCID ?? connection?.UCID ?? UCID,
     align,
     isDisabled,
     initializeDialogWithButtonText,

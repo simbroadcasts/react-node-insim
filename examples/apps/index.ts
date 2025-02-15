@@ -3,6 +3,7 @@ export { FlexExample } from './FlexExample';
 export { GridExample } from './GridExample';
 export { PacketHooksExample } from './PacketHooksExample';
 export { PlayersAndConnectionsExample } from './PlayersAndConnectionsExample';
+export { ScopesExample } from './ScopesExample';
 export { StackExample } from './StackExample';
 export { TextBoxExample } from './TextBoxExample';
 export { ToggleButtonExample } from './ToggleButtonExample';

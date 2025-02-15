@@ -150,6 +150,10 @@ root.render(
   - [`usePlayers`](#useplayers)
   - [`useRaceControlMessage`](#useracecontrolmessage)
   - [`useInSim`](#useinsim)
+- [Scopes](#scopes)
+  - [Connection scope](#connection-scope)
+  - [Human player scope](#human-player-scope)
+  - [Global scope](#global-scope)
 - [Development](#development)
 
 ## Requirements
@@ -864,6 +868,102 @@ function App() {
   }, []);
 
   return null;
+}
+```
+
+## Scopes
+
+If you needed to show personalised buttons for each connection or each human player on track, you would need to map over the list of connections/players and pass the correct UCIDs to each button manually. Scopes help in such use cases.
+
+### Connection scope
+
+You can show different buttons to each connection by wrapping a sub-tree in a `ConnectionScopeProvider` and using the `useConnectionScope` hook anywhere within that sub-tree to access the connection object.
+
+You don't need to specify the button's UCID in the scope - the correct UCID will be injected automatically.
+
+```tsx
+import { 
+  Button, 
+  ConnectionScopeProvider, 
+  useConnectionScope,
+} from 'react-node-insim';
+
+function App() {
+  return (
+    <ConnectionScopeProvider>
+      <UserNameButton />
+    </ConnectionScopeProvider>
+  );
+}
+
+function UserNameButton() {
+  const { UName } = useConnectionScope();
+
+  return (
+    <Button top={0} left={80} height={5} width={25}>
+      {UName}
+    </Button>
+  );
+}
+```
+
+### Human player scope
+
+You can show different buttons to each human player on track by wrapping a sub-tree in a `ConnectionScopeProvider` and `HumanPlayerScopeProvider`, then using the `useHumanPlayerScope` hook anywhere within that sub-tree to access the player object.
+
+You don't need to specify the button's UCID in the scope - the correct UCID will be injected automatically.
+
+```tsx
+import {
+  Button,
+  HumanPlayerScopeProvider,
+  useHumanPlayerScope,
+} from 'react-node-insim';
+
+function App() {
+  return (
+    <ConnectionScopeProvider>
+      <HumanPlayerScopeProvider>
+        <PlayerNameButton />
+      </HumanPlayerScopeProvider>
+    </ConnectionScopeProvider>
+  );
+}
+
+function UserNameButton() {
+  const { PName } = useHumanPlayerScope();
+
+  return (
+    <Button top={0} left={80} height={5} width={25}>
+      {PName}
+    </Button>
+  );
+}
+```
+
+
+### Global scope
+
+You can show the same set of buttons to all connections wrapping a sub-tree in a `GlobalScopeProvider`.
+
+You don't need to specify the button's UCID in the scope - the correct UCID value of 255 will be injected automatically.
+
+```tsx
+import { Button, GlobalScopeProvider } from 'react-node-insim';
+
+function App() {
+  return (
+    <GlobalScopeProvider>
+      <Button
+        top={0}
+        left={80}
+        height={5}
+        width={40}
+      >
+        React Node InSim
+      </Button>
+    </GlobalScopeProvider>
+  );
 }
 ```
 
