@@ -19,7 +19,10 @@
     },
     "./package.json": "./package.json"
   },
-  "repository": "git@github.com:simbroadcasts/react-node-insim.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/simbroadcasts/react-node-insim.git"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc -b ./src/tsconfig.cjs.json ./src/tsconfig.esm.json ./src/tsconfig.types.json",
