@@ -54,7 +54,7 @@ export const Button = forwardRef(function Button(
     left,
     width,
     height,
-    UCID: player?.UCID ?? connection?.UCID ?? UCID,
+    UCID,
     align,
     isDisabled,
     initializeDialogWithButtonText,
