@@ -452,7 +452,11 @@ export class Button extends InSimElement {
     this.log(`add onClick listener`);
 
     const onClickListener = (btcPacket: IS_BTC, inSim: InSim) => {
-      if (this.packet.ClickID === btcPacket.ClickID) {
+      if (
+        this.packet.ClickID === btcPacket.ClickID &&
+        (this.packet.UCID === btcPacket.UCID ||
+          this.packet.UCID === Button.UCID_ALL)
+      ) {
         onClick(btcPacket, inSim);
       }
     };
