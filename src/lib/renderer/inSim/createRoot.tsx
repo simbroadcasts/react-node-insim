@@ -1,3 +1,4 @@
+import { Provider as JotaiProvider } from 'jotai/react';
 import { InSim } from 'node-insim';
 import type { InSimFlags } from 'node-insim/packets';
 import { IS_BTN, PacketType } from 'node-insim/packets';
@@ -111,7 +112,7 @@ export function createRoot({
           inSim={inSim}
           connectRequestId={CONNECT_REQUEST_ID}
         >
-          {children}
+          <JotaiProvider>{children}</JotaiProvider>
         </InSimContextProvider>,
         fiberRoot,
         null,
