@@ -3,6 +3,7 @@ import { Children, cloneElement } from 'react';
 
 import type { ButtonProps } from '../Button';
 import { Button } from '../Button';
+import { ToggleButton } from '../ui';
 
 type ButtonChild = ReactElement<ButtonProps>;
 
@@ -41,7 +42,7 @@ export function Stack({
         let widthBefore = 0;
 
         return Children.map(children, (child) => {
-          if (child.type !== Button) {
+          if (child.type !== Button && child.type !== ToggleButton) {
             return;
           }
 
