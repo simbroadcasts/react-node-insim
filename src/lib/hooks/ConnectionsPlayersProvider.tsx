@@ -197,6 +197,11 @@ export function ConnectionsPlayersProvider({
   );
 }
 
+/** @internal */
+export function useConnectionsPlayersMaybeContext() {
+  return useContext(ConnectionsPlayersContext);
+}
+
 export function useConnections(): ReadonlyMap<number, Connection> & {
   map: <Item>(
     callback: (connection: Connection, key: number, map: Connection[]) => Item,

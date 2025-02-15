@@ -2,11 +2,41 @@ import { createScope, molecule, use } from 'bunshi';
 import { ScopeProvider, useMolecule } from 'bunshi/react';
 import { atom, useAtomValue } from 'jotai';
 import { type ReactNode } from 'react';
-import { type Connection, useConnections } from 'react-node-insim';
+import {
+  type Connection,
+  ConnectionsPlayersProvider,
+  useConnections,
+} from 'react-node-insim';
+
+import { useConnectionsPlayersMaybeContext } from '../hooks/ConnectionsPlayersProvider';
 
 export const ConnectionScope = createScope<Connection | null>(null);
 
 export function ConnectionScopeProvider({ children }: { children: ReactNode }) {
+  const connectionsPlayersContext = useConnectionsPlayersMaybeContext();
+
+  if (!connectionsPlayersContext) {
+    return (
+      <ConnectionsPlayersProvider>
+        <ConnectionScopeProviderWithConnectionsPlayersProvider>
+          {children}
+        </ConnectionScopeProviderWithConnectionsPlayersProvider>
+      </ConnectionsPlayersProvider>
+    );
+  }
+
+  return (
+    <ConnectionScopeProviderWithConnectionsPlayersProvider>
+      {children}
+    </ConnectionScopeProviderWithConnectionsPlayersProvider>
+  );
+}
+
+export function ConnectionScopeProviderWithConnectionsPlayersProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const connections = useConnections();
 
   return (

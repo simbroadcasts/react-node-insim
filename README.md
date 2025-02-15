@@ -877,7 +877,7 @@ If you needed to show personalised buttons for each connection or each human pla
 
 ### Connection scope
 
-You can show different buttons to each connection by wrapping a sub-tree in a `ConnectionScopeProvider` and using the `useConnectionScope` hook anywhere within that sub-tree to access the connection object.
+You can show different buttons to each connection by wrapping a sub-tree in a `ConnectionScopeProvider`, then using the `useConnectionScope` hook anywhere within that sub-tree to access the connection object.
 
 You don't need to specify the button's UCID in the scope - the correct UCID will be injected automatically.
 
@@ -909,7 +909,7 @@ function UserNameButton() {
 
 ### Human player scope
 
-You can show different buttons to each human player on track by wrapping a sub-tree in a `ConnectionScopeProvider` and `HumanPlayerScopeProvider`, then using the `useHumanPlayerScope` hook anywhere within that sub-tree to access the player object.
+You can show different buttons to each human player on track by wrapping a sub-tree in a `HumanPlayerScopeProvider`, then using the `useHumanPlayerScope` hook anywhere within that sub-tree to access the player object.
 
 You don't need to specify the button's UCID in the scope - the correct UCID will be injected automatically.
 
@@ -922,11 +922,9 @@ import {
 
 function App() {
   return (
-    <ConnectionScopeProvider>
-      <HumanPlayerScopeProvider>
-        <PlayerNameButton />
-      </HumanPlayerScopeProvider>
-    </ConnectionScopeProvider>
+    <HumanPlayerScopeProvider>
+      <PlayerNameButton />
+    </HumanPlayerScopeProvider>
   );
 }
 

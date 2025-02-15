@@ -4,12 +4,40 @@ import { atom, useAtomValue } from 'jotai';
 import { PlayerType } from 'node-insim/packets';
 import { type ReactNode } from 'react';
 import type { Player } from 'react-node-insim';
-import { useConnectionScope } from 'react-node-insim';
-import { usePlayers } from 'react-node-insim';
+import {
+  ConnectionScopeProvider,
+  useConnectionMaybeScope,
+  useConnectionScope,
+  usePlayers,
+} from 'react-node-insim';
 
 export const HumanPlayerScope = createScope<Player | null>(null);
 
 export function HumanPlayerScopeProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const connection = useConnectionMaybeScope();
+
+  if (!connection) {
+    return (
+      <ConnectionScopeProvider>
+        <HumanPlayerScopeProviderInConnectionScope>
+          {children}
+        </HumanPlayerScopeProviderInConnectionScope>
+      </ConnectionScopeProvider>
+    );
+  }
+
+  return (
+    <HumanPlayerScopeProviderInConnectionScope>
+      {children}
+    </HumanPlayerScopeProviderInConnectionScope>
+  );
+}
+
+function HumanPlayerScopeProviderInConnectionScope({
   children,
 }: {
   children: ReactNode;
