@@ -473,7 +473,11 @@ export class Button extends InSimElement {
     this.log(`add onType listener`);
 
     const onTypeListener = (bttPacket: IS_BTT, inSim: InSim) => {
-      if (this.packet.ClickID === bttPacket.ClickID) {
+      if (
+        this.packet.ClickID === bttPacket.ClickID &&
+        (this.packet.UCID === bttPacket.UCID ||
+          this.packet.UCID === Button.UCID_ALL)
+      ) {
         onType(bttPacket, inSim);
       }
     };
