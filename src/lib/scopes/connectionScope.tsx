@@ -41,15 +41,22 @@ export function ConnectionScopeProviderWithConnectionsPlayersProvider({
 
   return (
     <>
-      {connections.map((connection) => (
-        <ScopeProvider
-          key={connection.UCID}
-          scope={ConnectionScope}
-          value={connection}
-        >
-          {children}
-        </ScopeProvider>
-      ))}
+      {connections.map((connection) => {
+        // Do not show buttons for host
+        if (connection.UCID === 0) {
+          return null;
+        }
+
+        return (
+          <ScopeProvider
+            key={connection.UCID}
+            scope={ConnectionScope}
+            value={connection}
+          >
+            {children}
+          </ScopeProvider>
+        );
+      })}
     </>
   );
 }
