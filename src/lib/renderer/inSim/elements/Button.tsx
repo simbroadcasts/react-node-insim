@@ -133,8 +133,13 @@ export class Button extends InSimElement {
   private static readonly UCID_ALL = 255;
 
   private packet: IS_BTN = new IS_BTN();
-  private onClickListeners: Required<ButtonElementProps>['onClick'][] = [];
-  private onTypeListeners: Required<ButtonElementProps>['onType'][] = [];
+
+  private onClick: ButtonElementProps['onClick'];
+  private onClickListener: ButtonElementProps['onClick'];
+
+  private onType: ButtonElementProps['onType'];
+  private onTypeListener: ButtonElementProps['onType'];
+
   private onNewConnectionListener?: (packet: IS_NCN, inSim: InSim) => void;
 
   constructor(
@@ -147,15 +152,48 @@ export class Button extends InSimElement {
   ) {
     super(id, parent, type, [], context, container);
 
-    this.assertButtonCount(props);
+    this.onClick = props.onClick;
+    this.onType = props.onType;
 
+    this.assertButtonCount(props);
     this.assertTextLength(props);
     this.assertDimensions(props, { checkWidthAndHeight: true });
 
     this.updateButtonPacketData(props);
 
-    this.addOnClickListener(props);
-    this.addOnTypeListener(props);
+    if (this.onClick) {
+      this.log(`add onClick listener`);
+
+      const onClickListener = (btcPacket: IS_BTC, inSim: InSim) => {
+        if (
+          this.packet.ClickID === btcPacket.ClickID &&
+          (this.packet.UCID === btcPacket.UCID ||
+            this.packet.UCID === Button.UCID_ALL)
+        ) {
+          this.onClick?.(btcPacket, inSim);
+        }
+      };
+
+      this.container.inSim.on(PacketType.ISP_BTC, onClickListener);
+      this.onClickListener = onClickListener;
+    }
+
+    if (this.onType) {
+      this.log(`add onType listener`);
+
+      const onTypeListener = (bttPacket: IS_BTT, inSim: InSim) => {
+        if (
+          this.packet.ClickID === bttPacket.ClickID &&
+          (this.packet.UCID === bttPacket.UCID ||
+            this.packet.UCID === Button.UCID_ALL)
+        ) {
+          this.onType?.(bttPacket, inSim);
+        }
+      };
+
+      this.container.inSim.on(PacketType.ISP_BTT, onTypeListener);
+      this.onTypeListener = onTypeListener;
+    }
 
     this.reinitializeButtonAfterNewConnection();
 
@@ -325,14 +363,12 @@ export class Button extends InSimElement {
 
     if (onClickChanged) {
       this.log(`onClick changed`);
-      this.clearOnClickListeners();
-      this.addOnClickListener(newProps);
+      this.onClick = newProps.onClick;
     }
 
     if (onTypeChanged) {
       this.log(`onType changed`);
-      this.clearOnTypeListeners();
-      this.addOnTypeListener(newProps);
+      this.onType = newProps.onType;
     }
   }
 
@@ -444,75 +480,23 @@ export class Button extends InSimElement {
     this.packet.ClickID = clickId + this.container.buttonClickIDStart;
   }
 
-  private addOnClickListener({ onClick }: ButtonElementProps): void {
-    if (!onClick) {
-      return;
-    }
-
-    this.log(`add onClick listener`);
-
-    const onClickListener = (btcPacket: IS_BTC, inSim: InSim) => {
-      if (
-        this.packet.ClickID === btcPacket.ClickID &&
-        (this.packet.UCID === btcPacket.UCID ||
-          this.packet.UCID === Button.UCID_ALL)
-      ) {
-        onClick(btcPacket, inSim);
-      }
-    };
-
-    this.container.inSim.on(PacketType.ISP_BTC, onClickListener);
-    this.onClickListeners.push(onClickListener);
-  }
-
-  private addOnTypeListener({ onType }: ButtonElementProps): void {
-    if (!onType) {
-      return;
-    }
-
-    this.log(`add onType listener`);
-
-    const onTypeListener = (bttPacket: IS_BTT, inSim: InSim) => {
-      if (
-        this.packet.ClickID === bttPacket.ClickID &&
-        (this.packet.UCID === bttPacket.UCID ||
-          this.packet.UCID === Button.UCID_ALL)
-      ) {
-        onType(bttPacket, inSim);
-      }
-    };
-
-    this.container.inSim.on(PacketType.ISP_BTT, onTypeListener);
-    this.onTypeListeners.push(onTypeListener);
-  }
-
   private clearAllListeners(): void {
-    this.clearOnClickListeners();
-    this.clearOnTypeListeners();
+    this.clearOnClickListener();
+    this.clearOnTypeListener();
     this.clearOnNewConnectionListener();
   }
 
-  private clearOnClickListeners(): void {
-    if (this.onClickListeners && this.onClickListeners.length > 0) {
-      this.onClickListeners.forEach(
-        (listener: (packet: IS_BTC, inSim: InSim) => void) => {
-          this.log(`remove onClick listener`);
-          this.container.inSim.off(PacketType.ISP_BTC, listener);
-        },
-      );
-      this.onClickListeners = [];
+  private clearOnClickListener(): void {
+    if (this.onClickListener) {
+      this.container.inSim.off(PacketType.ISP_BTC, this.onClickListener);
+      this.onClickListener = undefined;
     }
   }
 
-  private clearOnTypeListeners(): void {
-    if (this.onTypeListeners && this.onTypeListeners.length > 0) {
-      this.onTypeListeners.forEach(
-        (listener: (packet: IS_BTT, inSim: InSim) => void) => {
-          this.log(`remove onType listener`);
-          this.container.inSim.off(PacketType.ISP_BTT, listener);
-        },
-      );
-      this.onTypeListeners = [];
+  private clearOnTypeListener(): void {
+    if (this.onTypeListener) {
+      this.container.inSim.off(PacketType.ISP_BTT, this.onTypeListener);
+      this.onTypeListener = undefined;
     }
   }
 
