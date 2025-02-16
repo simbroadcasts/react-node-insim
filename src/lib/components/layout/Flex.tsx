@@ -29,7 +29,7 @@ export type FlexProps = PositionProps &
     borderColor?: 'light' | 'dark';
   };
 
-type ButtonChild = ReactElement<ButtonProps>;
+type ButtonChild = ReactElement<ButtonProps> | null;
 
 type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
 
@@ -271,8 +271,8 @@ export const Flex = forwardRef(function FlexWithRef(
   );
 });
 
-const isValidChild = (child: ReactElement) =>
-  child.type === Button || child.type === Flex;
+const isValidChild = (child: ReactElement | null): child is ReactElement =>
+  child !== null && (child.type === Button || child.type === Flex);
 
 const directionMap: Record<
   NonNullable<FlexProps['direction']>,
