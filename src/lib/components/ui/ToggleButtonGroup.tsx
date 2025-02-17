@@ -2,13 +2,13 @@ import type { IS_BTC } from 'node-insim/packets';
 import type { ButtonProps } from 'react-node-insim';
 import { Button, HStack } from 'react-node-insim';
 
-type Option = {
+export type ToggleButtonGroupOption = {
   label: string;
   value: string | number;
   isDisabled?: boolean;
 };
 
-type Props<TOption extends Option> = Omit<
+type Props<TOption extends ToggleButtonGroupOption> = Omit<
   ButtonProps,
   'color' | 'onClick' | 'background'
 > & {
@@ -18,7 +18,7 @@ type Props<TOption extends Option> = Omit<
   isDisabled?: boolean;
 };
 
-export function ToggleButtonGroup<TOption extends Option>({
+export function ToggleButtonGroup<TOption extends ToggleButtonGroupOption>({
   options,
   selectedOption,
   onChange,

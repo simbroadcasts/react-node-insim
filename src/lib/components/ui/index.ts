@@ -1,3 +1,6 @@
 export { TextBox } from './TextBox';
 export { ToggleButton } from './ToggleButton';
-export { ToggleButtonGroup } from './ToggleButtonGroup';
+export {
+  type ToggleButtonGroupOption,
+  ToggleButtonGroup,
+} from './ToggleButtonGroup';
