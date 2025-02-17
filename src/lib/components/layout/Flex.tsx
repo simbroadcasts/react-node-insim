@@ -17,6 +17,7 @@ import yoga from 'yoga-layout-prebuilt';
 import type { Flex as FlexElement } from '../../renderer/inSim';
 import type { ButtonProps } from '../Button';
 import { Button } from '../Button';
+import { ToggleButton } from '../ui';
 
 export type FlexProps = PositionProps &
   Partial<
@@ -272,7 +273,8 @@ export const Flex = forwardRef(function FlexWithRef(
 });
 
 const isValidChild = (child: ReactElement | null): child is ReactElement =>
-  child !== null && (child.type === Button || child.type === Flex);
+  child !== null &&
+  (child.type === Button || child.type === ToggleButton || child.type === Flex);
 
 const directionMap: Record<
   NonNullable<FlexProps['direction']>,
