@@ -1,16 +1,16 @@
 import type { FlexProps } from '../../../components';
-import { InSimElement } from '../InSimElement';
-import type { Container, HostContext, Instance, Type } from '../types';
+import { InSimElement_OLD } from '../InSimElement_OLD';
+import type { Container_OLD, HostContext, Instance_OLD, Type } from '../types';
 
-export class Flex extends InSimElement {
+export class Flex extends InSimElement_OLD {
   constructor(
     id: number,
     parent: number,
     type: Type,
     props: FlexProps,
-    children: Array<Instance>,
+    children: Array<Instance_OLD>,
     context: HostContext,
-    container: Container,
+    container: Container_OLD,
   ) {
     super(id, parent, type, children, context, container);
   }

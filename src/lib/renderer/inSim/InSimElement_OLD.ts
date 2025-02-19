@@ -1,8 +1,8 @@
 import type { Key, Ref } from 'react';
 
 import type {
-  Children,
-  Container,
+  Children_OLD,
+  Container_OLD,
   HostContext,
   Props,
   Type,
@@ -16,21 +16,21 @@ export type InSimElementProps<PublicInstance, Props> = Props & {
   isConnected?: boolean;
 };
 
-export abstract class InSimElement {
+export abstract class InSimElement_OLD {
   readonly id: number;
   parent: number;
   readonly type: Type;
-  readonly children: Children;
+  readonly children: Children_OLD;
   readonly context: HostContext;
-  readonly container: Container;
+  readonly container: Container_OLD;
 
   protected constructor(
     id: number,
     parent: number,
     type: Type,
-    children: Children,
+    children: Children_OLD,
     context: HostContext,
-    container: Container,
+    container: Container_OLD,
   ) {
     this.id = id;
     this.parent = parent;

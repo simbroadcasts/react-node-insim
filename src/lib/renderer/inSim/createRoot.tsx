@@ -5,6 +5,10 @@ import { IS_BTN, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import type { OpaqueRoot } from 'react-reconciler';
 import { ConcurrentRoot } from 'react-reconciler/constants';
+import Yoga, {
+  FLEX_DIRECTION_COLUMN,
+  FLEX_DIRECTION_ROW,
+} from 'yoga-layout-prebuilt';
 
 import { InSimContextProvider } from '../../internals/InSimContext';
 import { log } from '../../internals/logger';
@@ -58,7 +62,13 @@ export function createRoot({
   const inSim = new InSim();
 
   const rootID = '' + idCounter++;
+  const node = Yoga.Node.create();
+  node.setWidth(200);
+  node.setHeight(200);
+  node.setFlexDirection(FLEX_DIRECTION_ROW);
   const container: Container = {
+    type: 'root',
+    node,
     rootID,
     inSim,
     pendingChildren: [],

@@ -4,6 +4,8 @@ import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
 import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
 
+import { NewButton } from '../src/lib/components/NewButton';
+import { NewFlex } from '../src/lib/components/NewFlex';
 import {
   ButtonExample,
   FlexExample,
@@ -28,21 +30,32 @@ const root = createRoot({
 });
 
 root.render(
-  <StrictMode>
-    <ConnectionsPlayersProvider>
-      <PlayersAndConnectionsExample />
-      <ScopesExample />
-      <PacketHooksExample />
-      <FlexExample isEditorVisible={false} />
-      <ButtonExample />
-      <GridExample />
-      <StackExample />
-      <ToggleButtonExample />
-      <ToggleButtonGroupExample />
-      <TextBoxExample />
-    </ConnectionsPlayersProvider>
-  </StrictMode>,
+  <NewFlex width={50} height={40}>
+    <NewButton width={20} height={5}>
+      Hello
+    </NewButton>
+    <NewButton width={20} height={5}>
+      World
+    </NewButton>
+  </NewFlex>,
 );
+
+// root.render(
+//   <StrictMode>
+//     <ConnectionsPlayersProvider>
+//       <PlayersAndConnectionsExample />
+//       <ScopesExample />
+//       <PacketHooksExample />
+//       <FlexExample isEditorVisible={false} />
+//       <ButtonExample />
+//       <GridExample />
+//       <StackExample />
+//       <ToggleButtonExample />
+//       <ToggleButtonGroupExample />
+//       <TextBoxExample />
+//     </ConnectionsPlayersProvider>
+//   </StrictMode>,
+// );
 
 process.on('uncaughtException', (error) => {
   console.log(error.message);

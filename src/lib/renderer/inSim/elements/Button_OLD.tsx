@@ -14,10 +14,10 @@ import type { ButtonProps } from 'react-node-insim';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
-import type { InSimElementProps } from '../InSimElement';
-import { InSimElement } from '../InSimElement';
+import type { InSimElementProps } from '../InSimElement_OLD';
+import { InSimElement_OLD } from '../InSimElement_OLD';
 import type {
-  Container,
+  Container_OLD,
   HostContext,
   PublicInstance,
   TextChildren,
@@ -27,7 +27,7 @@ import type {
 
 const log = baseLog.extend('button');
 
-export type ButtonElement = PublicInstance<Button>;
+export type ButtonElement = PublicInstance<Button_OLD>;
 
 export type ButtonElementProps = InSimElementProps<
   ButtonElement,
@@ -128,7 +128,7 @@ type ButtonBaseProps = {
   flex?: number;
 };
 
-export class Button extends InSimElement {
+export class Button_OLD extends InSimElement_OLD {
   private static readonly REQUEST_ID = 1;
   private static readonly UCID_ALL = 255;
 
@@ -148,7 +148,7 @@ export class Button extends InSimElement {
     type: Type,
     props: ButtonElementProps,
     context: HostContext,
-    container: Container,
+    container: Container_OLD,
   ) {
     super(id, parent, type, [], context, container);
 
@@ -168,7 +168,7 @@ export class Button extends InSimElement {
         if (
           this.packet.ClickID === btcPacket.ClickID &&
           (this.packet.UCID === btcPacket.UCID ||
-            this.packet.UCID === Button.UCID_ALL)
+            this.packet.UCID === Button_OLD.UCID_ALL)
         ) {
           this.onClick?.(btcPacket, inSim);
         }
@@ -185,7 +185,7 @@ export class Button extends InSimElement {
         if (
           this.packet.ClickID === bttPacket.ClickID &&
           (this.packet.UCID === bttPacket.UCID ||
-            this.packet.UCID === Button.UCID_ALL)
+            this.packet.UCID === Button_OLD.UCID_ALL)
         ) {
           this.onType?.(bttPacket, inSim);
         }
@@ -324,7 +324,7 @@ export class Button extends InSimElement {
     const text = this.buildButtonText(props);
 
     const buttonData: Required<IS_BTN_Data> = {
-      ReqI: Button.REQUEST_ID,
+      ReqI: Button_OLD.REQUEST_ID,
       ClickID: this.packet.ClickID,
       UCID: props.UCID,
       T: props.top,
@@ -345,7 +345,7 @@ export class Button extends InSimElement {
       if (
         packet.ReqI === 0 &&
         (this.packet.UCID === packet.UCID ||
-          this.packet.UCID === Button.UCID_ALL)
+          this.packet.UCID === Button_OLD.UCID_ALL)
       ) {
         this.log('reinitialize existing button');
         this.sendNewButton();
@@ -455,11 +455,11 @@ export class Button extends InSimElement {
   private generateClickIdForUCID(ucid: number): void {
     const freeClickId = this.container.buttonUCIDsByClickID.findIndex(
       (ucIds) => {
-        if (ucid === Button.UCID_ALL) {
+        if (ucid === Button_OLD.UCID_ALL) {
           return ucIds.size === 0;
         }
 
-        return !ucIds.has(ucid) && !ucIds.has(Button.UCID_ALL);
+        return !ucIds.has(ucid) && !ucIds.has(Button_OLD.UCID_ALL);
       },
     );
     const clickId =
