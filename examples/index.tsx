@@ -8,6 +8,7 @@ import Yoga from 'yoga-layout-prebuilt';
 import { Button } from '../src/lib/components/Button';
 import { Flex } from '../src/lib/components/layout/Flex';
 import { log } from '../src/lib/internals/logger';
+import applyStyles from '../src/lib/renderer/inSim/styles';
 import {
   ButtonExample,
   FlexExample,
@@ -22,6 +23,56 @@ import {
 } from './apps';
 
 const host = process.env.HOST ?? '127.0.0.1';
+
+const rootNode = Yoga.Node.create();
+
+applyStyles(rootNode, {
+  width: 200,
+  height: 200,
+  display: 'flex',
+  flexDirection: 'row',
+  position: 'relative',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const flexNode = Yoga.Node.create();
+applyStyles(flexNode, {
+  width: 200,
+  height: 50,
+  position: 'relative',
+  flexDirection: 'column',
+});
+
+const button1Node = Yoga.Node.create();
+applyStyles(button1Node, {
+  width: 20,
+  height: 10,
+});
+
+const button2Node = Yoga.Node.create();
+applyStyles(button2Node, {
+  width: 20,
+  height: 10,
+});
+
+flexNode.insertChild(button1Node, 0);
+flexNode.insertChild(button2Node, 1);
+
+rootNode.insertChild(flexNode, 0);
+
+console.log('before');
+console.log('rootNode', rootNode.getComputedLayout());
+console.log('flexNode', flexNode.getComputedLayout());
+console.log('button1Node', button1Node.getComputedLayout());
+console.log('button2Node', button2Node.getComputedLayout());
+rootNode.calculateLayout();
+// flexNode.calculateLayout();
+console.log('after');
+console.log('rootNode', rootNode.getComputedLayout());
+console.log('flexNode', flexNode.getComputedLayout());
+console.log('button1Node', button1Node.getComputedLayout());
+console.log('button2Node', button2Node.getComputedLayout());
 
 const root = createRoot({
   name: 'React InSim',
@@ -45,7 +96,7 @@ root.render(
   //     World
   //   </Button>
   // </>,
-  <Flex width={200} height={50}>
+  <Flex position="relative" width={200} height={50}>
     <Button width={20} height={10}>
       test1
     </Button>

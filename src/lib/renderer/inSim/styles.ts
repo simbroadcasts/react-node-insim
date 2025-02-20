@@ -304,7 +304,6 @@ const applyPaddingStyles = (node: YogaNode, style: Styles): void => {
 
 const applyFlexStyles = (node: YogaNode, style: Styles): void => {
   if ('flex' in style && style.flex !== undefined) {
-    console.log('SET FLEX', style.flex);
     node.setFlex(style.flex);
   }
 
@@ -434,13 +433,11 @@ const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
       node.setWidthAuto();
     }
   } else {
-    console.log('SET WIDTH AUTO');
     node.setWidthAuto();
   }
 
   if ('height' in style) {
     if (typeof style.height === 'number') {
-      console.log('SET HEIGHT', style.height);
       node.setHeight(style.height);
     } else if (typeof style.height === 'string') {
       node.setHeightPercent(Number.parseInt(style.height, 10));
@@ -511,7 +508,6 @@ const applyBorderStyles = (node: YogaNode, style: Styles): void => {
 // };
 
 const applyStyles = (node: YogaNode, style: Styles = {}): void => {
-  console.log('APPLY STYLES', style);
   applyPositionStyles(node, style);
   applyMarginStyles(node, style);
   applyPaddingStyles(node, style);

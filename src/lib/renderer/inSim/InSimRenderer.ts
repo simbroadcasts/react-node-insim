@@ -202,8 +202,11 @@ export const InSimRenderer = ReactReconciler<
   commitMount(instance, type: Type, props) {
     mountLog('commitMount', type);
 
-    // instance.container.node.calculateLayout();
-    // instance.node.calculateLayout();
+    mountLog(
+      'instance parent node',
+      instance.node.getParent()?.getComputedLayout(),
+    );
+
     mountLog(
       'CURRENT LAYOUT',
       instance.type,
@@ -211,19 +214,9 @@ export const InSimRenderer = ReactReconciler<
     );
     instance.clickId = ++instanceCounter;
 
-    // let parent = instance.parent;
-    // while (parent) {
-    //   parent.node.calculateLayout();
-    //
-    //   parent = 'parent' in parent ? parent.parent : null;
-    // }
-
     if (type === 'flex') {
-      // instance.node.calculateLayout();
-
       const updateChildren = (container: InSimElement) => {
         container.children.forEach((child) => {
-          // child.node.calculateLayout();
           if (child.type === 'flex') {
             updateChildren(child);
           } else if (child.type === 'lfs-button') {
@@ -249,12 +242,9 @@ export const InSimRenderer = ReactReconciler<
       };
       updateChildren(instance);
 
-      // instance.parent?.node.calculateLayout();
       return;
     }
     if (type === 'lfs-button') {
-      // instance.node.calculateLayout();
-
       const { left, top, width, height } = instance.node.getComputedLayout();
 
       if (instance.props.isConnected) {
@@ -283,8 +273,6 @@ export const InSimRenderer = ReactReconciler<
       throw new Error('Should have old props');
     }
 
-    // instance.container.node.calculateLayout();
-    // instance.node.calculateLayout();
     updateLog(
       'CURRENT LAYOUT',
       instance.type,
@@ -294,22 +282,14 @@ export const InSimRenderer = ReactReconciler<
 
     applyStyles(instance.node, newProps);
 
-    // let parent = instance.parent;
-    // while (parent) {
-    //   parent.node.calculateLayout();
-    //   parent = 'parent' in parent ? parent.parent : null;
-    // }
-
+    instance.container.node.calculateLayout();
     updateLog('NEW LAYOUT', instance.type, instance.node.getComputedLayout());
-
-    // instance.container.node.calculateLayout();
 
     if (type === 'flex') {
       // instance.node.calculateLayout();
 
       const updateChildren = (container: InSimElement) => {
         container.children.forEach((child) => {
-          // child.node.calculateLayout();
           if (child.type === 'flex') {
             updateChildren(child);
           } else if (child.type === 'lfs-button') {
@@ -334,15 +314,15 @@ export const InSimRenderer = ReactReconciler<
         });
       };
       updateChildren(instance);
-      // instance.parent?.node.calculateLayout();
       return;
     }
 
     if (type === 'lfs-button') {
-      // instance.container.node.calculateLayout();
-      // instance.node.calculateLayout();
-
-      updateLog('parent node child', instance.container.node.getChildCount());
+      updateLog(
+        'instance node position type',
+        instance.node.getParent()?.getWidth(),
+        instance.node.getParent()?.getHeight(),
+      );
 
       const { left, top, width, height } = instance.node.getComputedLayout();
 
@@ -402,7 +382,6 @@ export const InSimRenderer = ReactReconciler<
     child.parent = container;
     container.children.push(child);
     container.node.calculateLayout();
-    // child.node.calculateLayout();
 
     appendToContainerLog('get computed layout', child.node.getComputedLayout());
   },

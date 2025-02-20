@@ -64,20 +64,15 @@ export function createRoot({
 
   const rootID = '' + idCounter++;
   const node = Yoga.Node.create();
-  // node.setWidth(200);
-  // node.setHeight(200);
-  // node.setDisplay(Yoga.DISPLAY_FLEX);
-  // node.setFlexDirection(Yoga.FLEX_DIRECTION_ROW);
 
   applyStyles(node, {
     width: 200,
     height: 200,
     display: 'flex',
     flexDirection: 'row',
+    position: 'relative',
     ...rootNodeStyle,
   });
-
-  console.log(node.getAlignItems());
 
   console.log('CREATE ROOT');
   const container: Container = {
