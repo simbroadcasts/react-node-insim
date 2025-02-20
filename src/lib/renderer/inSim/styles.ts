@@ -1,5 +1,9 @@
 import Yoga, { type YogaNode } from 'yoga-layout-prebuilt';
 
+import { log as baseLog } from '../../internals/logger';
+
+const log = baseLog.extend('styles');
+
 export type Styles = {
   readonly textWrap?:
     | 'wrap'
@@ -22,11 +26,11 @@ export type Styles = {
   //  */
   // readonly rowGap?: number;
 
-  /**
-   * Size of the gap between an element's columns and rows. Shorthand for `columnGap` and `rowGap`.
-   */
-  readonly gap?: number;
-
+  // /**
+  //  * Size of the gap between an element's columns and rows. Shorthand for `columnGap` and `rowGap`.
+  //  */
+  // readonly gap?: number;
+  //
   /**
    * Margin on all sides. Equivalent to setting `marginTop`, `marginBottom`, `marginLeft` and `marginRight`.
    */
@@ -96,6 +100,8 @@ export type Styles = {
    * Right padding.
    */
   readonly paddingRight?: number;
+
+  readonly flex?: number;
 
   /**
    * This property defines the ability for a flex item to grow if necessary.
@@ -299,6 +305,10 @@ const applyPaddingStyles = (node: YogaNode, style: Styles): void => {
 };
 
 const applyFlexStyles = (node: YogaNode, style: Styles): void => {
+  if ('flex' in style && style.flex !== undefined) {
+    node.setFlex(style.flex);
+  }
+
   if ('flexGrow' in style) {
     node.setFlexGrow(style.flexGrow ?? 0);
   }
@@ -418,12 +428,18 @@ const applyFlexStyles = (node: YogaNode, style: Styles): void => {
 const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
   if ('width' in style) {
     if (typeof style.width === 'number') {
+      log('set width number', style.width);
       node.setWidth(style.width);
     } else if (typeof style.width === 'string') {
+      log('set width percent', style.width);
       node.setWidthPercent(Number.parseInt(style.width, 10));
     } else {
+      log('set auto width');
       node.setWidthAuto();
     }
+  } else {
+    log('set auto width');
+    node.setWidthAuto();
   }
 
   if ('height' in style) {
@@ -497,7 +513,7 @@ const applyBorderStyles = (node: YogaNode, style: Styles): void => {
 //   }
 // };
 
-const styles = (node: YogaNode, style: Styles = {}): void => {
+const applyStyles = (node: YogaNode, style: Styles = {}): void => {
   applyPositionStyles(node, style);
   applyMarginStyles(node, style);
   applyPaddingStyles(node, style);
@@ -508,4 +524,4 @@ const styles = (node: YogaNode, style: Styles = {}): void => {
   // applyGapStyles(node, style);
 };
 
-export default styles;
+export default applyStyles;

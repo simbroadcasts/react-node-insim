@@ -1,17 +1,12 @@
 import { createElement } from 'react';
 
+import type { Styles } from '../renderer/inSim/styles';
 import type { ButtonChild } from './types';
 
-export type NewFlexProps = {
-  width: number;
-  height: number;
+export type NewFlexProps = Styles & {
   children: ButtonChild | ButtonChild[];
 };
 
-export function NewFlex({ width, height, children }: NewFlexProps) {
-  return createElement<NewFlexProps>('flex', {
-    width,
-    height,
-    children,
-  });
+export function NewFlex(props: NewFlexProps) {
+  return createElement<NewFlexProps>('flex', props);
 }

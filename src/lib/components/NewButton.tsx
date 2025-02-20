@@ -2,14 +2,13 @@ import { createElement } from 'react';
 
 import { useInSimContext } from '../internals/InSimContext';
 import type { TextChildren } from '../renderer/inSim';
+import type { Styles } from '../renderer/inSim/styles';
 
-export type NewButtonProps = {
-  width: number;
-  height: number;
+export type NewButtonProps = Styles & {
   children: TextChildren;
 };
 
-export function NewButton({ width, height, children }: NewButtonProps) {
+export function NewButton(props: NewButtonProps) {
   const { shouldClearAllButtons, isConnected } = useInSimContext();
 
   return createElement<
@@ -17,9 +16,7 @@ export function NewButton({ width, height, children }: NewButtonProps) {
       isConnected: boolean;
     }
   >('lfs-button', {
-    width,
-    height,
-    children,
+    ...props,
     isConnected,
   });
 }
