@@ -1,9 +1,5 @@
 import Yoga, { type YogaNode } from 'yoga-layout-prebuilt';
 
-import { log as baseLog } from '../../internals/logger';
-
-const log = baseLog.extend('styles');
-
 export type Styles = {
   readonly textWrap?:
     | 'wrap'
@@ -110,8 +106,9 @@ export type Styles = {
   readonly flexGrow?: number;
 
   /**
-   * It specifies the “flex shrink factor”, which determines how much the flex item will shrink relative to the rest of the flex items in the flex container when there isn’t enough space on the row.
-   * See [flex-shrink](https://css-tricks.com/almanac/properties/f/flex-shrink/).
+   * It specifies the “flex shrink factor”, which determines how much the flex item will shrink relative to the rest of
+   * the flex items in the flex container when there isn’t enough space on the row. See
+   * [flex-shrink](https://css-tricks.com/almanac/properties/f/flex-shrink/).
    */
   readonly flexShrink?: number;
 
@@ -122,20 +119,21 @@ export type Styles = {
   readonly flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
 
   /**
-   * It specifies the initial size of the flex item, before any available space is distributed according to the flex factors.
-   * See [flex-basis](https://css-tricks.com/almanac/properties/f/flex-basis/).
+   * It specifies the initial size of the flex item, before any available space is distributed according to the flex
+   * factors. See [flex-basis](https://css-tricks.com/almanac/properties/f/flex-basis/).
    */
   readonly flexBasis?: number | string;
 
   /**
-   * It defines whether the flex items are forced in a single line or can be flowed into multiple lines. If set to multiple lines, it also defines the cross-axis which determines the direction new lines are stacked in.
-   * See [flex-wrap](https://css-tricks.com/almanac/properties/f/flex-wrap/).
+   * It defines whether the flex items are forced in a single line or can be flowed into multiple lines. If set to
+   * multiple lines, it also defines the cross-axis which determines the direction new lines are stacked in. See
+   * [flex-wrap](https://css-tricks.com/almanac/properties/f/flex-wrap/).
    */
   readonly flexWrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
 
   /**
-   * The align-items property defines the default behavior for how items are laid out along the cross axis (perpendicular to the main axis).
-   * See [align-items](https://css-tricks.com/almanac/properties/a/align-items/).
+   * The align-items property defines the default behavior for how items are laid out along the cross axis
+   * (perpendicular to the main axis). See [align-items](https://css-tricks.com/almanac/properties/a/align-items/).
    */
   readonly alignItems?: 'flex-start' | 'center' | 'flex-end' | 'stretch';
 
@@ -306,6 +304,7 @@ const applyPaddingStyles = (node: YogaNode, style: Styles): void => {
 
 const applyFlexStyles = (node: YogaNode, style: Styles): void => {
   if ('flex' in style && style.flex !== undefined) {
+    console.log('SET FLEX', style.flex);
     node.setFlex(style.flex);
   }
 
@@ -428,22 +427,20 @@ const applyFlexStyles = (node: YogaNode, style: Styles): void => {
 const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
   if ('width' in style) {
     if (typeof style.width === 'number') {
-      log('set width number', style.width);
       node.setWidth(style.width);
     } else if (typeof style.width === 'string') {
-      log('set width percent', style.width);
       node.setWidthPercent(Number.parseInt(style.width, 10));
     } else {
-      log('set auto width');
       node.setWidthAuto();
     }
   } else {
-    log('set auto width');
+    console.log('SET WIDTH AUTO');
     node.setWidthAuto();
   }
 
   if ('height' in style) {
     if (typeof style.height === 'number') {
+      console.log('SET HEIGHT', style.height);
       node.setHeight(style.height);
     } else if (typeof style.height === 'string') {
       node.setHeightPercent(Number.parseInt(style.height, 10));
@@ -514,6 +511,7 @@ const applyBorderStyles = (node: YogaNode, style: Styles): void => {
 // };
 
 const applyStyles = (node: YogaNode, style: Styles = {}): void => {
+  console.log('APPLY STYLES', style);
   applyPositionStyles(node, style);
   applyMarginStyles(node, style);
   applyPaddingStyles(node, style);

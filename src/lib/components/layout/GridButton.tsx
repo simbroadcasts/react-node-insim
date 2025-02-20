@@ -3,8 +3,8 @@ import type { ForwardedRef } from 'react';
 import { forwardRef } from 'react';
 
 import type { ButtonElement } from '../../renderer/inSim';
-import type { ButtonProps } from '../Button';
-import { Button } from '../Button';
+import type { ButtonProps } from '../Button_OLD';
+import { Button_OLD } from '../Button_OLD';
 
 export type GridButtonProps = ButtonProps & Node['config'];
 
@@ -12,5 +12,5 @@ export const GridButton = forwardRef(function GridButton(
   props: GridButtonProps,
   ref: ForwardedRef<ButtonElement>,
 ) {
-  return <Button ref={ref} {...props} />;
+  return <Button_OLD ref={ref} {...props} />;
 });

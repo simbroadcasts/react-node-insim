@@ -3,9 +3,11 @@ import './env';
 import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
 import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
+import Yoga from 'yoga-layout-prebuilt';
 
-import { NewButton } from '../src/lib/components/NewButton';
-import { NewFlex } from '../src/lib/components/NewFlex';
+import { Button } from '../src/lib/components/Button';
+import { Flex } from '../src/lib/components/layout/Flex';
+import { log } from '../src/lib/internals/logger';
 import {
   ButtonExample,
   FlexExample,
@@ -27,46 +29,52 @@ const root = createRoot({
   port: process.env.PORT ? parseInt(process.env.PORT, 10) : 29999,
   adminPassword: process.env.ADMIN ?? '',
   flags: host === '127.0.0.1' ? InSimFlags.ISF_LOCAL : undefined,
+  rootNodeStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 root.render(
   // TODO flex={1} results in 0 width
-  // <NewFlex
-  //   width={200}
-  //   height={50}
-  //   flexDirection="column"
-  //   justifyContent="space-evenly"
-  //   alignItems="stretch"
-  // >
-  //   <NewButton flex={1} height={5}>
+  // <>
+  //   <Button flex={1} height={5}>
   //     Hello
-  //   </NewButton>
-  //   <NewButton flex={1} height={5}>
+  //   </Button>
+  //   <Button flex={1} height={5}>
   //     World
-  //   </NewButton>
-  // </NewFlex>,
-  // <NewFlex
-  //   minWidth="50%"
+  //   </Button>
+  // </>,
+  <Flex width={200} height={50}>
+    <Button width={20} height={10}>
+      test1
+    </Button>
+    <Button width={20} height={10}>
+      test2
+    </Button>
+  </Flex>,
+  // <Flex
+  //   width={100}
   //   height={40}
   //   flexDirection="row"
-  //   justifyContent="space-between"
+  //   justifyContent="flex-end"
   //   alignItems="stretch"
   // >
-  //   <NewButton width={10} height={5}>
+  //   <Button flex={1} width={10} height={5}>
   //     Hello
-  //   </NewButton>
-  //   <NewButton width={20} height={5}>
+  //   </Button>
+  //   <Button flex={1} width={20} height={5}>
   //     World
-  //   </NewButton>
-  // </NewFlex>,
-  <>
-    <NewButton width={20} height={5}>
-      Hello
-    </NewButton>
-    <NewButton width={20} height={5}>
-      World
-    </NewButton>
-  </>,
+  //   </Button>
+  // </Flex>,
+  // <>
+  //   <Button width={20} height={5}>
+  //     Hello
+  //   </Button>
+  //   <Button width={20} height={5}>
+  //     World
+  //   </Button>
+  // </>,
 );
 
 // root.render(

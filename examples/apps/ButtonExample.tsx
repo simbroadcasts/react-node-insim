@@ -1,7 +1,7 @@
 import { IS_MST } from 'node-insim/packets';
 
 import type { ButtonProps } from '../../src';
-import { Button, VStack } from '../../src';
+import { Button_OLD, VStack } from '../../src';
 
 export function ButtonExample() {
   const top = 122;
@@ -11,7 +11,7 @@ export function ButtonExample() {
 
   return (
     <>
-      <Button
+      <Button_OLD
         top={top}
         left={left}
         width={20}
@@ -21,7 +21,7 @@ export function ButtonExample() {
         UCID={255}
       >
         Button
-      </Button>
+      </Button_OLD>
       {backgroundColors.map((background, backgroundIndex) => (
         <VStack
           key={background}
@@ -33,13 +33,13 @@ export function ButtonExample() {
           background={background}
         >
           {textColors.map((color) => (
-            <Button
+            <Button_OLD
               key={color}
               color={color}
               align={alignments[backgroundIndex]}
             >
               {color}
-            </Button>
+            </Button_OLD>
           ))}
         </VStack>
       ))}
@@ -51,7 +51,7 @@ export function ButtonExample() {
         UCID={255}
         background="dark"
       >
-        <Button
+        <Button_OLD
           onClick={(packet, inSim) => {
             inSim.send(
               new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
@@ -59,8 +59,8 @@ export function ButtonExample() {
           }}
         >
           Click
-        </Button>
-        <Button
+        </Button_OLD>
+        <Button_OLD
           onType={(packet, inSim) => {
             inSim.send(
               new IS_MST({
@@ -70,7 +70,7 @@ export function ButtonExample() {
           }}
         >
           Type in
-        </Button>
+        </Button_OLD>
       </VStack>
       <VStack
         top={top + 5 + height * 2}
@@ -79,7 +79,7 @@ export function ButtonExample() {
         height={height}
         UCID={255}
       >
-        <Button
+        <Button_OLD
           variant="light"
           onClick={(packet, inSim) => {
             inSim.send(
@@ -88,8 +88,8 @@ export function ButtonExample() {
           }}
         >
           light
-        </Button>
-        <Button
+        </Button_OLD>
+        <Button_OLD
           variant="light"
           isDisabled
           onClick={(packet, inSim) => {
@@ -99,8 +99,8 @@ export function ButtonExample() {
           }}
         >
           light
-        </Button>
-        <Button
+        </Button_OLD>
+        <Button_OLD
           variant="dark"
           onClick={(packet, inSim) => {
             inSim.send(
@@ -109,8 +109,8 @@ export function ButtonExample() {
           }}
         >
           dark
-        </Button>
-        <Button
+        </Button_OLD>
+        <Button_OLD
           variant="dark"
           isDisabled
           onClick={(packet, inSim) => {
@@ -120,7 +120,7 @@ export function ButtonExample() {
           }}
         >
           dark
-        </Button>
+        </Button_OLD>
       </VStack>
     </>
   );

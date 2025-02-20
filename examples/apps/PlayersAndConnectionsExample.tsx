@@ -2,7 +2,7 @@ import type { InSim } from 'node-insim';
 import type { IS_BTC } from 'node-insim/packets';
 import { IS_MST, MessageSound } from 'node-insim/packets';
 import {
-  Button,
+  Button_OLD,
   useConnections,
   useInSim,
   usePlayers,
@@ -76,7 +76,7 @@ export function PlayersAndConnectionsExample() {
 
   return (
     <>
-      <Button
+      <Button_OLD
         top={top}
         left={left}
         width={width}
@@ -85,7 +85,7 @@ export function PlayersAndConnectionsExample() {
         color="title"
       >
         Players ({players.size})
-      </Button>
+      </Button_OLD>
       <VStack
         background="dark"
         top={top + height}
@@ -95,12 +95,15 @@ export function PlayersAndConnectionsExample() {
         UCID={255}
       >
         {players.map((player) => (
-          <Button key={player.PLID} onClick={handlePlayerClick(player.PLID)}>
+          <Button_OLD
+            key={player.PLID}
+            onClick={handlePlayerClick(player.PLID)}
+          >
             {player.PName}
-          </Button>
+          </Button_OLD>
         ))}
       </VStack>
-      <Button
+      <Button_OLD
         top={top}
         left={left + width}
         width={width}
@@ -109,7 +112,7 @@ export function PlayersAndConnectionsExample() {
         color="title"
       >
         Connections ({connections.size})
-      </Button>
+      </Button_OLD>
       <VStack
         background="dark"
         top={top + height}
@@ -119,12 +122,12 @@ export function PlayersAndConnectionsExample() {
         UCID={255}
       >
         {connections.map((connection) => (
-          <Button
+          <Button_OLD
             key={connection.UCID}
             onClick={handleConnectionClick(connection.UCID)}
           >
             {connection.UName}
-          </Button>
+          </Button_OLD>
         ))}
       </VStack>
     </>

@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 
 import type { FlexProps } from '../../src';
-import { Button, Flex, HStack } from '../../src';
+import { Button_OLD, Flex_OLD, HStack } from '../../src';
 
 export function FlexExample({
   isEditorVisible,
@@ -30,7 +30,7 @@ export function FlexExample({
     <>
       {isEditorVisible && (
         <>
-          <Button
+          <Button_OLD
             top={top}
             left={left}
             width={10}
@@ -40,9 +40,9 @@ export function FlexExample({
             UCID={255}
           >
             Flex props
-          </Button>
+          </Button_OLD>
 
-          <Button
+          <Button_OLD
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -50,7 +50,7 @@ export function FlexExample({
             UCID={255}
             background="dark"
           />
-          <Button
+          <Button_OLD
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -58,7 +58,7 @@ export function FlexExample({
             UCID={255}
             background="dark"
           />
-          <Button
+          <Button_OLD
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -79,7 +79,7 @@ export function FlexExample({
 
             return (
               <Fragment key={key}>
-                <Button
+                <Button_OLD
                   width={17}
                   height={rowHeight}
                   top={top + rowHeight * (index + 1) + 1}
@@ -89,7 +89,7 @@ export function FlexExample({
                   color="unselected"
                 >
                   {key}
-                </Button>
+                </Button_OLD>
                 <HStack
                   width={13}
                   height={rowHeight}
@@ -114,7 +114,7 @@ export function FlexExample({
                       flexPropValue === value ? 'selected' : 'unselected';
 
                     return (
-                      <Button
+                      <Button_OLD
                         key={`${valueString}-${variant}`}
                         background={variant}
                         color={color}
@@ -166,7 +166,7 @@ export function FlexExample({
                         }
                       >
                         {valueString}
-                      </Button>
+                      </Button_OLD>
                     );
                   })}
                 </HStack>
@@ -176,7 +176,7 @@ export function FlexExample({
         </>
       )}
 
-      <Button
+      <Button_OLD
         top={(flexProps.top ?? 0) - rowHeight - 1}
         left={flexProps.left}
         width={10}
@@ -186,20 +186,20 @@ export function FlexExample({
         UCID={255}
       >
         Flex
-      </Button>
+      </Button_OLD>
 
-      <Flex top={0} left={0} UCID={255} {...flexProps}>
-        <Button width={10} height={12}>
+      <Flex_OLD top={0} left={0} UCID={255} {...flexProps}>
+        <Button_OLD width={10} height={12}>
           Outer
-        </Button>
-        <Button width={20} height={8}>
+        </Button_OLD>
+        <Button_OLD width={20} height={8}>
           Flex
-        </Button>
-        <Button width={8} height={5}>
+        </Button_OLD>
+        <Button_OLD width={8} height={5}>
           Box
-        </Button>
+        </Button_OLD>
 
-        <Flex
+        <Flex_OLD
           top={1}
           left={1}
           width={30}
@@ -208,17 +208,17 @@ export function FlexExample({
           background="light"
           UCID={255}
         >
-          <Button width={5} height={12}>
+          <Button_OLD width={5} height={12}>
             Inner
-          </Button>
-          <Button width={10} height={8}>
+          </Button_OLD>
+          <Button_OLD width={10} height={8}>
             Flex
-          </Button>
-          <Button width={10} height={5}>
+          </Button_OLD>
+          <Button_OLD width={10} height={5}>
             Box
-          </Button>
-        </Flex>
-      </Flex>
+          </Button_OLD>
+        </Flex_OLD>
+      </Flex_OLD>
     </>
   );
 }

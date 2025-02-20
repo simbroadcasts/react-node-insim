@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ButtonProps } from 'react-node-insim';
-import { Button } from 'react-node-insim';
+import { Button_OLD } from 'react-node-insim';
 
 type Props = Omit<ButtonProps, 'height'> & {
   rows?: number;
@@ -53,7 +53,7 @@ export function TextBox({
 
   return (
     <>
-      <Button
+      <Button_OLD
         top={top}
         left={left}
         width={textAreaWidth}
@@ -63,7 +63,7 @@ export function TextBox({
         {...commonProps}
       />
       {Array.from({ length: rows }).map((_, i) => (
-        <Button
+        <Button_OLD
           key={i}
           top={top + i * rowHeight}
           left={left}
@@ -78,11 +78,11 @@ export function TextBox({
         >
           {chunks[i + scrollPosition] ?? ''}
           {i === rows - 1 && canScrollDown ? '...' : ''}
-        </Button>
+        </Button_OLD>
       ))}
       {isScrollbarVisible && (
         <>
-          <Button
+          <Button_OLD
             top={top}
             left={scrollbarLeft}
             width={scrollbarWidth}
@@ -99,10 +99,10 @@ export function TextBox({
             {...commonProps}
           >
             ▲
-          </Button>
+          </Button_OLD>
           {rows > 2 && (
             <>
-              <Button
+              <Button_OLD
                 top={
                   top + rowHeight + (scrollPosition / rows) * scrollbarHeight
                 }
@@ -115,7 +115,7 @@ export function TextBox({
               />
             </>
           )}
-          <Button
+          <Button_OLD
             top={
               top +
               textAreaHeight -
@@ -136,7 +136,7 @@ export function TextBox({
             {...commonProps}
           >
             ▼
-          </Button>
+          </Button_OLD>
         </>
       )}
     </>

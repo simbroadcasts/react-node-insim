@@ -10,6 +10,8 @@ import Yoga from 'yoga-layout-prebuilt';
 import { InSimContextProvider } from '../../internals/InSimContext';
 import { log } from '../../internals/logger';
 import { InSimRenderer } from './InSimRenderer';
+import type { Styles } from './styles';
+import applyStyles from './styles';
 import type { Container } from './types';
 
 export type CreateRootOptions = {
@@ -23,6 +25,7 @@ export type CreateRootOptions = {
   interval?: number;
   appendButtonIDs?: boolean;
   buttonClickIDStart?: number;
+  rootNodeStyle?: Styles;
 };
 
 export const CONNECT_REQUEST_ID = 255;
@@ -43,6 +46,7 @@ export function createRoot({
   interval,
   appendButtonIDs = false,
   buttonClickIDStart = 0,
+  rootNodeStyle = {},
 }: CreateRootOptions) {
   if (buttonClickIDStart < 0) {
     throw new Error(
@@ -60,10 +64,22 @@ export function createRoot({
 
   const rootID = '' + idCounter++;
   const node = Yoga.Node.create();
-  node.setWidth(200);
-  node.setHeight(200);
-  node.setDisplay(Yoga.DISPLAY_FLEX);
-  node.setFlexDirection(Yoga.FLEX_DIRECTION_ROW);
+  // node.setWidth(200);
+  // node.setHeight(200);
+  // node.setDisplay(Yoga.DISPLAY_FLEX);
+  // node.setFlexDirection(Yoga.FLEX_DIRECTION_ROW);
+
+  applyStyles(node, {
+    width: 200,
+    height: 200,
+    display: 'flex',
+    flexDirection: 'row',
+    ...rootNodeStyle,
+  });
+
+  console.log(node.getAlignItems());
+
+  console.log('CREATE ROOT');
   const container: Container = {
     type: 'root',
     node,

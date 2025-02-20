@@ -1,67 +1,22 @@
-import type { ForwardedRef } from 'react';
-import { createElement, forwardRef } from 'react';
+import { createElement } from 'react';
 
 import { useInSimContext } from '../internals/InSimContext';
-import type { ButtonElement, ButtonElementProps } from '../renderer/inSim';
-import { useConnectionMaybeScope } from '../scopes/connectionScope';
-import { useGlobalScope } from '../scopes/globalScope';
-import { useHumanPlayerMaybeScope } from '../scopes/humanPlayerScope';
-import type { WithPartial } from '../types';
+import type { TextChildren } from '../renderer/inSim';
+import type { Styles } from '../renderer/inSim/styles';
 
-export type ButtonProps = WithPartial<
-  Omit<ButtonElementProps, 'shouldClearAllButtons' | 'isConnected'>,
-  | 'top'
-  | 'left'
-  | 'width'
-  | 'height'
-  | 'UCID'
-  | 'align'
-  | 'isDisabled'
-  | 'initializeDialogWithButtonText'
-  | 'caption'
-  | 'maxTypeInChars'
-  | 'isAlwaysOnScreen'
->;
+export type NewButtonProps = Styles & {
+  children: TextChildren;
+};
 
-export const Button = forwardRef(function Button(
-  {
-    top = 0,
-    left = 0,
-    width = 0,
-    height = 0,
-    UCID: UCIDProp = 0,
-    align = 'center',
-    isDisabled = false,
-    initializeDialogWithButtonText = false,
-    caption = '',
-    maxTypeInChars = 95,
-    isAlwaysOnScreen = false,
-    ...props
-  }: ButtonProps,
-  ref: ForwardedRef<ButtonElement>,
-) {
+export function Button(props: NewButtonProps) {
   const { shouldClearAllButtons, isConnected } = useInSimContext();
-  const isGlobal = useGlobalScope();
-  const connection = useConnectionMaybeScope();
-  const player = useHumanPlayerMaybeScope();
 
-  const UCID = isGlobal ? 255 : player?.UCID ?? connection?.UCID ?? UCIDProp;
-
-  return createElement<ButtonElementProps>('btn', {
-    shouldClearAllButtons,
-    isConnected,
-    top,
-    left,
-    width,
-    height,
-    UCID,
-    align,
-    isDisabled,
-    initializeDialogWithButtonText,
-    caption,
-    maxTypeInChars,
-    isAlwaysOnScreen,
+  return createElement<
+    NewButtonProps & {
+      isConnected: boolean;
+    }
+  >('lfs-button', {
     ...props,
-    ref,
+    isConnected,
   });
-});
+}

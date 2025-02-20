@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button, ToggleButton } from '../../src';
+import { Button_OLD, ToggleButton } from '../../src';
 
 export function ToggleButtonExample() {
   const [isOnLight, setIsOnLight] = useState(false);
@@ -12,7 +12,7 @@ export function ToggleButtonExample() {
 
   return (
     <>
-      <Button
+      <Button_OLD
         top={top}
         left={left}
         width={20}
@@ -22,7 +22,7 @@ export function ToggleButtonExample() {
         UCID={255}
       >
         ToggleButton
-      </Button>
+      </Button_OLD>
       <ToggleButton
         top={top + 5}
         left={left}
