@@ -12,7 +12,7 @@ import Yoga, { FLEX_DIRECTION_ROW } from 'yoga-layout-prebuilt';
 import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
 import type { InSimElement } from './InSimElement';
-import applyStyles from './styles';
+import applyStyles from './styleProps';
 import type {
   Container,
   HostContext,
@@ -95,7 +95,7 @@ export const InSimRenderer = ReactReconciler<
         applyStyles(node, props);
 
         inst = {
-          clickId: 0,
+          clickId: ++instanceCounter,
           type,
           props,
           context: hostContext,
@@ -202,25 +202,16 @@ export const InSimRenderer = ReactReconciler<
   commitMount(instance, type: Type, props) {
     mountLog('commitMount', type);
 
-    mountLog(
-      'instance parent node',
-      instance.node.getParent()?.getComputedLayout(),
-    );
-
-    mountLog(
-      'CURRENT LAYOUT',
-      instance.type,
-      instance.node.getComputedLayout(),
-    );
-    instance.clickId = ++instanceCounter;
-
     if (type === 'flex') {
       const updateChildren = (container: InSimElement) => {
         container.children.forEach((child) => {
           if (child.type === 'flex') {
             updateChildren(child);
           } else if (child.type === 'lfs-button') {
-            const { left, top, width, height } = child.node.getComputedLayout();
+            const { left, top, width, height } = getAbsolutePosition(
+              child.node,
+              child.type,
+            );
 
             if (instance.props.isConnected) {
               sendButton(container.container.inSim, {
@@ -240,12 +231,33 @@ export const InSimRenderer = ReactReconciler<
           }
         });
       };
+
+      // Background
+      const { left, top, width, height } = getAbsolutePosition(
+        instance.node,
+        instance.type,
+      );
+
+      if (instance.props.isConnected) {
+        sendButton(instance.container.inSim, {
+          clickId: ++instanceCounter,
+          left,
+          top,
+          width,
+          height,
+          text: '',
+        });
+      }
+
       updateChildren(instance);
 
       return;
     }
     if (type === 'lfs-button') {
-      const { left, top, width, height } = instance.node.getComputedLayout();
+      const { left, top, width, height } = getAbsolutePosition(
+        instance.node,
+        instance.type,
+      );
 
       if (instance.props.isConnected) {
         sendButton(instance.container.inSim, {
@@ -273,27 +285,22 @@ export const InSimRenderer = ReactReconciler<
       throw new Error('Should have old props');
     }
 
-    updateLog(
-      'CURRENT LAYOUT',
-      instance.type,
-      instance.node.getComputedLayout(),
-    );
     updateLog('new props', newProps);
 
     applyStyles(instance.node, newProps);
 
     instance.container.node.calculateLayout();
-    updateLog('NEW LAYOUT', instance.type, instance.node.getComputedLayout());
 
     if (type === 'flex') {
-      // instance.node.calculateLayout();
-
       const updateChildren = (container: InSimElement) => {
         container.children.forEach((child) => {
           if (child.type === 'flex') {
             updateChildren(child);
           } else if (child.type === 'lfs-button') {
-            const { left, top, width, height } = child.node.getComputedLayout();
+            const { left, top, width, height } = getAbsolutePosition(
+              child.node,
+              child.type,
+            );
 
             if (newProps.isConnected) {
               sendButton(container.container.inSim, {
@@ -313,18 +320,33 @@ export const InSimRenderer = ReactReconciler<
           }
         });
       };
+
+      // Background
+      const { left, top, width, height } = getAbsolutePosition(
+        instance.node,
+        instance.type,
+      );
+
+      if (newProps.isConnected) {
+        sendButton(instance.container.inSim, {
+          clickId: ++instanceCounter,
+          left,
+          top,
+          width,
+          height,
+          text: '',
+        });
+      }
+
       updateChildren(instance);
       return;
     }
 
     if (type === 'lfs-button') {
-      updateLog(
-        'instance node position type',
-        instance.node.getParent()?.getWidth(),
-        instance.node.getParent()?.getHeight(),
+      const { left, top, width, height } = getAbsolutePosition(
+        instance.node,
+        instance.type,
       );
-
-      const { left, top, width, height } = instance.node.getComputedLayout();
 
       if (newProps.isConnected) {
         sendButton(instance.container.inSim, {
@@ -374,7 +396,6 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    appendToContainerLog('child node', child.type, child.node.getHeight());
     const pos = container.children.length;
     appendToContainerLog('insert child at', pos);
 
@@ -382,8 +403,6 @@ export const InSimRenderer = ReactReconciler<
     child.parent = container;
     container.children.push(child);
     container.node.calculateLayout();
-
-    appendToContainerLog('get computed layout', child.node.getComputedLayout());
   },
 
   insertBefore(parentInstance, child, beforeChild) {
@@ -548,4 +567,46 @@ function deleteButton(
       SubT: ButtonFunction.BFN_DEL_BTN,
     }),
   );
+}
+
+function getAbsolutePosition(
+  node: Yoga.YogaNode,
+  type: Type,
+): Pick<
+  ReturnType<Yoga.YogaNode['getComputedLayout']>,
+  'left' | 'top' | 'width' | 'height'
+> {
+  log('getAbsolutePosition', type);
+
+  let left = 0;
+  let top = 0;
+  let width: number | null = null;
+  let height: number | null = null;
+
+  let currentNode: Yoga.YogaNode | null = node;
+
+  while (currentNode) {
+    const layout = currentNode.getComputedLayout();
+
+    log('computed', layout);
+
+    if (width === null) {
+      width = layout.width;
+    }
+
+    if (height === null) {
+      height = layout.height;
+    }
+
+    left += layout.left;
+    top += layout.top;
+    currentNode = currentNode.getParent(); // Assume Yoga exposes a method to get the parent node
+  }
+
+  return {
+    left,
+    top,
+    width: width ?? 0,
+    height: height ?? 0,
+  };
 }

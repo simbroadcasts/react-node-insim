@@ -1,12 +1,25 @@
 import { createElement } from 'react';
 
-import type { Styles } from '../../renderer/inSim/styles';
+import { useInSimContext } from '../../internals/InSimContext';
+import type { StyleProps } from '../../renderer/inSim/styleProps';
 import type { ButtonChild } from '../types';
 
-export type NewFlexProps = Styles & {
+export type FlexProps = StyleProps & {
   children: ButtonChild | ButtonChild[];
+  backgroundColor?: 'light' | 'dark';
+  borderColor?: 'light' | 'dark';
 };
 
-export function Flex(props: NewFlexProps) {
-  return createElement<NewFlexProps>('flex', props);
+export function Flex({ flexDirection = 'row', ...props }: FlexProps) {
+  const { shouldClearAllButtons, isConnected } = useInSimContext();
+
+  return createElement<
+    FlexProps & {
+      isConnected: boolean;
+    }
+  >('flex', {
+    ...props,
+    flexDirection,
+    isConnected,
+  });
 }

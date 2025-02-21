@@ -1,32 +1,8 @@
 import Yoga, { type YogaNode } from 'yoga-layout-prebuilt';
 
-export type Styles = {
-  readonly textWrap?:
-    | 'wrap'
-    | 'end'
-    | 'middle'
-    | 'truncate-end'
-    | 'truncate'
-    | 'truncate-middle'
-    | 'truncate-start';
-
+export type StyleProps = {
   readonly position?: 'absolute' | 'relative';
 
-  // /**
-  //  * Size of the gap between an element's columns.
-  //  */
-  // readonly columnGap?: number;
-  //
-  // /**
-  //  * Size of the gap between element's rows.
-  //  */
-  // readonly rowGap?: number;
-
-  // /**
-  //  * Size of the gap between an element's columns and rows. Shorthand for `columnGap` and `rowGap`.
-  //  */
-  // readonly gap?: number;
-  //
   /**
    * Margin on all sides. Equivalent to setting `marginTop`, `marginBottom`, `marginLeft` and `marginRight`.
    */
@@ -35,12 +11,12 @@ export type Styles = {
   /**
    * Horizontal margin. Equivalent to setting `marginLeft` and `marginRight`.
    */
-  readonly marginX?: number;
+  readonly marginHorizontal?: number;
 
   /**
    * Vertical margin. Equivalent to setting `marginTop` and `marginBottom`.
    */
-  readonly marginY?: number;
+  readonly marginVertical?: number;
 
   /**
    * Top margin.
@@ -70,12 +46,12 @@ export type Styles = {
   /**
    * Horizontal padding. Equivalent to setting `paddingLeft` and `paddingRight`.
    */
-  readonly paddingX?: number;
+  readonly paddingHorizontal?: number;
 
   /**
    * Vertical padding. Equivalent to setting `paddingTop` and `paddingBottom`.
    */
-  readonly paddingY?: number;
+  readonly paddingVertical?: number;
 
   /**
    * Top padding.
@@ -156,13 +132,13 @@ export type Styles = {
     | 'center';
 
   /**
-   * Width of the element in spaces.
+   * Width of the element (0 to 200).
    * You can also set it in percent, which will calculate the width based on the width of parent element.
    */
   readonly width?: number | string;
 
   /**
-   * Height of the element in lines (rows).
+   * Height of the element (0 to 200).
    * You can also set it in percent, which will calculate the height based on the height of parent element.
    */
   readonly height?: number | string;
@@ -177,38 +153,7 @@ export type Styles = {
    */
   readonly minHeight?: number | string;
 
-  /**
-   * Set this property to `none` to hide the element.
-   */
-  readonly display?: 'flex' | 'none';
-
-  /**
-   * Determines whether top border is visible.
-   *
-   * @default true
-   */
-  readonly borderTop?: boolean;
-
-  /**
-   * Determines whether bottom border is visible.
-   *
-   * @default true
-   */
-  readonly borderBottom?: boolean;
-
-  /**
-   * Determines whether left border is visible.
-   *
-   * @default true
-   */
-  readonly borderLeft?: boolean;
-
-  /**
-   * Determines whether right border is visible.
-   *
-   * @default true
-   */
-  readonly borderRight?: boolean;
+  readonly borderWidth?: number;
 
   /**
    * Behavior for an element's overflow in both directions.
@@ -222,17 +167,17 @@ export type Styles = {
    *
    * @default 'visible'
    */
-  readonly overflowX?: 'visible' | 'hidden';
+  readonly overflowHorizontal?: 'visible' | 'hidden';
 
   /**
    * Behavior for an element's overflow in vertical direction.
    *
    * @default 'visible'
    */
-  readonly overflowY?: 'visible' | 'hidden';
+  readonly overflowVertical?: 'visible' | 'hidden';
 };
 
-const applyPositionStyles = (node: YogaNode, style: Styles): void => {
+const applyPositionStyles = (node: YogaNode, style: StyleProps): void => {
   if ('position' in style) {
     node.setPositionType(
       style.position === 'absolute'
@@ -242,17 +187,17 @@ const applyPositionStyles = (node: YogaNode, style: Styles): void => {
   }
 };
 
-const applyMarginStyles = (node: YogaNode, style: Styles): void => {
+const applyMarginStyles = (node: YogaNode, style: StyleProps): void => {
   if ('margin' in style) {
     node.setMargin(Yoga.EDGE_ALL, style.margin ?? 0);
   }
 
-  if ('marginX' in style) {
-    node.setMargin(Yoga.EDGE_HORIZONTAL, style.marginX ?? 0);
+  if ('marginHorizontal' in style) {
+    node.setMargin(Yoga.EDGE_HORIZONTAL, style.marginHorizontal ?? 0);
   }
 
-  if ('marginY' in style) {
-    node.setMargin(Yoga.EDGE_VERTICAL, style.marginY ?? 0);
+  if ('marginVertical' in style) {
+    node.setMargin(Yoga.EDGE_VERTICAL, style.marginVertical ?? 0);
   }
 
   if ('marginLeft' in style) {
@@ -272,17 +217,17 @@ const applyMarginStyles = (node: YogaNode, style: Styles): void => {
   }
 };
 
-const applyPaddingStyles = (node: YogaNode, style: Styles): void => {
+const applyPaddingStyles = (node: YogaNode, style: StyleProps): void => {
   if ('padding' in style) {
     node.setPadding(Yoga.EDGE_ALL, style.padding ?? 0);
   }
 
-  if ('paddingX' in style) {
-    node.setPadding(Yoga.EDGE_HORIZONTAL, style.paddingX ?? 0);
+  if ('paddingHorizontal' in style) {
+    node.setPadding(Yoga.EDGE_HORIZONTAL, style.paddingHorizontal ?? 0);
   }
 
-  if ('paddingY' in style) {
-    node.setPadding(Yoga.EDGE_VERTICAL, style.paddingY ?? 0);
+  if ('paddingVertical' in style) {
+    node.setPadding(Yoga.EDGE_VERTICAL, style.paddingVertical ?? 0);
   }
 
   if ('paddingLeft' in style) {
@@ -302,7 +247,7 @@ const applyPaddingStyles = (node: YogaNode, style: Styles): void => {
   }
 };
 
-const applyFlexStyles = (node: YogaNode, style: Styles): void => {
+const applyFlexStyles = (node: YogaNode, style: StyleProps): void => {
   if ('flex' in style && style.flex !== undefined) {
     node.setFlex(style.flex);
   }
@@ -423,12 +368,12 @@ const applyFlexStyles = (node: YogaNode, style: Styles): void => {
   }
 };
 
-const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
+const applyDimensionStyles = (node: YogaNode, style: StyleProps): void => {
   if ('width' in style) {
     if (typeof style.width === 'number') {
       node.setWidth(style.width);
     } else if (typeof style.width === 'string') {
-      node.setWidthPercent(Number.parseInt(style.width, 10));
+      node.setWidthPercent(parseInt(style.width, 10));
     } else {
       node.setWidthAuto();
     }
@@ -440,7 +385,7 @@ const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
     if (typeof style.height === 'number') {
       node.setHeight(style.height);
     } else if (typeof style.height === 'string') {
-      node.setHeightPercent(Number.parseInt(style.height, 10));
+      node.setHeightPercent(parseInt(style.height, 10));
     } else {
       node.setHeightAuto();
     }
@@ -448,7 +393,7 @@ const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
 
   if ('minWidth' in style) {
     if (typeof style.minWidth === 'string') {
-      node.setMinWidthPercent(Number.parseInt(style.minWidth, 10));
+      node.setMinWidthPercent(parseInt(style.minWidth, 10));
     } else {
       node.setMinWidth(style.minWidth ?? 0);
     }
@@ -456,14 +401,14 @@ const applyDimensionStyles = (node: YogaNode, style: Styles): void => {
 
   if ('minHeight' in style) {
     if (typeof style.minHeight === 'string') {
-      node.setMinHeightPercent(Number.parseInt(style.minHeight, 10));
+      node.setMinHeightPercent(parseInt(style.minHeight, 10));
     } else {
       node.setMinHeight(style.minHeight ?? 0);
     }
   }
 };
 
-const applyDisplayStyles = (node: YogaNode, style: Styles): void => {
+const applyDisplayStyles = (node: YogaNode, style: StyleProps): void => {
   if ('display' in style) {
     node.setDisplay(
       style.display === 'flex' ? Yoga.DISPLAY_FLEX : Yoga.DISPLAY_NONE,
@@ -471,43 +416,13 @@ const applyDisplayStyles = (node: YogaNode, style: Styles): void => {
   }
 };
 
-const applyBorderStyles = (node: YogaNode, style: Styles): void => {
-  if ('borderStyle' in style) {
-    const borderWidth = style.borderStyle ? 1 : 0;
-
-    if (style.borderTop !== false) {
-      node.setBorder(Yoga.EDGE_TOP, borderWidth);
-    }
-
-    if (style.borderBottom !== false) {
-      node.setBorder(Yoga.EDGE_BOTTOM, borderWidth);
-    }
-
-    if (style.borderLeft !== false) {
-      node.setBorder(Yoga.EDGE_LEFT, borderWidth);
-    }
-
-    if (style.borderRight !== false) {
-      node.setBorder(Yoga.EDGE_RIGHT, borderWidth);
-    }
+const applyBorderStyles = (node: YogaNode, style: StyleProps): void => {
+  if ('borderWidth' in style) {
+    node.setBorder(Yoga.EDGE_ALL, style.borderWidth ?? 0);
   }
 };
 
-// const applyGapStyles = (node: YogaNode, style: Styles): void => {
-//   if ('gap' in style) {
-//     node.setGap(Yoga.GUTTER_ALL, style.gap ?? 0);
-//   }
-//
-//   if ('columnGap' in style) {
-//     node.setGap(Yoga.GUTTER_COLUMN, style.columnGap ?? 0);
-//   }
-//
-//   if ('rowGap' in style) {
-//     node.setGap(Yoga.GUTTER_ROW, style.rowGap ?? 0);
-//   }
-// };
-
-const applyStyles = (node: YogaNode, style: Styles = {}): void => {
+const applyStyles = (node: YogaNode, style: StyleProps = {}): void => {
   applyPositionStyles(node, style);
   applyMarginStyles(node, style);
   applyPaddingStyles(node, style);
@@ -515,7 +430,6 @@ const applyStyles = (node: YogaNode, style: Styles = {}): void => {
   applyDimensionStyles(node, style);
   applyDisplayStyles(node, style);
   applyBorderStyles(node, style);
-  // applyGapStyles(node, style);
 };
 
 export default applyStyles;

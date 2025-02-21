@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
 
-import type { NewButtonProps } from './Button';
+import type { ButtonProps } from './Button';
 
-export type ButtonChild = ReactElement<NewButtonProps> | null;
+export type ButtonChild = ReactElement<ButtonProps> | null;

@@ -10,8 +10,8 @@ import Yoga from 'yoga-layout-prebuilt';
 import { InSimContextProvider } from '../../internals/InSimContext';
 import { log } from '../../internals/logger';
 import { InSimRenderer } from './InSimRenderer';
-import type { Styles } from './styles';
-import applyStyles from './styles';
+import type { StyleProps } from './styleProps';
+import applyStyles from './styleProps';
 import type { Container } from './types';
 
 export type CreateRootOptions = {
@@ -25,7 +25,7 @@ export type CreateRootOptions = {
   interval?: number;
   appendButtonIDs?: boolean;
   buttonClickIDStart?: number;
-  rootNodeStyle?: Styles;
+  rootNodeStyle?: StyleProps;
 };
 
 export const CONNECT_REQUEST_ID = 255;
