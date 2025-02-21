@@ -19,6 +19,7 @@ import type { ButtonProps } from '../Button_OLD';
 import { Button_OLD } from '../Button_OLD';
 import { ToggleButton } from '../ui';
 
+/** @deprecated */
 export type FlexProps = PositionProps &
   Partial<
     Pick<ButtonProps, 'width' | 'height' | 'background' | 'color' | 'UCID'>
@@ -70,6 +71,7 @@ type FlexboxProps = {
   marginHorizontal?: number;
 };
 
+/** @deprecated */
 export const Flex_OLD = forwardRef(function FlexWithRef(
   {
     children,

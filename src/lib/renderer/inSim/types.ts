@@ -6,6 +6,7 @@ import type { InSimElement_OLD } from './InSimElement_OLD';
 
 type UCID = number;
 
+/** @deprecated */
 export type Container_OLD = {
   rootID: string;
   inSim: InSim;
@@ -48,13 +49,15 @@ type TextChild = string | number;
 
 export type TextChildren = TextChild | TextChild[];
 
+/** @deprecated */
 export type Children_OLD = Instance_OLD[];
 export type Children = Instance[];
 
+/** @deprecated */
 export type Instance_OLD = InSimElement_OLD;
 export type Instance = InSimElement;
 
-export type PublicInstance<T extends Instance_OLD> = Omit<
+export type PublicInstance<T extends Instance> = Omit<
   T,
   'commitMount' | 'commitUpdate' | 'detachDeletedInstance'
 >;

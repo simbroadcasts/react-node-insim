@@ -27,8 +27,10 @@ import type {
 
 const log = baseLog.extend('button');
 
+/** @deprecated */
 export type ButtonElement = PublicInstance<Button_OLD>;
 
+/** @deprecated */
 export type ButtonElementProps = InSimElementProps<
   ButtonElement,
   ButtonBaseProps
@@ -128,6 +130,7 @@ type ButtonBaseProps = {
   flex?: number;
 };
 
+/** @deprecated */
 export class Button_OLD extends InSimElement_OLD {
   private static readonly REQUEST_ID = 1;
   private static readonly UCID_ALL = 255;

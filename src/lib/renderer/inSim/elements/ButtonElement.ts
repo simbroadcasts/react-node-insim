@@ -10,19 +10,20 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 import { pipe } from 'ramda';
-import type { ButtonProps } from 'react-node-insim';
+import type { YogaNode } from 'yoga-layout-prebuilt';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
-import type { InSimElementProps } from '../InSimElement_OLD';
-import { InSimElement_OLD } from '../InSimElement_OLD';
+import type { InSimElementProps } from '../InSimElement';
+import { InSimElement } from '../InSimElement';
+import { getAbsolutePosition } from '../node';
 import type { StyleProps } from '../styleProps';
+import applyStyles from '../styleProps';
 import type {
-  Container_OLD,
+  Container,
   HostContext,
   PublicInstance,
   TextChildren,
-  Type,
   UpdatePayload,
 } from '../types';
 
@@ -90,7 +91,8 @@ type ButtonBaseProps = StyleProps & {
   isDisabled: boolean;
 
   /**
-   * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to 95)
+   * If set, the user can click this button to type in text. This is the maximum number of characters to type in (0 to
+   * 95)
    */
   maxTypeInChars: number;
 
@@ -116,16 +118,19 @@ type ButtonBaseProps = StyleProps & {
   /**
    * NOTE: You should not use this flag for most buttons.
    *
-   * This is a special flag for buttons that really must be on in all screens (including the garage and options screens). You will probably need to confine these buttons to the top or bottom edge of the screen, to avoid overwriting LFS buttons. Most buttons should be defined without this flag, and positioned in the recommended area so LFS can keep a space clear in the main screens.
+   * This is a special flag for buttons that really must be on in all screens (including the garage and options
+   * screens). You will probably need to confine these buttons to the top or bottom edge of the screen, to avoid
+   * overwriting LFS buttons. Most buttons should be defined without this flag, and positioned in the recommended area
+   * so LFS can keep a space clear in the main screens.
    **/
   isAlwaysOnScreen: boolean;
 
   flex?: number;
 };
 
-export class ButtonElement extends InSimElement_OLD {
-  private static readonly REQUEST_ID = 1;
-  private static readonly UCID_ALL = 255;
+export class ButtonElement extends InSimElement {
+  public static readonly REQUEST_ID = 1;
+  public static readonly UCID_ALL = 255;
 
   private packet: IS_BTN = new IS_BTN();
 
@@ -139,22 +144,18 @@ export class ButtonElement extends InSimElement_OLD {
 
   constructor(
     id: number,
-    parent: number,
-    type: Type,
     props: ButtonElementProps,
     context: HostContext,
-    container: Container_OLD,
+    container: Container,
+    node: YogaNode,
   ) {
-    super(id, parent, type, [], context, container);
+    super(id, null, 'lfs-button', props, [], context, container, node);
 
     this.onClick = props.onClick;
     this.onType = props.onType;
 
     this.assertButtonCount(props);
     this.assertTextLength(props);
-    this.assertDimensions(props, { checkWidthAndHeight: true });
-
-    this.updateButtonPacketData(props);
 
     if (this.onClick) {
       this.log(`add onClick listener`);
@@ -198,6 +199,7 @@ export class ButtonElement extends InSimElement_OLD {
   commitMount(props: ButtonElementProps): void {
     this.log(`mount`);
 
+    this.updateButtonPacketData(props);
     this.generateClickIdForUCID(this.packet.UCID);
 
     if (props.shouldClearAllButtons) {
@@ -220,6 +222,9 @@ export class ButtonElement extends InSimElement_OLD {
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
 
+    applyStyles(this.node, newProps);
+    this.container.node.calculateLayout();
+
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);
       return;
@@ -229,8 +234,6 @@ export class ButtonElement extends InSimElement_OLD {
       this.log(`do not update - not connected`);
       return;
     }
-
-    this.assertDimensions(newProps);
 
     const onlyTextChanged = this.onlyTextChanged(changedPropNames);
 
@@ -279,21 +282,10 @@ export class ButtonElement extends InSimElement_OLD {
     this.deleteButton(clickID, ucid);
     this.removeClickIdForUCID(clickID, ucid);
     this.clearAllListeners();
-  }
 
-  private assertDimensions(
-    props: ButtonElementProps,
-    { checkWidthAndHeight = false }: { checkWidthAndHeight?: boolean } = {},
-  ): void {
-    if (
-      (props.width === 0 && props.height !== 0) ||
-      (props.width !== 0 && props.height === 0) ||
-      (checkWidthAndHeight && props.width === 0 && props.height === 0)
-    ) {
-      throw new Error(
-        `Invalid button dimensions: W=${props.width} H=${props.height}`,
-      );
-    }
+    this.node.getParent()?.removeChild(this.node);
+    this.container.node.calculateLayout();
+    this.node.getParent()?.calculateLayout();
   }
 
   private assertTextLength(props: ButtonElementProps): void {
@@ -311,28 +303,27 @@ export class ButtonElement extends InSimElement_OLD {
   }
 
   private updateButtonPacketData(props: ButtonElementProps): void {
-    const buttonStyle = this.getButtonStyleFromProps(props);
+    this.packet.ReqI = ButtonElement.REQUEST_ID;
+    this.packet.UCID = props.UCID;
+
+    const { left, top, width, height } = getAbsolutePosition(this.node);
+
+    this.packet.L = left;
+    this.packet.T = top;
+    this.packet.W = width;
+    this.packet.H = height;
+
+    this.packet.BStyle = this.getButtonStyleFromProps(props);
     const initValueButtonText = props.initializeDialogWithButtonText
       ? TypeIn.INIT_VALUE_BUTTON_TEXT
       : 0;
 
-    const text = this.buildButtonText(props);
+    this.packet.Text = this.buildButtonText(props);
+    this.packet.TypeIn = props.onType
+      ? props.maxTypeInChars + initValueButtonText
+      : 0;
 
-    const buttonData: Required<IS_BTN_Data> = {
-      ReqI: ButtonElement.REQUEST_ID,
-      ClickID: this.packet.ClickID,
-      UCID: props.UCID,
-      T: props.top,
-      L: props.left, // TODO
-      W: props.width,
-      H: props.height,
-      Text: text,
-      BStyle: buttonStyle,
-      TypeIn: props.onType ? props.maxTypeInChars + initValueButtonText : 0,
-      Inst: props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0,
-    };
-
-    this.packet = new IS_BTN(buttonData);
+    this.packet.Inst = props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0;
   }
 
   private reinitializeButtonAfterNewConnection(): void {
@@ -442,7 +433,7 @@ export class ButtonElement extends InSimElement_OLD {
   }
 
   private isSemanticColor(
-    color?: ButtonProps['color'],
+    color?: ButtonElementProps['color'],
   ): color is SemanticColor {
     return color !== undefined && color in semanticColorMap;
   }
@@ -504,6 +495,7 @@ export class ButtonElement extends InSimElement_OLD {
     }
   }
 
+  // TODO return true if onClick or onType also changed
   private onlyTextChanged(
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): boolean {

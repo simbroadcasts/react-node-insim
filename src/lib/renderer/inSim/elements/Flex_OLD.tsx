@@ -2,6 +2,7 @@ import type { FlexProps } from '../../../components';
 import { InSimElement_OLD } from '../InSimElement_OLD';
 import type { Container_OLD, HostContext, Instance_OLD, Type } from '../types';
 
+/** @deprecated */
 export class Flex_OLD extends InSimElement_OLD {
   constructor(
     id: number,

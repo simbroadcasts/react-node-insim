@@ -1,77 +1,45 @@
 import type { ReactElement } from 'react';
-import { Children, cloneElement } from 'react';
+import { createContext, useContext } from 'react';
 
-import type { ButtonProps } from '../Button_OLD';
-import { Button_OLD } from '../Button_OLD';
-import { ToggleButton } from '../ui';
+import type { StyleProps } from '../../renderer/inSim/styleProps';
+import type { ButtonProps } from '../Button';
+import { Flex } from './Flex';
 
 type ButtonChild = ReactElement<ButtonProps>;
 
-export type StackProps = Required<Pick<ButtonProps, 'top' | 'left'>> &
-  Partial<
-    Pick<
-      ButtonProps,
-      'width' | 'height' | 'variant' | 'background' | 'color' | 'UCID'
-    >
-  > & {
+// TODO decide if to implement these
+type StackCommonButtonProps = Pick<
+  ButtonProps,
+  'width' | 'height' | 'variant' | 'background' | 'color' | 'UCID'
+>;
+
+export type StackProps = Omit<StyleProps, 'flexDirection'> &
+  StackCommonButtonProps & {
     direction: 'horizontal' | 'vertical';
-
-    /** Gap between each button */
-    gap?: number;
-
     children: ButtonChild | ButtonChild[];
   };
 
-export function Stack({
-  children,
-  direction,
-  top,
-  left,
-  width,
-  height,
-  background,
-  color,
-  variant,
-  UCID,
-  gap = 0,
-}: StackProps) {
+export function Stack({ children, direction, ...props }: StackProps) {
   return (
-    <>
-      {(() => {
-        let heightBefore = 0;
-        let widthBefore = 0;
-
-        return Children.map(children, (child) => {
-          if (child.type !== Button_OLD && child.type !== ToggleButton) {
-            return;
+    <Flex
+      flexDirection={direction === 'vertical' ? 'column' : 'row'}
+      {...props}
+    >
+      <StackContext.Provider
+        value={
+          {
+            // TODO
           }
-
-          const isVertical = direction === 'vertical';
-
-          const buttonHeight = child.props.height ?? height ?? 0;
-          const buttonWidth = child.props.width ?? width ?? 0;
-
-          const buttonTop = top + heightBefore;
-          const buttonLeft = left + widthBefore;
-
-          if (isVertical) {
-            heightBefore += buttonHeight + gap;
-          } else {
-            widthBefore += buttonWidth + gap;
-          }
-
-          return cloneElement(child, {
-            top: buttonTop,
-            left: buttonLeft,
-            width: buttonWidth,
-            height: buttonHeight,
-            variant: child.props.variant ?? variant,
-            background: child.props.background ?? background,
-            color: child.props.color ?? color,
-            UCID: child.props.UCID ?? UCID,
-          });
-        });
-      })()}
-    </>
+        }
+      >
+        {children}
+      </StackContext.Provider>
+    </Flex>
   );
+}
+
+const StackContext = createContext<StackCommonButtonProps | null>(null);
+
+export function useStackContext() {
+  return useContext(StackContext);
 }

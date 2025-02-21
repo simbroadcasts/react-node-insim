@@ -1,24 +1,24 @@
 import { createElement } from 'react';
 
 import { useInSimContext } from '../../internals/InSimContext';
-import type { StyleProps } from '../../renderer/inSim/styleProps';
-import type { ButtonChild } from '../types';
+import type { FlexElementProps } from '../../renderer/inSim/elements/FlexElement';
+import { useStackContext } from './Stack';
 
-export type FlexProps = StyleProps & {
-  children: ButtonChild | ButtonChild[];
-  backgroundColor?: 'light' | 'dark';
-  borderColor?: 'light' | 'dark';
-};
+export type FlexProps = Omit<
+  FlexElementProps,
+  'shouldClearAllButtons' | 'isConnected'
+>;
 
 export function Flex({ flexDirection = 'row', ...props }: FlexProps) {
   const { shouldClearAllButtons, isConnected } = useInSimContext();
+  const stackContext = useStackContext();
 
-  return createElement<
-    FlexProps & {
-      isConnected: boolean;
-    }
-  >('flex', {
+  const width = stackContext?.width ?? props.width;
+
+  return createElement<FlexElementProps>('flex', {
     ...props,
+    width,
+    shouldClearAllButtons,
     flexDirection,
     isConnected,
   });

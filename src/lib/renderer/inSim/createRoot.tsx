@@ -68,13 +68,11 @@ export function createRoot({
   applyStyles(node, {
     width: 200,
     height: 200,
-    display: 'flex',
     flexDirection: 'row',
-    position: 'relative',
+    flexWrap: 'wrap',
     ...rootNodeStyle,
   });
 
-  console.log('CREATE ROOT');
   const container: Container = {
     type: 'root',
     node,

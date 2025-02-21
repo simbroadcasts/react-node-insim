@@ -9,6 +9,7 @@ import type {
   UpdatePayload,
 } from './types';
 
+/** @deprecated */
 export type InSimElementProps<PublicInstance, Props> = Props & {
   ref?: Ref<PublicInstance>;
   key?: Key;
@@ -16,6 +17,7 @@ export type InSimElementProps<PublicInstance, Props> = Props & {
   isConnected?: boolean;
 };
 
+/** @deprecated */
 export abstract class InSimElement_OLD {
   readonly id: number;
   parent: number;

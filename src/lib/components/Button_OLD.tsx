@@ -8,6 +8,7 @@ import { useGlobalScope } from '../scopes/globalScope';
 import { useHumanPlayerMaybeScope } from '../scopes/humanPlayerScope';
 import type { WithPartial } from '../types';
 
+/** @deprecated */
 export type ButtonProps = WithPartial<
   Omit<ButtonElementProps, 'shouldClearAllButtons' | 'isConnected'>,
   | 'top'
@@ -23,6 +24,7 @@ export type ButtonProps = WithPartial<
   | 'isAlwaysOnScreen'
 >;
 
+/** @deprecated */
 export const Button_OLD = forwardRef(function Button(
   {
     top = 0,

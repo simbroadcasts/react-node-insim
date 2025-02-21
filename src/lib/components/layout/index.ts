@@ -1,4 +1,4 @@
-export { Flex_OLD, FlexProps } from './Flex_OLD';
+export { Flex, FlexProps } from './Flex';
 export { Grid, GridProps } from './Grid';
 export { GridButton, GridButtonProps } from './GridButton';
 export { HStack } from './HStack';

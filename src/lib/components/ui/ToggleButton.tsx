@@ -1,5 +1,5 @@
 import type { ButtonProps } from 'react-node-insim';
-import { Button_OLD } from 'react-node-insim';
+import { Button } from 'react-node-insim';
 
 type Props = Omit<ButtonProps, 'color' | 'onClick' | 'background'> & {
   isOn: boolean;
@@ -16,7 +16,7 @@ export function ToggleButton({
   const color = isOn ? selectedColor[variant] : unselectedColor[variant];
 
   return (
-    <Button_OLD
+    <Button
       {...props}
       variant={variant}
       color={color}

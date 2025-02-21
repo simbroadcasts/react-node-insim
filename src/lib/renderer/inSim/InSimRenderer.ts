@@ -1,16 +1,13 @@
-import type { InSim } from 'node-insim';
-import {
-  ButtonFunction,
-  ButtonStyle,
-  IS_BFN,
-  IS_BTN,
-} from 'node-insim/packets';
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
-import Yoga, { FLEX_DIRECTION_ROW } from 'yoga-layout-prebuilt';
+import Yoga from 'yoga-layout-prebuilt';
 
 import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
+import type { ButtonElementProps } from './elements/ButtonElement';
+import { ButtonElement } from './elements/ButtonElement';
+import type { FlexElementProps } from './elements/FlexElement';
+import { FlexElement } from './elements/FlexElement';
 import type { InSimElement } from './InSimElement';
 import applyStyles from './styleProps';
 import type {
@@ -25,10 +22,6 @@ import type {
 
 const NO_CONTEXT = {};
 let instanceCounter = 0;
-
-const appendToContainerLog = log.extend('appendToContainer');
-const mountLog = log.extend('mount');
-const updateLog = log.extend('update');
 
 export const InSimRenderer = ReactReconciler<
   Type,
@@ -87,23 +80,29 @@ export const InSimRenderer = ReactReconciler<
 
     let inst: InSimElement;
 
+    const node = Yoga.Node.create();
+    applyStyles(node, props);
+
     switch (type) {
-      case 'flex':
-      case 'lfs-button': {
-        const node = Yoga.Node.create();
-
-        applyStyles(node, props);
-
-        inst = {
-          clickId: ++instanceCounter,
-          type,
-          props,
-          context: hostContext,
-          container: rootContainerInstance,
+      case 'flex': {
+        inst = new FlexElement(
+          ++instanceCounter,
+          props as FlexElementProps,
+          hostContext,
+          rootContainerInstance,
           node,
-          parent: null,
-          children: [],
-        };
+        );
+
+        break;
+      }
+      case 'lfs-button': {
+        inst = new ButtonElement(
+          ++instanceCounter,
+          props as ButtonElementProps,
+          hostContext,
+          rootContainerInstance,
+          node,
+        );
         break;
       }
 
@@ -196,172 +195,171 @@ export const InSimRenderer = ReactReconciler<
     log('detachDeletedInstance', instance.type);
 
     // TODO remove from parent?
-    // instance.detachDeletedInstance();
+    instance.detachDeletedInstance();
   },
 
   commitMount(instance, type: Type, props) {
-    mountLog('commitMount', type);
+    log('commitMount', type);
 
-    if (type === 'flex') {
-      const updateChildren = (container: InSimElement) => {
-        container.children.forEach((child) => {
-          if (child.type === 'flex') {
-            updateChildren(child);
-          } else if (child.type === 'lfs-button') {
-            const { left, top, width, height } = getAbsolutePosition(
-              child.node,
-              child.type,
-            );
+    instance.commitMount(props);
 
-            if (instance.props.isConnected) {
-              sendButton(container.container.inSim, {
-                clickId: child.clickId,
-                left,
-                top,
-                width,
-                height,
-                text: childrenToString(child.props.children as any),
-              });
-              return;
-            } else {
-              log(
-                `commitMount button in flex - do not send button - not connected to InSim`,
-              );
-            }
-          }
-        });
-      };
-
-      // Background
-      const { left, top, width, height } = getAbsolutePosition(
-        instance.node,
-        instance.type,
-      );
-
-      if (instance.props.isConnected) {
-        sendButton(instance.container.inSim, {
-          clickId: ++instanceCounter,
-          left,
-          top,
-          width,
-          height,
-          text: '',
-        });
-      }
-
-      updateChildren(instance);
-
-      return;
-    }
-    if (type === 'lfs-button') {
-      const { left, top, width, height } = getAbsolutePosition(
-        instance.node,
-        instance.type,
-      );
-
-      if (instance.props.isConnected) {
-        sendButton(instance.container.inSim, {
-          clickId: instance.clickId,
-          left,
-          top,
-          width,
-          height,
-          text: childrenToString(props.children as any),
-        });
-      } else {
-        mountLog(`do not send button - not connected to InSim`);
-      }
-    }
+    // TODO
+    // if (type === 'flex') {
+    //   const updateChildren = (container: InSimElement) => {
+    //     container.children.forEach((child) => {
+    //       if (child.type === 'flex') {
+    //         updateChildren(child);
+    //       } else if (child.type === 'lfs-button') {
+    //         const { left, top, width, height } = getAbsolutePosition(
+    //           child.node,
+    //           child.type,
+    //         );
+    //
+    //         if (instance.props.isConnected) {
+    //           sendButton(container.container.inSim, {
+    //             clickId: child.clickId,
+    //             left,
+    //             top,
+    //             width,
+    //             height,
+    //             text: childrenToString(child.props.children as any),
+    //           });
+    //           return;
+    //         } else {
+    //           log(
+    //             `commitMount button in flex - do not send button - not connected to InSim`,
+    //           );
+    //         }
+    //       }
+    //     });
+    //   };
+    //
+    //   // Background
+    //   const { left, top, width, height } = getAbsolutePosition(
+    //     instance.node,
+    //     instance.type,
+    //   );
+    //
+    //   if (instance.props.isConnected) {
+    //     sendButton(instance.container.inSim, {
+    //       clickId: ++instanceCounter,
+    //       left,
+    //       top,
+    //       width,
+    //       height,
+    //       text: '',
+    //     });
+    //   }
+    //
+    //   updateChildren(instance);
+    //
+    //   return;
+    // }
+    // if (type === 'lfs-button') {
+    //   const { left, top, width, height } = getAbsolutePosition(
+    //     instance.node,
+    //     instance.type,
+    //   );
+    //
+    //   if (instance.props.isConnected) {
+    //     sendButton(instance.container.inSim, {
+    //       clickId: instance.clickId,
+    //       left,
+    //       top,
+    //       width,
+    //       height,
+    //       text: childrenToString(props.children as any),
+    //     });
+    //   } else {
+    //     mountLog(`do not send button - not connected to InSim`);
+    //   }
+    // }
   },
 
   commitUpdate(instance, updatePayload, type, oldProps, newProps) {
-    updateLog('commitUpdate', type, {
-      type,
-      oldProps,
-      newProps,
-      updatePayload,
-    });
+    log('commitUpdate', type);
+
     if (oldProps === null) {
       throw new Error('Should have old props');
     }
 
-    updateLog('new props', newProps);
+    instance.commitUpdate(oldProps, newProps, updatePayload);
 
-    applyStyles(instance.node, newProps);
-
-    instance.container.node.calculateLayout();
-
-    if (type === 'flex') {
-      const updateChildren = (container: InSimElement) => {
-        container.children.forEach((child) => {
-          if (child.type === 'flex') {
-            updateChildren(child);
-          } else if (child.type === 'lfs-button') {
-            const { left, top, width, height } = getAbsolutePosition(
-              child.node,
-              child.type,
-            );
-
-            if (newProps.isConnected) {
-              sendButton(container.container.inSim, {
-                clickId: child.clickId,
-                left,
-                top,
-                width,
-                height,
-                text: childrenToString(child.props.children as any),
-              });
-              return;
-            } else {
-              updateLog(
-                `button in flex - do not send button - not connected to InSim`,
-              );
-            }
-          }
-        });
-      };
-
-      // Background
-      const { left, top, width, height } = getAbsolutePosition(
-        instance.node,
-        instance.type,
-      );
-
-      if (newProps.isConnected) {
-        sendButton(instance.container.inSim, {
-          clickId: ++instanceCounter,
-          left,
-          top,
-          width,
-          height,
-          text: '',
-        });
-      }
-
-      updateChildren(instance);
-      return;
-    }
-
-    if (type === 'lfs-button') {
-      const { left, top, width, height } = getAbsolutePosition(
-        instance.node,
-        instance.type,
-      );
-
-      if (newProps.isConnected) {
-        sendButton(instance.container.inSim, {
-          clickId: instance.clickId,
-          left,
-          top,
-          width,
-          height,
-          text: childrenToString(newProps.children as any),
-        });
-        return;
-      } else {
-        updateLog(`button - do not send button - not connected to InSim`);
-      }
-    }
+    // applyStyles(instance.node, newProps);
+    //
+    // instance.container.node.calculateLayout();
+    //
+    // if (type === 'flex') {
+    //   const updateChildren = (container: InSimElement) => {
+    //     container.children.forEach((child) => {
+    //       if (child.type === 'flex') {
+    //         updateChildren(child);
+    //       } else if (child.type === 'lfs-button') {
+    //         const { left, top, width, height } = getAbsolutePosition(
+    //           child.node,
+    //           child.type,
+    //         );
+    //
+    //         if (newProps.isConnected) {
+    //           sendButton(container.container.inSim, {
+    //             clickId: child.clickId,
+    //             left,
+    //             top,
+    //             width,
+    //             height,
+    //             text: childrenToString(child.props.children as any),
+    //           });
+    //           return;
+    //         } else {
+    //           updateLog(
+    //             `button in flex - do not send button - not connected to InSim`,
+    //           );
+    //         }
+    //       }
+    //     });
+    //   };
+    //
+    //   // Background
+    //   const { left, top, width, height } = getAbsolutePosition(
+    //     instance.node,
+    //     instance.type,
+    //   );
+    //
+    //   if (newProps.isConnected) {
+    //     sendButton(instance.container.inSim, {
+    //       clickId: ++instanceCounter,
+    //       left,
+    //       top,
+    //       width,
+    //       height,
+    //       text: '',
+    //     });
+    //   }
+    //
+    //   updateChildren(instance);
+    //   return;
+    // }
+    //
+    // if (type === 'lfs-button') {
+    //   const { left, top, width, height } = getAbsolutePosition(
+    //     instance.node,
+    //     instance.type,
+    //   );
+    //
+    //   if (newProps.isConnected) {
+    //     sendButton(instance.container.inSim, {
+    //       clickId: instance.clickId,
+    //       left,
+    //       top,
+    //       width,
+    //       height,
+    //       text: childrenToString(newProps.children as any),
+    //     });
+    //     return;
+    //   } else {
+    //     updateLog(`button - do not send button - not connected to InSim`);
+    //   }
+    // }
   },
 
   commitTextUpdate() {
@@ -383,7 +381,7 @@ export const InSimRenderer = ReactReconciler<
   },
 
   appendChildToContainer(container, child) {
-    appendToContainerLog(`appendChildToContainer`, {
+    log(`appendChildToContainer`, {
       container: container.type,
       child: child.type,
     });
@@ -396,10 +394,7 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    const pos = container.children.length;
-    appendToContainerLog('insert child at', pos);
-
-    container.node.insertChild(child.node, pos);
+    container.node.insertChild(child.node, container.children.length);
     child.parent = container;
     container.children.push(child);
     container.node.calculateLayout();
@@ -462,7 +457,7 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    deleteButton(child.container.inSim, child.clickId);
+    child.detachDeletedInstance();
   },
 
   clearContainer(container: Container) {
@@ -515,98 +510,4 @@ function shallowDiff(
 
     return oldObj[propName] !== newObj[propName];
   });
-}
-
-function sendButton(
-  inSim: InSim,
-  {
-    clickId,
-    left,
-    top,
-    width,
-    height,
-    text,
-  }: {
-    clickId: number; // TODO auto-generate
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-    text: string;
-  },
-) {
-  log(`create button with ClickID ${clickId}`, {
-    left,
-    top,
-    width,
-    height,
-    text,
-  });
-  inSim.send(
-    new IS_BTN({
-      ClickID: clickId,
-      ReqI: 1,
-      L: left,
-      T: top,
-      W: width,
-      H: height,
-      BStyle: ButtonStyle.ISB_DARK,
-      Text: childrenToString(text),
-    }),
-  );
-}
-
-function deleteButton(
-  inSim: InSim,
-  clickId: number, // TODO auto-generate
-) {
-  log(`delete button with ClickID ${clickId}`);
-  inSim.send(
-    new IS_BFN({
-      ClickID: clickId,
-      SubT: ButtonFunction.BFN_DEL_BTN,
-    }),
-  );
-}
-
-function getAbsolutePosition(
-  node: Yoga.YogaNode,
-  type: Type,
-): Pick<
-  ReturnType<Yoga.YogaNode['getComputedLayout']>,
-  'left' | 'top' | 'width' | 'height'
-> {
-  log('getAbsolutePosition', type);
-
-  let left = 0;
-  let top = 0;
-  let width: number | null = null;
-  let height: number | null = null;
-
-  let currentNode: Yoga.YogaNode | null = node;
-
-  while (currentNode) {
-    const layout = currentNode.getComputedLayout();
-
-    log('computed', layout);
-
-    if (width === null) {
-      width = layout.width;
-    }
-
-    if (height === null) {
-      height = layout.height;
-    }
-
-    left += layout.left;
-    top += layout.top;
-    currentNode = currentNode.getParent(); // Assume Yoga exposes a method to get the parent node
-  }
-
-  return {
-    left,
-    top,
-    width: width ?? 0,
-    height: height ?? 0,
-  };
 }
