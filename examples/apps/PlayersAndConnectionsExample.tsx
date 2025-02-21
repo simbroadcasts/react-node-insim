@@ -71,7 +71,7 @@ export function PlayersAndConnectionsExample() {
     };
 
   const width = 18;
-  const height = 4;
+  const height = Array.from(players.values()).length > 3 ? 5 : 4;
   const UCID = 255;
 
   return (

@@ -223,9 +223,6 @@ export class ButtonElement extends InSimElement {
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
 
-    applyStyles(this.node, newProps);
-    this.container.node.calculateLayout();
-
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);
       return;

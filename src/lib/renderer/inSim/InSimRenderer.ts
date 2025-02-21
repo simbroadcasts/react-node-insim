@@ -209,6 +209,9 @@ export const InSimRenderer = ReactReconciler<
       throw new Error('Should have old props');
     }
 
+    applyStyles(instance.node, newProps);
+    instance.container.node.calculateLayout();
+
     instance.commitUpdate(oldProps, newProps, updatePayload);
   },
 
@@ -339,11 +342,8 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    // TODO called twice with removeChild?
     child.detachDeletedInstance();
     child.node.freeRecursive();
-
-    // child.detachDeletedInstance();
   },
 
   clearContainer(container: Container) {

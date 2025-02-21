@@ -30,58 +30,7 @@ export class FlexElement extends InSimElement {
   }
 
   commitMount(): void {
-    const updateChildren = (container: InSimElement) => {
-      container.children.forEach((child) => {
-        if (child.type === 'flex') {
-          updateChildren(child);
-        } else if (child.type === 'lfs-button') {
-          // TODO is it needed?
-          // const { left, top, width, height } = getAbsolutePosition(
-          //   child.node,
-          //   child.type,
-          // );
-          //
-          // if (this.props.isConnected) {
-          //   sendButton(container.container.inSim, {
-          //     clickId: child.clickId,
-          //     left,
-          //     top,
-          //     width,
-          //     height,
-          //     text: childrenToString(child.props.children as any),
-          //   });
-          //   return;
-          // } else {
-          //   log(
-          //     `commitMount button in flex - do not send button - not connected to InSim`,
-          //   );
-          // }
-        }
-      });
-    };
-
-    // TODO
-    // Background
-    // const { left, top, width, height } = getAbsolutePosition(
-    //   this.node,
-    //   this.type,
-    // );
-    //
-    // if (this.props.isConnected) {
-    //
-    //
-    //
-    //   sendButton(instance.container.inSim, {
-    //     clickId: ++instanceCounter,
-    //     left,
-    //     top,
-    //     width,
-    //     height,
-    //     text: '',
-    //   });
-    // }
-
-    // updateChildren(this);
+    // noop
   }
 
   commitUpdate(): void {
