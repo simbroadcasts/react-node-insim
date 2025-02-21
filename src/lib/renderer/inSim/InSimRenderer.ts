@@ -120,10 +120,10 @@ export const InSimRenderer = ReactReconciler<
     );
 
     parentInstance.node.insertChild(child.node, parentInstance.children.length);
-    // parentInstance.node.markDirty();
+    parentInstance.node.markDirty();
     child.parent = parentInstance;
     parentInstance.children.push(child);
-    parentInstance.container.node.calculateLayout();
+    // parentInstance.container.node.calculateLayout();
   },
 
   finalizeInitialChildren(instance, type, props) {
@@ -157,9 +157,11 @@ export const InSimRenderer = ReactReconciler<
     return null;
   },
 
-  resetAfterCommit(): void {
+  resetAfterCommit(containerInfo: Container): void {
     log('resetAfterCommit');
     log('');
+
+    containerInfo.node.calculateLayout();
   },
 
   getCurrentEventPriority() {
@@ -221,9 +223,19 @@ export const InSimRenderer = ReactReconciler<
       child: child.type,
     });
 
-    parentInstance.node.insertChild(child.node, parentInstance.children.length);
-    // parentInstance.node.markDirty();
-    parentInstance.container.node.calculateLayout();
+    if (child.node.getParent()) {
+      child.node.getParent()?.removeChild(child.node);
+    }
+
+    parentInstance.node.insertChild(
+      child.node,
+      parentInstance.node.getChildCount(),
+    );
+
+    // if (parentInstance.node.getChildCount() > 0) {
+    //   parentInstance.node.markDirty();
+    // }
+    // parentInstance.container.node.calculateLayout();
 
     parentInstance.children.push(child);
     child.parent = parentInstance;
@@ -243,9 +255,17 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
+    if (child.node.getParent()) {
+      child.node.getParent()?.removeChild(child.node);
+    }
+
     container.node.insertChild(child.node, container.children.length);
-    // container.node.markDirty();
-    container.node.calculateLayout();
+
+    if (container.node.getChildCount() > 0) {
+      // container.node.markDirty();
+    }
+
+    // container.node.calculateLayout();
 
     child.parent = container;
     container.children.push(child);
@@ -298,7 +318,9 @@ export const InSimRenderer = ReactReconciler<
         (c) => c !== child,
       );
       child.parent = null;
-      parentInstance.container.node.calculateLayout();
+      // parentInstance.container.node.calculateLayout();
+
+      child.node.freeRecursive();
 
       child.detachDeletedInstance();
     }
@@ -319,6 +341,8 @@ export const InSimRenderer = ReactReconciler<
 
     // TODO called twice with removeChild?
     child.detachDeletedInstance();
+    child.node.freeRecursive();
+
     // child.detachDeletedInstance();
   },
 

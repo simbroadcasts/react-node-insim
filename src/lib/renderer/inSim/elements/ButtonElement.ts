@@ -131,6 +131,7 @@ type ButtonBaseProps = StyleProps & {
 export class ButtonElement extends InSimElement {
   public static readonly REQUEST_ID = 1;
   public static readonly UCID_ALL = 255;
+  public static readonly MAX_SIZE = 200;
 
   private packet: IS_BTN = new IS_BTN();
 
@@ -304,10 +305,10 @@ export class ButtonElement extends InSimElement {
 
     const { left, top, width, height } = getAbsolutePosition(this.node);
 
-    this.packet.L = left;
-    this.packet.T = top;
-    this.packet.W = width;
-    this.packet.H = height;
+    this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
+    this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
+    this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
+    this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
 
     this.packet.BStyle = this.getButtonStyleFromProps(props);
     const initValueButtonText = props.initializeDialogWithButtonText
