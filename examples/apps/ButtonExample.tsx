@@ -1,7 +1,7 @@
 import { IS_MST } from 'node-insim/packets';
 
 import type { ButtonProps } from '../../src';
-import { Button_OLD, VStack } from '../../src';
+import { Button, VStack } from '../../src';
 
 export function ButtonExample() {
   const top = 122;
@@ -11,17 +11,17 @@ export function ButtonExample() {
 
   return (
     <>
-      <Button_OLD
+      <Button
         top={top}
         left={left}
         width={20}
         height={height}
         color="title"
-        align="left"
+        textAlign="left"
         UCID={255}
       >
         Button
-      </Button_OLD>
+      </Button>
       {backgroundColors.map((background, backgroundIndex) => (
         <VStack
           key={background}
@@ -33,13 +33,13 @@ export function ButtonExample() {
           background={background}
         >
           {textColors.map((color) => (
-            <Button_OLD
+            <Button
               key={color}
               color={color}
-              align={alignments[backgroundIndex]}
+              textAlign={alignments[backgroundIndex]}
             >
               {color}
-            </Button_OLD>
+            </Button>
           ))}
         </VStack>
       ))}
@@ -51,7 +51,7 @@ export function ButtonExample() {
         UCID={255}
         background="dark"
       >
-        <Button_OLD
+        <Button
           onClick={(packet, inSim) => {
             inSim.send(
               new IS_MST({ Msg: `Clicked button ID ${packet.ClickID}` }),
@@ -59,8 +59,8 @@ export function ButtonExample() {
           }}
         >
           Click
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           onType={(packet, inSim) => {
             inSim.send(
               new IS_MST({
@@ -70,7 +70,7 @@ export function ButtonExample() {
           }}
         >
           Type in
-        </Button_OLD>
+        </Button>
       </VStack>
       <VStack
         top={top + 5 + height * 2}
@@ -79,7 +79,7 @@ export function ButtonExample() {
         height={height}
         UCID={255}
       >
-        <Button_OLD
+        <Button
           variant="light"
           onClick={(packet, inSim) => {
             inSim.send(
@@ -88,8 +88,8 @@ export function ButtonExample() {
           }}
         >
           light
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           variant="light"
           isDisabled
           onClick={(packet, inSim) => {
@@ -99,8 +99,8 @@ export function ButtonExample() {
           }}
         >
           light
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           variant="dark"
           onClick={(packet, inSim) => {
             inSim.send(
@@ -109,8 +109,8 @@ export function ButtonExample() {
           }}
         >
           dark
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           variant="dark"
           isDisabled
           onClick={(packet, inSim) => {
@@ -120,7 +120,7 @@ export function ButtonExample() {
           }}
         >
           dark
-        </Button_OLD>
+        </Button>
       </VStack>
     </>
   );

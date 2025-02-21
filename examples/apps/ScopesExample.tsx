@@ -1,5 +1,5 @@
 import {
-  Button_OLD,
+  Button,
   ConnectionScopeProvider,
   GlobalScopeProvider,
   HStack,
@@ -12,16 +12,16 @@ export function ScopesExample() {
   return (
     <>
       <GlobalScopeProvider>
-        <Button_OLD
+        <Button
           top={0}
           left={80}
           height={5}
           width={40}
-          align="left"
+          textAlign="left"
           variant="light"
         >
           React Node InSim
-        </Button_OLD>
+        </Button>
       </GlobalScopeProvider>
       <ConnectionScopeProvider>
         <UserNameButton />
@@ -37,13 +37,13 @@ function UserNameButton() {
   const { UName } = useConnectionScope();
 
   return (
-    <HStack top={5} left={80} height={5}>
-      <Button_OLD width={15} align="left" color="title">
+    <HStack>
+      <Button width={15} textAlign="left" color="title">
         Username
-      </Button_OLD>
-      <Button_OLD width={25} variant="dark">
+      </Button>
+      <Button width={25} variant="dark">
         {UName}
-      </Button_OLD>
+      </Button>
     </HStack>
   );
 }
@@ -53,12 +53,12 @@ function HumanPlayerNameButton() {
 
   return (
     <HStack top={10} left={80} height={5}>
-      <Button_OLD width={15} align="left" color="title">
+      <Button width={15} textAlign="left" color="title">
         Player name
-      </Button_OLD>
-      <Button_OLD width={25} variant="dark">
+      </Button>
+      <Button width={25} variant="dark">
         {PName}
-      </Button_OLD>
+      </Button>
     </HStack>
   );
 }

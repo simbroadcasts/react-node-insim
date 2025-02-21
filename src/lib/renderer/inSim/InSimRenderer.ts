@@ -4,10 +4,8 @@ import Yoga from 'yoga-layout-prebuilt';
 
 import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
-import type { ButtonElementProps } from './elements/ButtonElement';
-import { ButtonElement } from './elements/ButtonElement';
-import type { FlexElementProps } from './elements/FlexElement';
-import { FlexElement } from './elements/FlexElement';
+import type { ButtonElementProps, FlexElementProps } from './elements';
+import { ButtonElement, FlexElement } from './elements';
 import type { InSimElement } from './InSimElement';
 import applyStyles from './styleProps';
 import type {
@@ -122,6 +120,7 @@ export const InSimRenderer = ReactReconciler<
     );
 
     parentInstance.node.insertChild(child.node, parentInstance.children.length);
+    // parentInstance.node.markDirty();
     child.parent = parentInstance;
     parentInstance.children.push(child);
     parentInstance.container.node.calculateLayout();
@@ -129,7 +128,7 @@ export const InSimRenderer = ReactReconciler<
 
   finalizeInitialChildren(instance, type, props) {
     const b = instance.type === 'lfs-button' || instance.type === 'flex';
-    log('finalizeInitialChildren', b, type, props);
+    log('finalizeInitialChildren', type, b);
     return b;
   },
 
@@ -193,87 +192,12 @@ export const InSimRenderer = ReactReconciler<
 
   detachDeletedInstance(instance) {
     log('detachDeletedInstance', instance.type);
-
-    // TODO remove from parent?
-    instance.detachDeletedInstance();
   },
 
   commitMount(instance, type: Type, props) {
     log('commitMount', type);
 
     instance.commitMount(props);
-
-    // TODO
-    // if (type === 'flex') {
-    //   const updateChildren = (container: InSimElement) => {
-    //     container.children.forEach((child) => {
-    //       if (child.type === 'flex') {
-    //         updateChildren(child);
-    //       } else if (child.type === 'lfs-button') {
-    //         const { left, top, width, height } = getAbsolutePosition(
-    //           child.node,
-    //           child.type,
-    //         );
-    //
-    //         if (instance.props.isConnected) {
-    //           sendButton(container.container.inSim, {
-    //             clickId: child.clickId,
-    //             left,
-    //             top,
-    //             width,
-    //             height,
-    //             text: childrenToString(child.props.children as any),
-    //           });
-    //           return;
-    //         } else {
-    //           log(
-    //             `commitMount button in flex - do not send button - not connected to InSim`,
-    //           );
-    //         }
-    //       }
-    //     });
-    //   };
-    //
-    //   // Background
-    //   const { left, top, width, height } = getAbsolutePosition(
-    //     instance.node,
-    //     instance.type,
-    //   );
-    //
-    //   if (instance.props.isConnected) {
-    //     sendButton(instance.container.inSim, {
-    //       clickId: ++instanceCounter,
-    //       left,
-    //       top,
-    //       width,
-    //       height,
-    //       text: '',
-    //     });
-    //   }
-    //
-    //   updateChildren(instance);
-    //
-    //   return;
-    // }
-    // if (type === 'lfs-button') {
-    //   const { left, top, width, height } = getAbsolutePosition(
-    //     instance.node,
-    //     instance.type,
-    //   );
-    //
-    //   if (instance.props.isConnected) {
-    //     sendButton(instance.container.inSim, {
-    //       clickId: instance.clickId,
-    //       left,
-    //       top,
-    //       width,
-    //       height,
-    //       text: childrenToString(props.children as any),
-    //     });
-    //   } else {
-    //     mountLog(`do not send button - not connected to InSim`);
-    //   }
-    // }
   },
 
   commitUpdate(instance, updatePayload, type, oldProps, newProps) {
@@ -284,82 +208,6 @@ export const InSimRenderer = ReactReconciler<
     }
 
     instance.commitUpdate(oldProps, newProps, updatePayload);
-
-    // applyStyles(instance.node, newProps);
-    //
-    // instance.container.node.calculateLayout();
-    //
-    // if (type === 'flex') {
-    //   const updateChildren = (container: InSimElement) => {
-    //     container.children.forEach((child) => {
-    //       if (child.type === 'flex') {
-    //         updateChildren(child);
-    //       } else if (child.type === 'lfs-button') {
-    //         const { left, top, width, height } = getAbsolutePosition(
-    //           child.node,
-    //           child.type,
-    //         );
-    //
-    //         if (newProps.isConnected) {
-    //           sendButton(container.container.inSim, {
-    //             clickId: child.clickId,
-    //             left,
-    //             top,
-    //             width,
-    //             height,
-    //             text: childrenToString(child.props.children as any),
-    //           });
-    //           return;
-    //         } else {
-    //           updateLog(
-    //             `button in flex - do not send button - not connected to InSim`,
-    //           );
-    //         }
-    //       }
-    //     });
-    //   };
-    //
-    //   // Background
-    //   const { left, top, width, height } = getAbsolutePosition(
-    //     instance.node,
-    //     instance.type,
-    //   );
-    //
-    //   if (newProps.isConnected) {
-    //     sendButton(instance.container.inSim, {
-    //       clickId: ++instanceCounter,
-    //       left,
-    //       top,
-    //       width,
-    //       height,
-    //       text: '',
-    //     });
-    //   }
-    //
-    //   updateChildren(instance);
-    //   return;
-    // }
-    //
-    // if (type === 'lfs-button') {
-    //   const { left, top, width, height } = getAbsolutePosition(
-    //     instance.node,
-    //     instance.type,
-    //   );
-    //
-    //   if (newProps.isConnected) {
-    //     sendButton(instance.container.inSim, {
-    //       clickId: instance.clickId,
-    //       left,
-    //       top,
-    //       width,
-    //       height,
-    //       text: childrenToString(newProps.children as any),
-    //     });
-    //     return;
-    //   } else {
-    //     updateLog(`button - do not send button - not connected to InSim`);
-    //   }
-    // }
   },
 
   commitTextUpdate() {
@@ -374,10 +222,11 @@ export const InSimRenderer = ReactReconciler<
     });
 
     parentInstance.node.insertChild(child.node, parentInstance.children.length);
+    // parentInstance.node.markDirty();
+    parentInstance.container.node.calculateLayout();
+
     parentInstance.children.push(child);
     child.parent = parentInstance;
-
-    parentInstance.container.node.calculateLayout();
   },
 
   appendChildToContainer(container, child) {
@@ -395,9 +244,11 @@ export const InSimRenderer = ReactReconciler<
     }
 
     container.node.insertChild(child.node, container.children.length);
+    // container.node.markDirty();
+    container.node.calculateLayout();
+
     child.parent = container;
     container.children.push(child);
-    container.node.calculateLayout();
   },
 
   insertBefore(parentInstance, child, beforeChild) {
@@ -435,12 +286,21 @@ export const InSimRenderer = ReactReconciler<
     log('removeChild', { parent: parentInstance.type, child: child.type });
 
     if (parentInstance && parentInstance.node && child.node) {
+      log('old child count', parentInstance.node.getChildCount());
       parentInstance.node.removeChild(child.node);
+
+      if (parentInstance.node.getChildCount() > 0) {
+        log('new child count', parentInstance.node.getChildCount());
+        // parentInstance.node.markDirty();
+      }
+
       parentInstance.children = parentInstance.children.filter(
         (c) => c !== child,
       );
       child.parent = null;
       parentInstance.container.node.calculateLayout();
+
+      child.detachDeletedInstance();
     }
   },
 
@@ -457,7 +317,9 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
+    // TODO called twice with removeChild?
     child.detachDeletedInstance();
+    // child.detachDeletedInstance();
   },
 
   clearContainer(container: Container) {

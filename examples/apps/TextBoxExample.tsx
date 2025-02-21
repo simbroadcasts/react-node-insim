@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button_OLD, HStack, TextBox } from '../../src';
+import { Button, HStack, TextBox } from '../../src';
 
 export function TextBoxExample() {
   const [rows, setRows] = useState<number | undefined>(4);
@@ -13,10 +13,10 @@ export function TextBoxExample() {
   return (
     <>
       <HStack top={top} left={left} height={4} UCID={255}>
-        <Button_OLD width={8} color="title" align="left">
+        <Button width={8} color="title" textAlign="left">
           TextBox
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           width={8}
           variant="light"
           onType={(packet) => {
@@ -35,8 +35,8 @@ export function TextBoxExample() {
           }}
         >
           Rows: {rows ?? '-'}
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           width={8}
           variant="light"
           onType={(packet) => {
@@ -50,8 +50,8 @@ export function TextBoxExample() {
           }}
         >
           Cols: {cols}
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           width={12}
           variant="light"
           onType={(packet) => {
@@ -65,7 +65,7 @@ export function TextBoxExample() {
           }}
         >
           Row height: {rowHeight}
-        </Button_OLD>
+        </Button>
       </HStack>
       <TextBox
         top={top + 5}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button_OLD, HStack, VStack } from '../../src';
+import { Button, HStack, VStack } from '../../src';
 
 export function StackExample() {
   const [gap, setGap] = useState(0);
@@ -11,11 +11,11 @@ export function StackExample() {
 
   return (
     <>
-      <HStack top={top} left={left} height={4} UCID={255}>
-        <Button_OLD width={7} color="title" align="left">
+      <HStack UCID={255}>
+        <Button width={7} color="title" textAlign="left">
           VStack
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           width={7}
           variant="light"
           onType={(packet) => {
@@ -29,8 +29,8 @@ export function StackExample() {
           }}
         >
           Gap: {gap}
-        </Button_OLD>
-        <Button_OLD
+        </Button>
+        <Button
           width={8}
           variant="light"
           onType={(packet) => {
@@ -44,7 +44,7 @@ export function StackExample() {
           }}
         >
           Height: {height}
-        </Button_OLD>
+        </Button>
       </HStack>
       <VStack
         top={top + 5}
@@ -55,10 +55,10 @@ export function StackExample() {
         UCID={255}
         gap={gap}
       >
-        <Button_OLD>Stacked button 1</Button_OLD>
-        <Button_OLD>Stacked button 2</Button_OLD>
-        <Button_OLD>Stacked button 3</Button_OLD>
-        <Button_OLD>Stacked button 4</Button_OLD>
+        <Button>Stacked button 1</Button>
+        <Button>Stacked button 2</Button>
+        <Button>Stacked button 3</Button>
+        <Button>Stacked button 4</Button>
       </VStack>
       <VStack
         top={top + 5}
@@ -67,22 +67,22 @@ export function StackExample() {
         background="dark"
         UCID={255}
       >
-        <Button_OLD height={4}>Height: 4</Button_OLD>
-        <Button_OLD height={10}>Height: 10</Button_OLD>
-        <Button_OLD height={14}>Height: 14</Button_OLD>
-        <Button_OLD height={6}>Height: 6</Button_OLD>
+        <Button height={4}>Height: 4</Button>
+        <Button height={10}>Height: 10</Button>
+        <Button height={14}>Height: 14</Button>
+        <Button height={6}>Height: 6</Button>
       </VStack>
-      <Button_OLD
+      <Button
         top={top}
         left={left + 38}
         width={20}
         height={4}
         color="title"
-        align="left"
+        textAlign="left"
         UCID={255}
       >
         HStack
-      </Button_OLD>
+      </Button>
       <HStack
         top={top + 5}
         left={left + 38}
@@ -91,12 +91,12 @@ export function StackExample() {
         background="dark"
         UCID={255}
       >
-        <Button_OLD>1</Button_OLD>
-        <Button_OLD>2</Button_OLD>
-        <Button_OLD>3</Button_OLD>
-        <Button_OLD>4</Button_OLD>
-        <Button_OLD>5</Button_OLD>
-        <Button_OLD>6</Button_OLD>
+        <Button>1</Button>
+        <Button>2</Button>
+        <Button>3</Button>
+        <Button>4</Button>
+        <Button>5</Button>
+        <Button>6</Button>
       </HStack>
       <HStack
         top={top + 10}
@@ -106,10 +106,10 @@ export function StackExample() {
         background="dark"
         UCID={255}
       >
-        <Button_OLD width={3}>3</Button_OLD>
-        <Button_OLD width={5}>5</Button_OLD>
-        <Button_OLD width={9}>9</Button_OLD>
-        <Button_OLD width={4}>4</Button_OLD>
+        <Button width={3}>3</Button>
+        <Button width={5}>5</Button>
+        <Button width={9}>9</Button>
+        <Button width={4}>4</Button>
       </HStack>
     </>
   );

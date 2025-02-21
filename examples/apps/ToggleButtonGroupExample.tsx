@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button_OLD, ToggleButtonGroup } from '../../src';
+import { Button, ToggleButtonGroup } from '../../src';
 
 const options = [
   { label: 'low', value: 1 },
@@ -18,17 +18,17 @@ export function ToggleButtonGroupExample() {
 
   return (
     <>
-      <Button_OLD
+      <Button
         top={top}
         left={left}
         width={20}
         height={4}
         color="title"
-        align="left"
+        textAlign="left"
         UCID={255}
       >
         ToggleButtonGroup
-      </Button_OLD>
+      </Button>
       <ToggleButtonGroup
         top={top + 5}
         left={left}

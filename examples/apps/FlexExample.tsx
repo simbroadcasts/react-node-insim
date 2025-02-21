@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 
 import type { FlexProps } from '../../src';
-import { Button_OLD, Flex_OLD, HStack } from '../../src';
+import { Button, Flex, HStack } from '../../src';
 
 export function FlexExample({
   isEditorVisible,
@@ -10,14 +10,11 @@ export function FlexExample({
 }) {
   const [flexProps, setFlexProps] = useState<Partial<FlexProps>>({
     backgroundColor: 'light',
-    background: 'dark',
-    top: 126,
-    left: 2,
+    // background: 'dark',
     width: 90,
     height: 30,
-    borderSize: 1,
+    borderWidth: 1,
     borderColor: 'dark',
-    alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'space-evenly',
   });
@@ -30,19 +27,19 @@ export function FlexExample({
     <>
       {isEditorVisible && (
         <>
-          <Button_OLD
+          <Button
             top={top}
             left={left}
             width={10}
             height={rowHeight}
             color="title"
-            align="left"
+            textAlign="left"
             UCID={255}
           >
             Flex props
-          </Button_OLD>
+          </Button>
 
-          <Button_OLD
+          <Button
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -50,7 +47,7 @@ export function FlexExample({
             UCID={255}
             background="dark"
           />
-          <Button_OLD
+          <Button
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -58,7 +55,7 @@ export function FlexExample({
             UCID={255}
             background="dark"
           />
-          <Button_OLD
+          <Button
             top={top + rowHeight}
             left={left}
             width={editorWidth}
@@ -79,17 +76,17 @@ export function FlexExample({
 
             return (
               <Fragment key={key}>
-                <Button_OLD
+                <Button
                   width={17}
                   height={rowHeight}
                   top={top + rowHeight * (index + 1) + 1}
                   left={left}
                   UCID={255}
-                  align="left"
+                  textAlign="left"
                   color="unselected"
                 >
                   {key}
-                </Button_OLD>
+                </Button>
                 <HStack
                   width={13}
                   height={rowHeight}
@@ -114,7 +111,7 @@ export function FlexExample({
                       flexPropValue === value ? 'selected' : 'unselected';
 
                     return (
-                      <Button_OLD
+                      <Button
                         key={`${valueString}-${variant}`}
                         background={variant}
                         color={color}
@@ -166,7 +163,7 @@ export function FlexExample({
                         }
                       >
                         {valueString}
-                      </Button_OLD>
+                      </Button>
                     );
                   })}
                 </HStack>
@@ -176,30 +173,30 @@ export function FlexExample({
         </>
       )}
 
-      <Button_OLD
+      <Button
         top={(flexProps.top ?? 0) - rowHeight - 1}
         left={flexProps.left}
         width={10}
         height={rowHeight}
         color="title"
-        align="left"
+        textAlign="left"
         UCID={255}
       >
         Flex
-      </Button_OLD>
+      </Button>
 
-      <Flex_OLD top={0} left={0} UCID={255} {...flexProps}>
-        <Button_OLD width={10} height={12}>
+      <Flex top={0} left={0} UCID={255} {...flexProps}>
+        <Button width={10} height={12}>
           Outer
-        </Button_OLD>
-        <Button_OLD width={20} height={8}>
+        </Button>
+        <Button width={20} height={8}>
           Flex
-        </Button_OLD>
-        <Button_OLD width={8} height={5}>
+        </Button>
+        <Button width={8} height={5}>
           Box
-        </Button_OLD>
+        </Button>
 
-        <Flex_OLD
+        <Flex
           top={1}
           left={1}
           width={30}
@@ -208,41 +205,27 @@ export function FlexExample({
           background="light"
           UCID={255}
         >
-          <Button_OLD width={5} height={12}>
+          <Button width={5} height={12}>
             Inner
-          </Button_OLD>
-          <Button_OLD width={10} height={8}>
+          </Button>
+          <Button width={10} height={8}>
             Flex
-          </Button_OLD>
-          <Button_OLD width={10} height={5}>
+          </Button>
+          <Button width={10} height={5}>
             Box
-          </Button_OLD>
-        </Flex_OLD>
-      </Flex_OLD>
+          </Button>
+        </Flex>
+      </Flex>
     </>
   );
 }
 
-const alignContentOptions: FlexProps['alignContent'][] = [
-  undefined,
-  'start',
-  'center',
-  'end',
-  'stretch',
-  'auto',
-  'baseline',
-  'space-between',
-  'space-around',
-];
-
 const alignItemsOptions: FlexProps['alignItems'][] = [
   undefined,
-  'start',
+  'flex-start',
   'center',
-  'end',
+  'flex-end',
   'stretch',
-  'auto',
-  'baseline',
 ];
 
 const backgroundColorOptions: FlexProps['backgroundColor'][] = [
@@ -251,7 +234,7 @@ const backgroundColorOptions: FlexProps['backgroundColor'][] = [
   'dark',
 ];
 
-const directionOptions: FlexProps['direction'][] = [
+const directionOptions: FlexProps['flexDirection'][] = [
   undefined,
   'row',
   'row-reverse',
@@ -261,55 +244,39 @@ const directionOptions: FlexProps['direction'][] = [
 
 const justifyContentOptions: FlexProps['justifyContent'][] = [
   undefined,
-  'start',
+  'flex-start',
   'center',
-  'end',
+  'flex-end',
   'space-evenly',
   'space-around',
   'space-between',
 ];
 
-const wrapOptions: FlexProps['wrap'][] = [
+const wrapOptions: FlexProps['flexWrap'][] = [
   undefined,
-  'no-wrap',
+  'nowrap',
   'wrap',
   'wrap-reverse',
 ];
 
-const colorOptions: FlexProps['color'][] = [
-  undefined,
-  'default',
-  'title',
-  'unselected',
-  'selected',
-  'ok',
-  'cancel',
-  'textstring',
-  'unavailable',
-];
-
-const backgroundOptions: FlexProps['background'][] = [
-  undefined,
-  'dark',
-  'light',
-  'transparent',
-];
+// const backgroundOptions: FlexProps['background'][] = [
+//   undefined,
+//   'dark',
+//   'light',
+//   'transparent',
+// ];
 
 const plusMinusOptions = ['-', '+'];
 
 const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
-  top: plusMinusOptions,
-  left: plusMinusOptions,
   width: [undefined, 30, 50, 90],
   height: [undefined, 30, 50, 90],
-  color: colorOptions,
   backgroundColor: backgroundColorOptions,
-  borderSize: plusMinusOptions,
-  borderColor: backgroundOptions,
-  background: backgroundOptions,
-  alignContent: alignContentOptions,
+  borderWidth: plusMinusOptions,
+  // borderColor: backgroundOptions,
+  // background: backgroundOptions,
   alignItems: alignItemsOptions,
-  direction: directionOptions,
+  flexDirection: directionOptions,
   justifyContent: justifyContentOptions,
   margin: plusMinusOptions,
   marginBottom: plusMinusOptions,
@@ -325,5 +292,5 @@ const rows: Partial<Record<keyof FlexProps, unknown[]>> = {
   paddingRight: plusMinusOptions,
   paddingTop: plusMinusOptions,
   paddingVertical: plusMinusOptions,
-  wrap: wrapOptions,
+  flexWrap: wrapOptions,
 };

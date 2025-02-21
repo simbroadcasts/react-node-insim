@@ -75,11 +75,17 @@ export function PlayersAndConnectionsExample() {
   const UCID = 255;
 
   return (
-    <VStack width={width}>
+    <Flex
+      flexDirection="column"
+      width={width}
+      alignItems="center"
+      justifyContent="center"
+    >
       <>
         {players.map((player) => (
           <Button
             key={player.PLID}
+            width={width}
             height={height}
             UCID={UCID}
             background="dark"
@@ -89,6 +95,6 @@ export function PlayersAndConnectionsExample() {
           </Button>
         ))}
       </>
-    </VStack>
+    </Flex>
   );
 }

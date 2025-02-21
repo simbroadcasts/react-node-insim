@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ButtonProps } from 'react-node-insim';
-import { Button_OLD } from 'react-node-insim';
+import { Button } from 'react-node-insim';
 
 type Props = Omit<ButtonProps, 'height'> & {
   rows?: number;
@@ -20,7 +20,7 @@ export function TextBox({
   left = 0,
   width = 0,
   children,
-  align = 'left',
+  textAlign = 'left',
   background,
   color,
   variant,
@@ -53,7 +53,7 @@ export function TextBox({
 
   return (
     <>
-      <Button_OLD
+      <Button
         top={top}
         left={left}
         width={textAreaWidth}
@@ -63,13 +63,13 @@ export function TextBox({
         {...commonProps}
       />
       {Array.from({ length: rows }).map((_, i) => (
-        <Button_OLD
+        <Button
           key={i}
           top={top + i * rowHeight}
           left={left}
           width={textAreaWidth}
           height={rowHeight}
-          align={align}
+          textAlign={textAlign}
           variant={variant}
           color={color}
           background="transparent"
@@ -78,11 +78,11 @@ export function TextBox({
         >
           {chunks[i + scrollPosition] ?? ''}
           {i === rows - 1 && canScrollDown ? '...' : ''}
-        </Button_OLD>
+        </Button>
       ))}
       {isScrollbarVisible && (
         <>
-          <Button_OLD
+          <Button
             top={top}
             left={scrollbarLeft}
             width={scrollbarWidth}
@@ -99,10 +99,10 @@ export function TextBox({
             {...commonProps}
           >
             ▲
-          </Button_OLD>
+          </Button>
           {rows > 2 && (
             <>
-              <Button_OLD
+              <Button
                 top={
                   top + rowHeight + (scrollPosition / rows) * scrollbarHeight
                 }
@@ -115,7 +115,7 @@ export function TextBox({
               />
             </>
           )}
-          <Button_OLD
+          <Button
             top={
               top +
               textAreaHeight -
@@ -136,7 +136,7 @@ export function TextBox({
             {...commonProps}
           >
             ▼
-          </Button_OLD>
+          </Button>
         </>
       )}
     </>

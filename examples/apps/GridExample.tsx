@@ -1,4 +1,4 @@
-import { Button_OLD, Grid, GridButton } from '../../src';
+import { Button, Grid, GridButton } from '../../src';
 
 export function GridExample() {
   const top = 157;
@@ -6,17 +6,17 @@ export function GridExample() {
 
   return (
     <>
-      <Button_OLD
+      <Button
         top={top}
         left={left}
         width={10}
         height={4}
         color="title"
-        align="left"
+        textAlign="left"
         UCID={255}
       >
         Grid
-      </Button_OLD>
+      </Button>
       <Grid
         top={top + 5}
         left={left}

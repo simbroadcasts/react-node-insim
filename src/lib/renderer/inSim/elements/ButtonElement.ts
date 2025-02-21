@@ -282,10 +282,6 @@ export class ButtonElement extends InSimElement {
     this.deleteButton(clickID, ucid);
     this.removeClickIdForUCID(clickID, ucid);
     this.clearAllListeners();
-
-    this.node.getParent()?.removeChild(this.node);
-    this.container.node.calculateLayout();
-    this.node.getParent()?.calculateLayout();
   }
 
   private assertTextLength(props: ButtonElementProps): void {
