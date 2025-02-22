@@ -3,7 +3,9 @@ import type { RootElement } from './elements/RootElement';
 
 export type Container = RootElement;
 
-export type Type = 'btn' | 'flex' | 'lfs-button';
+export type InSimElementType = 'btn' | 'flex' | 'lfs-button';
+
+export type ElementType = 'root' | InSimElementType;
 
 export type Props = Record<string, unknown>;
 

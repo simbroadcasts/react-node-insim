@@ -8,11 +8,11 @@ import { ButtonElement, FlexElement } from './elements';
 import type { InSimElement } from './elements/InSimElement';
 import type {
   Container,
+  ElementType,
   HostContext,
   Instance,
   Props,
   TextChildren,
-  Type,
   UpdatePayload,
 } from './types';
 
@@ -20,7 +20,7 @@ const NO_CONTEXT = {};
 let instanceCounter = 0;
 
 export const InSimRenderer = ReactReconciler<
-  Type,
+  ElementType,
   Props,
   Container,
   Instance,
@@ -185,7 +185,7 @@ export const InSimRenderer = ReactReconciler<
     log('detachDeletedInstance', instance.type);
   },
 
-  commitMount(instance, type: Type, props) {
+  commitMount(instance, type: ElementType, props) {
     log('commitMount', type);
 
     instance.commitMount(props);
@@ -319,7 +319,7 @@ function insertInContainerOrInstanceBefore(
   parentInstance.children.splice(beforeIndex, 0, child);
 }
 
-function shouldSetTextContent(type: Type, props: Props): boolean {
+function shouldSetTextContent(type: ElementType, props: Props): boolean {
   const b =
     type === 'lfs-button' ||
     typeof props.children === 'string' ||

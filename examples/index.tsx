@@ -30,7 +30,7 @@ const root = createRoot({
   port,
   adminPassword,
   flags,
-  // appendClickIDsInButtons: true,
+  appendClickIDsInButtons: true,
   rootNodeStyle: {
     justifyContent: 'center',
     alignItems: 'center',

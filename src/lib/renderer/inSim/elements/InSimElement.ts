@@ -5,8 +5,8 @@ import type {
   Children,
   Container,
   HostContext,
+  InSimElementType,
   Props,
-  Type,
   UpdatePayload,
 } from '../types';
 import { BaseElement } from './BaseElement';
@@ -28,7 +28,7 @@ export abstract class InSimElement extends BaseElement {
   protected constructor(
     id: number,
     parent: InSimElement | Container | null,
-    type: Type,
+    type: InSimElementType,
     props: Props,
     children: Children,
     context: HostContext,

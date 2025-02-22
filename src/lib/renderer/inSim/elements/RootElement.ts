@@ -4,12 +4,10 @@ import Yoga from 'yoga-layout-prebuilt';
 
 import { log } from '../../../internals/logger';
 import applyStyles, { type StyleProps } from '../styleProps';
-import type { Children } from '../types';
 import { BaseElement } from './BaseElement';
 
 export class RootElement extends BaseElement {
   readonly id: string;
-  pendingChildren: Children;
   readonly inSim: InSim;
 
   /**
@@ -17,7 +15,7 @@ export class RootElement extends BaseElement {
    * ClickID2: [UCID1, UCID2, UCID3, UCID4]
    * ClickID2: [              UCID3, UCID4]
    */
-  buttonUCIDsByClickID: Set<number>[];
+  buttonUCIDsByClickID: Set<number>[] = [];
   buttonClickIDStart: number;
   appendClickIDsInButtons: boolean;
 
@@ -41,10 +39,6 @@ export class RootElement extends BaseElement {
 
     this.id = id;
     this.inSim = inSim;
-    this.children = [];
-    this.pendingChildren = [];
-    this.inSim = inSim;
-    this.buttonUCIDsByClickID = [];
     this.buttonClickIDStart = buttonClickIDStart;
     this.appendClickIDsInButtons = appendClickIDsInButtons;
 

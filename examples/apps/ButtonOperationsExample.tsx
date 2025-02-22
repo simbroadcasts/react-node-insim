@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Button } from 'react-node-insim';
 
+const controlsWidth = 40;
+const controlsHeight = 5;
+
 export function ButtonOperationsExample() {
-  const [width, setWidth] = useState(20);
+  const [width, setWidth] = useState(30);
   const [height, setHeight] = useState(5);
   const [buttons, setButtons] = useState<{ id: string; text: string }[]>([
     generateButton(),
@@ -11,8 +14,8 @@ export function ButtonOperationsExample() {
   return (
     <>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => {
           setButtons((prevButtons) =>
@@ -32,40 +35,40 @@ export function ButtonOperationsExample() {
         update text
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => setWidth(width + 1)}
       >
         width +
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => setWidth(width - 1)}
       >
         width -
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => setHeight(height + 1)}
       >
         height +
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => setHeight(height - 1)}
       >
         height -
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() =>
           setButtons((prevButtons) => [generateButton(), ...prevButtons])
@@ -74,8 +77,8 @@ export function ButtonOperationsExample() {
         prepend
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => {
           setButtons((prevButtons) => [...prevButtons, generateButton()]);
@@ -84,12 +87,13 @@ export function ButtonOperationsExample() {
         append
       </Button>
       <Button
-        width={20}
-        height={5}
+        width={controlsWidth}
+        height={controlsHeight}
         variant="light"
         onClick={() => {
           setButtons((prevButtons) => prevButtons.slice(0, -1));
         }}
+        marginBottom={4}
       >
         pop
       </Button>

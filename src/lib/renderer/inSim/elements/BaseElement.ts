@@ -1,14 +1,14 @@
 import type { YogaNode } from 'yoga-layout-prebuilt';
 
-import type { Children, Type } from '../types';
+import type { Children, ElementType } from '../types';
 import type { InSimElement } from './InSimElement';
 
 export abstract class BaseElement {
-  readonly type: Type | 'root';
+  readonly type: ElementType;
   children: Children;
   readonly node: YogaNode;
 
-  protected constructor(type: Type | 'root', node: YogaNode) {
+  protected constructor(type: ElementType, node: YogaNode) {
     this.type = type;
     this.children = [];
     this.node = node;
@@ -20,9 +20,7 @@ export abstract class BaseElement {
     }
 
     this.node.insertChild(child.node, this.node.getChildCount());
-
     this.updateAllLayouts();
-
     this.children.push(child);
   }
 
