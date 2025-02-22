@@ -117,7 +117,9 @@ export const InSimRenderer = ReactReconciler<
     parentInstance.node.markDirty();
     child.parent = parentInstance;
     parentInstance.children.push(child);
-    // parentInstance.container.node.calculateLayout();
+
+    parentInstance.container.node.calculateLayout();
+    parentInstance.container.children.forEach((child) => child.updateLayout());
   },
 
   finalizeInitialChildren(instance, type, props) {
@@ -238,7 +240,8 @@ export const InSimRenderer = ReactReconciler<
     // if (parentInstance.node.getChildCount() > 0) {
     //   parentInstance.node.markDirty();
     // }
-    // parentInstance.container.node.calculateLayout();
+    parentInstance.container.node.calculateLayout();
+    parentInstance.container.children.forEach((child) => child.updateLayout());
 
     parentInstance.children.push(child);
     child.parent = parentInstance;

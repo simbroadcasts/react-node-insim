@@ -203,7 +203,7 @@ export class ButtonElement extends InSimElement {
     this.log(`mount`);
     this.props = props;
 
-    // this.container.node.calculateLayout();
+    this.container.node.calculateLayout();
 
     this.updateButtonPacketData(props);
     this.generateClickIdForUCID(this.packet.UCID);
