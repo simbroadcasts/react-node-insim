@@ -10,7 +10,7 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 import { pipe } from 'ramda';
-import type { YogaNode } from 'yoga-layout-prebuilt';
+import Yoga, { YogaNode } from 'yoga-layout-prebuilt';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
@@ -148,8 +148,10 @@ export class ButtonElement extends InSimElement {
     props: ButtonElementProps,
     context: HostContext,
     container: Container,
-    node: YogaNode,
   ) {
+    const node = Yoga.Node.create();
+    applyStyles(node, props);
+
     super(id, null, 'lfs-button', props, [], context, container, node);
 
     this.onClick = props.onClick;
@@ -199,6 +201,9 @@ export class ButtonElement extends InSimElement {
 
   commitMount(props: ButtonElementProps): void {
     this.log(`mount`);
+    this.props = props;
+
+    // this.container.node.calculateLayout();
 
     this.updateButtonPacketData(props);
     this.generateClickIdForUCID(this.packet.UCID);
@@ -220,13 +225,18 @@ export class ButtonElement extends InSimElement {
     const { left, top, width, height } = getAbsolutePosition(this.node);
     this.log('updateLayout', { left, top, width, height });
 
+    if (!this.props.isConnected) {
+      this.log('do not update layout - not connected');
+      return;
+    }
+
     if (
       left === this.packet.L &&
       top === this.packet.T &&
       width === this.packet.W &&
       height === this.packet.H
     ) {
-      this.log('nothing to update - do not send new button');
+      this.log('do not update layout - no change');
       return;
     }
 
@@ -244,6 +254,11 @@ export class ButtonElement extends InSimElement {
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
+    this.props = newProps;
+
+    applyStyles(this.node, newProps);
+    this.container.node.calculateLayout();
+    this.container.children.forEach((child) => child.updateLayout());
 
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);

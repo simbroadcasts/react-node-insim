@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 
 import { useInSimContext } from '../../internals/InSimContext';
-import type { FlexElementProps } from '../../renderer/inSim/elements/FlexElement';
+import type { FlexElementProps } from '../../renderer/inSim/elements';
 import { useStackContext } from './Stack';
 
 export type FlexProps = Omit<

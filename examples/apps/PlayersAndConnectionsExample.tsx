@@ -70,31 +70,32 @@ export function PlayersAndConnectionsExample() {
       );
     };
 
-  const width = 18;
-  const height = Array.from(players.values()).length > 3 ? 5 : 4;
+  const width = 20;
+  const height = 6;
   const UCID = 255;
 
   return (
-    // <Flex
-    //   flexDirection="column"
-    //   width={width}
-    //   alignItems="center"
-    //   justifyContent="center"
-    // >
-    <>
+    <Flex
+      flexDirection="column"
+      width={50}
+      padding={3}
+      alignItems="center"
+      justifyContent="center"
+    >
+      {/*<>*/}
       {players.map((player) => (
         <Button
           key={player.PLID}
           width={width}
           height={height}
           UCID={UCID}
-          background="dark"
+          background="light"
           onClick={handlePlayerClick(player.PLID)}
         >
           {player.PName}
         </Button>
       ))}
-    </>
-    // </Flex>
+      {/*</>*/}
+    </Flex>
   );
 }

@@ -1,6 +1,5 @@
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants';
-import Yoga from 'yoga-layout-prebuilt';
 
 import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
@@ -73,33 +72,28 @@ export const InSimRenderer = ReactReconciler<
     return instance;
   },
 
-  createInstance(type, props, rootContainerInstance, hostContext) {
+  createInstance(type, props, rootContainer, hostContext) {
     log('createInstance', type);
 
-    let inst: InSimElement;
-
-    const node = Yoga.Node.create();
-    applyStyles(node, props);
+    let instance: InSimElement;
 
     switch (type) {
       case 'flex': {
-        inst = new FlexElement(
+        instance = new FlexElement(
           ++instanceCounter,
           props as FlexElementProps,
           hostContext,
-          rootContainerInstance,
-          node,
+          rootContainer,
         );
 
         break;
       }
       case 'lfs-button': {
-        inst = new ButtonElement(
+        instance = new ButtonElement(
           ++instanceCounter,
           props as ButtonElementProps,
           hostContext,
-          rootContainerInstance,
-          node,
+          rootContainer,
         );
         break;
       }
@@ -108,7 +102,7 @@ export const InSimRenderer = ReactReconciler<
         throw new Error(`Invalid instance type: ${type}`);
     }
 
-    return inst;
+    return instance;
   },
 
   appendInitialChild(parentInstance, child) {
@@ -162,6 +156,10 @@ export const InSimRenderer = ReactReconciler<
     log('');
 
     containerInfo.node.calculateLayout();
+
+    containerInfo.children.forEach((child) => {
+      // child.updateLayout();
+    });
   },
 
   getCurrentEventPriority() {
@@ -194,8 +192,11 @@ export const InSimRenderer = ReactReconciler<
 
   detachDeletedInstance(instance) {
     log('detachDeletedInstance', instance.type);
-
-    instance.detachDeletedInstance();
+    // instance.detachDeletedInstance();
+    // instance.container?.children.forEach((child) => {
+    //   log('update layout', child.type);
+    //   child.updateLayout();
+    // });
   },
 
   commitMount(instance, type: Type, props) {
@@ -210,9 +211,6 @@ export const InSimRenderer = ReactReconciler<
     if (oldProps === null) {
       throw new Error('Should have old props');
     }
-
-    applyStyles(instance.node, newProps);
-    instance.container.node.calculateLayout();
 
     instance.commitUpdate(oldProps, newProps, updatePayload);
   },
@@ -266,12 +264,6 @@ export const InSimRenderer = ReactReconciler<
 
     container.node.insertChild(child.node, container.children.length);
 
-    if (container.node.getChildCount() > 0) {
-      // container.node.markDirty();
-    }
-
-    // container.node.calculateLayout();
-
     child.parent = container;
     container.children.push(child);
   },
@@ -308,34 +300,20 @@ export const InSimRenderer = ReactReconciler<
   },
 
   removeChild(parentInstance, child) {
-    log('removeChild', { parent: parentInstance.type, child: child.type });
+    log('removeChild', {
+      child: child.type,
+      parent: parentInstance.type,
+    });
 
-    if (parentInstance && parentInstance.node && child.node) {
-      parentInstance.node.removeChild(child.node);
-
-      if (parentInstance.node.getChildCount() > 0) {
-        // parentInstance.node.markDirty();
-      }
-
-      parentInstance.children = parentInstance.children.filter(
-        (c) => c !== child,
-      );
-      child.parent = null;
-      parentInstance.container.node.calculateLayout();
-
-      child.node.freeRecursive();
-
-      parentInstance.children.forEach((parentChild) => {
-        parentChild.updateLayout();
-      });
-    }
+    removeChild(parentInstance, child);
   },
 
   removeChildFromContainer(parentInstance, child): void {
     log('removeChildFromContainer', {
-      container: parentInstance.rootID,
       child: child.type,
+      container: parentInstance.rootID,
     });
+
     if (typeof parentInstance.rootID !== 'string') {
       // Some calls to this aren't typesafe.
       // This helps surface mistakes in tests.
@@ -344,19 +322,7 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    parentInstance.node.removeChild(child.node);
-    parentInstance.children = parentInstance.children.filter(
-      (c) => c !== child,
-    );
-    child.parent = null;
-
-    parentInstance.node.calculateLayout();
-
-    child.node.freeRecursive();
-
-    parentInstance.children.forEach((parentChild) => {
-      parentChild.updateLayout();
-    });
+    removeChild(parentInstance, child);
   },
 
   clearContainer(container: Container) {
@@ -365,6 +331,7 @@ export const InSimRenderer = ReactReconciler<
   },
 });
 
+// TODO test this with LFS
 function insertInContainerOrInstanceBefore(
   parentInstance: Container | Instance,
   child: Instance,
@@ -409,4 +376,19 @@ function shallowDiff(
 
     return oldObj[propName] !== newObj[propName];
   });
+}
+
+function removeChild(parent: InSimElement | Container, child: InSimElement) {
+  parent.node.removeChild(child.node);
+  parent.children = parent.children.filter((c) => c !== child);
+  child.parent = null;
+  child.node.freeRecursive();
+  parent.node.calculateLayout();
+
+  child.detachDeletedInstance();
+
+  // child.container.children.forEach((child) => {
+  //   log('update layout', child.type);
+  //   child.updateLayout();
+  // });
 }

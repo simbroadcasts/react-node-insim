@@ -21,6 +21,7 @@ import {
   ToggleButtonExample,
   ToggleButtonGroupExample,
 } from './apps';
+import { ButtonOperationsExample } from './apps/ButtonOperationsExample';
 
 // const rootNode = Yoga.Node.create();
 // rootNode.setWidth(200);
@@ -69,44 +70,21 @@ const root = createRoot({
   port,
   adminPassword,
   flags,
+  // appendButtonIDs: true,
   rootNodeStyle: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'column',
     // width: 100,
     // height: 100,
   },
 });
 
-// root.render(
-//   <Flex
-//     width={100}
-//     height={50}
-//     alignItems="stretch"
-//     justifyContent="space-between"
-//     flexDirection="column"
-//   >
-//     <Button flex={1} height={4} variant="dark">
-//       Hello
-//     </Button>
-//     <Button flex={2} height={6} variant="dark">
-//       Hello
-//     </Button>
-//     <Flex flex={3}>
-//       <Button width="30%" variant="dark">
-//         Hello
-//       </Button>
-//       <Button width="70%" variant="dark">
-//         Hello
-//       </Button>
-//     </Flex>
-//   </Flex>,
-// );
-
 root.render(
   <StrictMode>
     <ConnectionsPlayersProvider>
-      <PlayersAndConnectionsExample />
+      <ButtonOperationsExample />
+      {/*<PlayersAndConnectionsExample />*/}
       {/*<ScopesExample />*/}
       {/*<PacketHooksExample />*/}
       {/*<FlexExample isEditorVisible={false} />*/}

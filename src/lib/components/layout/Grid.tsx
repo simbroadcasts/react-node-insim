@@ -92,7 +92,7 @@ export function Grid({
     container.appendChild(node);
   });
 
-  container.calculateLayout();
+  // container.calculateLayout();
   const result = container.getAllComputedLayout();
 
   return (

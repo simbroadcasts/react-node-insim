@@ -1,8 +1,9 @@
-import type { YogaNode } from 'yoga-layout-prebuilt';
+import Yoga from 'yoga-layout-prebuilt';
 
 import type { ButtonChild } from '../../../components/types';
 import { type InSimElementProps, InSimElement } from '../InSimElement';
 import type { StyleProps } from '../styleProps';
+import applyStyles from '../styleProps';
 import type { Container, HostContext, PublicInstance } from '../types';
 
 export type FlexElementInstance = PublicInstance<FlexElement>;
@@ -24,8 +25,10 @@ export class FlexElement extends InSimElement {
     props: FlexElementProps,
     context: HostContext,
     container: Container,
-    node: YogaNode,
   ) {
+    const node = Yoga.Node.create();
+    applyStyles(node, props);
+
     super(id, null, 'flex', props, [], context, container, node);
   }
 
@@ -35,6 +38,7 @@ export class FlexElement extends InSimElement {
 
   commitUpdate(): void {
     // noop
+    // this.updateLayout();
   }
 
   detachDeletedInstance(): void {
@@ -43,5 +47,9 @@ export class FlexElement extends InSimElement {
 
   updateLayout() {
     // noop
+    this.children.forEach((child) => {
+      // log('flex - updateLayout - child', child.type);
+      // child.updateLayout();
+    });
   }
 }
