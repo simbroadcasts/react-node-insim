@@ -1,6 +1,7 @@
 import type { Key, Ref } from 'react';
 import type { YogaNode } from 'yoga-layout-prebuilt';
 
+import { BaseElement } from './BaseElement';
 import type {
   Children,
   Container,
@@ -17,15 +18,12 @@ export type InSimElementProps<PublicInstance, Props> = Props & {
   isConnected?: boolean;
 };
 
-export abstract class InSimElement {
+export abstract class InSimElement extends BaseElement {
   readonly id: number;
   parent: InSimElement | Container | null;
-  readonly type: Type;
   props: Props;
-  children: Children;
   readonly context: HostContext;
   readonly container: Container;
-  readonly node: YogaNode;
 
   protected constructor(
     id: number,
@@ -37,14 +35,14 @@ export abstract class InSimElement {
     container: Container,
     node: YogaNode,
   ) {
+    super(type, node);
+
     this.id = id;
     this.parent = parent;
-    this.type = type;
     this.props = props;
     this.children = children;
     this.context = context;
     this.container = container;
-    this.node = node;
   }
 
   abstract commitMount(props: Props): void;

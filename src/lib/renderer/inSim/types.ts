@@ -1,27 +1,7 @@
-import type { InSim } from 'node-insim';
-import type { YogaNode } from 'yoga-layout-prebuilt';
-
 import type { InSimElement } from './InSimElement';
+import type { RootElement } from './RootElement';
 
-type UCID = number;
-
-export type Container = {
-  readonly type: 'root';
-  rootID: string;
-  inSim: InSim;
-  children: Instance[];
-  pendingChildren: Instance[];
-  readonly node: YogaNode;
-
-  /**
-   * ClickID1: [UCID1, UCID2,      , UCID4]
-   * ClickID2: [UCID1, UCID2, UCID3, UCID4]
-   * ClickID2: [              UCID3, UCID4]
-   */
-  buttonUCIDsByClickID: Set<UCID>[];
-  buttonClickIDStart: number;
-  appendButtonIDs: boolean;
-};
+export type Container = RootElement;
 
 export type Type = 'btn' | 'flex' | 'lfs-button';
 

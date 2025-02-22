@@ -1,18 +1,15 @@
 import { Provider as JotaiProvider } from 'jotai/react';
 import { InSim } from 'node-insim';
 import type { InSimFlags } from 'node-insim/packets';
-import { IS_BTN, PacketType } from 'node-insim/packets';
+import { IS_BTN } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import type { OpaqueRoot } from 'react-reconciler';
 import { ConcurrentRoot } from 'react-reconciler/constants';
-import Yoga from 'yoga-layout-prebuilt';
 
 import { InSimContextProvider } from '../../internals/InSimContext';
-import { log } from '../../internals/logger';
 import { InSimRenderer } from './InSimRenderer';
+import { RootElement } from './RootElement';
 import type { StyleProps } from './styleProps';
-import applyStyles from './styleProps';
-import type { Container } from './types';
 
 export type CreateRootOptions = {
   name: string;
@@ -30,10 +27,10 @@ export type CreateRootOptions = {
 
 export const CONNECT_REQUEST_ID = 255;
 
-const rootContainers = new Map<string, Container>();
+const rootContainers = new Map<string, RootElement>();
 const roots = new Map<string, OpaqueRoot>();
 
-let idCounter = 0;
+let rootIdCounter = 0;
 
 export function createRoot({
   name,
@@ -61,29 +58,14 @@ export function createRoot({
   }
 
   const inSim = new InSim();
-
-  const rootID = '' + idCounter++;
-  const node = Yoga.Node.create();
-
-  applyStyles(node, {
-    width: 200,
-    height: 200,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    ...rootNodeStyle,
-  });
-
-  const container: Container = {
-    type: 'root',
-    node,
+  const rootID = '' + rootIdCounter++;
+  const container = new RootElement(
     rootID,
     inSim,
-    pendingChildren: [],
-    children: [],
-    buttonUCIDsByClickID: [],
+    rootNodeStyle,
     buttonClickIDStart,
     appendButtonIDs,
-  };
+  );
   rootContainers.set(rootID, container);
   const fiberRoot = InSimRenderer.createContainer(
     container,
@@ -110,16 +92,6 @@ export function createRoot({
     Prefix: prefix,
     UDPPort,
     Interval: interval,
-  });
-
-  // When a connection leaves, remove their UCID from all buttons
-  inSim.on(PacketType.ISP_CNL, (packet) => {
-    container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
-      if (ucIds.has(packet.UCID)) {
-        log(`removing UCID ${packet.UCID} from clickID ${clickID}`);
-        ucIds.delete(packet.UCID);
-      }
-    });
   });
 
   return {

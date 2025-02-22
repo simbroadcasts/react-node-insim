@@ -113,13 +113,7 @@ export const InSimRenderer = ReactReconciler<
       child.props.children,
     );
 
-    parentInstance.node.insertChild(child.node, parentInstance.children.length);
-    parentInstance.node.markDirty();
-    child.parent = parentInstance;
-    parentInstance.children.push(child);
-
-    parentInstance.container.node.calculateLayout();
-    parentInstance.container.children.forEach((child) => child.updateLayout());
+    parentInstance.appendChild(child);
   },
 
   finalizeInitialChildren(instance, type, props) {
@@ -158,10 +152,6 @@ export const InSimRenderer = ReactReconciler<
     log('');
 
     containerInfo.node.calculateLayout();
-
-    containerInfo.children.forEach((child) => {
-      // child.updateLayout();
-    });
   },
 
   getCurrentEventPriority() {
@@ -194,11 +184,6 @@ export const InSimRenderer = ReactReconciler<
 
   detachDeletedInstance(instance) {
     log('detachDeletedInstance', instance.type);
-    // instance.detachDeletedInstance();
-    // instance.container?.children.forEach((child) => {
-    //   log('update layout', child.type);
-    //   child.updateLayout();
-    // });
   },
 
   commitMount(instance, type: Type, props) {
@@ -228,23 +213,7 @@ export const InSimRenderer = ReactReconciler<
       child: child.type,
     });
 
-    if (child.node.getParent()) {
-      child.node.getParent()?.removeChild(child.node);
-    }
-
-    parentInstance.node.insertChild(
-      child.node,
-      parentInstance.node.getChildCount(),
-    );
-
-    // if (parentInstance.node.getChildCount() > 0) {
-    //   parentInstance.node.markDirty();
-    // }
-    parentInstance.container.node.calculateLayout();
-    parentInstance.container.children.forEach((child) => child.updateLayout());
-
-    parentInstance.children.push(child);
-    child.parent = parentInstance;
+    parentInstance.appendChild(child);
   },
 
   appendChildToContainer(container, child) {
@@ -253,7 +222,7 @@ export const InSimRenderer = ReactReconciler<
       child: child.type,
     });
 
-    if (typeof container.rootID !== 'string') {
+    if (typeof container.id !== 'string') {
       // Some calls to this aren't typesafe.
       // This helps surface mistakes in tests.
       throw new Error(
@@ -292,7 +261,7 @@ export const InSimRenderer = ReactReconciler<
       child: child.type,
       beforeChild: beforeChild.type,
     });
-    if (typeof parentInstance.rootID !== 'string') {
+    if (typeof parentInstance.id !== 'string') {
       // Some calls to this aren't typesafe.
       // This helps surface mistakes in tests.
       throw new Error(
@@ -308,16 +277,16 @@ export const InSimRenderer = ReactReconciler<
       parent: parentInstance.type,
     });
 
-    removeChild(parentInstance, child);
+    parentInstance.removeChild(child);
   },
 
   removeChildFromContainer(parentInstance, child): void {
     log('removeChildFromContainer', {
       child: child.type,
-      container: parentInstance.rootID,
+      container: parentInstance.id,
     });
 
-    if (typeof parentInstance.rootID !== 'string') {
+    if (typeof parentInstance.id !== 'string') {
       // Some calls to this aren't typesafe.
       // This helps surface mistakes in tests.
       throw new Error(
@@ -383,15 +352,12 @@ function shallowDiff(
 
 function removeChild(parent: InSimElement | Container, child: InSimElement) {
   parent.node.removeChild(child.node);
-  parent.children = parent.children.filter((c) => c !== child);
-  child.parent = null;
-  child.node.freeRecursive();
   parent.node.calculateLayout();
 
-  child.detachDeletedInstance();
+  parent.children = parent.children.filter((c) => c !== child);
 
-  // child.container.children.forEach((child) => {
-  //   log('update layout', child.type);
-  //   child.updateLayout();
-  // });
+  child.parent = null;
+  child.node.freeRecursive();
+
+  child.detachDeletedInstance();
 }
