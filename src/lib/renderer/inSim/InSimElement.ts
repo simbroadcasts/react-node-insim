@@ -56,4 +56,6 @@ export abstract class InSimElement {
   ): void;
 
   abstract detachDeletedInstance(): void;
+
+  abstract updateLayout(): void;
 }

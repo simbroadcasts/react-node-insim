@@ -40,4 +40,8 @@ export class FlexElement extends InSimElement {
   detachDeletedInstance(): void {
     // noop
   }
+
+  updateLayout() {
+    // noop
+  }
 }

@@ -216,6 +216,28 @@ export class ButtonElement extends InSimElement {
     this.sendNewButton();
   }
 
+  updateLayout() {
+    const { left, top, width, height } = getAbsolutePosition(this.node);
+    this.log('updateLayout', { left, top, width, height });
+
+    if (
+      left === this.packet.L &&
+      top === this.packet.T &&
+      width === this.packet.W &&
+      height === this.packet.H
+    ) {
+      this.log('nothing to update - do not send new button');
+      return;
+    }
+
+    this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
+    this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
+    this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
+    this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
+
+    this.sendNewButton();
+  }
+
   commitUpdate(
     oldProps: ButtonElementProps,
     newProps: ButtonElementProps,

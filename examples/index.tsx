@@ -70,9 +70,9 @@ const root = createRoot({
   adminPassword,
   flags,
   rootNodeStyle: {
-    justifyContent: 'flex-end',
-    // alignItems: 'center',
-    // flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    flexDirection: 'column',
     // width: 100,
     // height: 100,
   },

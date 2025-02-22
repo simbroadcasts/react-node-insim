@@ -309,11 +309,9 @@ export const InSimRenderer = ReactReconciler<
     log('removeChild', { parent: parentInstance.type, child: child.type });
 
     if (parentInstance && parentInstance.node && child.node) {
-      log('old child count', parentInstance.node.getChildCount());
       parentInstance.node.removeChild(child.node);
 
       if (parentInstance.node.getChildCount() > 0) {
-        log('new child count', parentInstance.node.getChildCount());
         // parentInstance.node.markDirty();
       }
 
@@ -321,11 +319,15 @@ export const InSimRenderer = ReactReconciler<
         (c) => c !== child,
       );
       child.parent = null;
-      // parentInstance.container.node.calculateLayout();
+      parentInstance.container.node.calculateLayout();
 
       child.node.freeRecursive();
 
       child.detachDeletedInstance();
+
+      parentInstance.children.forEach((parentChild) => {
+        parentChild.updateLayout();
+      });
     }
   },
 
@@ -342,8 +344,21 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    child.detachDeletedInstance();
+    parentInstance.node.removeChild(child.node);
+    parentInstance.children = parentInstance.children.filter(
+      (c) => c !== child,
+    );
+    child.parent = null;
+
+    parentInstance.node.calculateLayout();
+
     child.node.freeRecursive();
+
+    child.detachDeletedInstance();
+
+    parentInstance.children.forEach((parentChild) => {
+      parentChild.updateLayout();
+    });
   },
 
   clearContainer(container: Container) {

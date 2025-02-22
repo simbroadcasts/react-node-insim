@@ -75,26 +75,26 @@ export function PlayersAndConnectionsExample() {
   const UCID = 255;
 
   return (
-    <Flex
-      flexDirection="column"
-      width={width}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <>
-        {players.map((player) => (
-          <Button
-            key={player.PLID}
-            width={width}
-            height={height}
-            UCID={UCID}
-            background="dark"
-            onClick={handlePlayerClick(player.PLID)}
-          >
-            {player.PName}
-          </Button>
-        ))}
-      </>
-    </Flex>
+    // <Flex
+    //   flexDirection="column"
+    //   width={width}
+    //   alignItems="center"
+    //   justifyContent="center"
+    // >
+    <>
+      {players.map((player) => (
+        <Button
+          key={player.PLID}
+          width={width}
+          height={height}
+          UCID={UCID}
+          background="dark"
+          onClick={handlePlayerClick(player.PLID)}
+        >
+          {player.PName}
+        </Button>
+      ))}
+    </>
+    // </Flex>
   );
 }
