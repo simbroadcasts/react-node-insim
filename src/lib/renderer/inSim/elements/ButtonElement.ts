@@ -226,20 +226,11 @@ export class ButtonElement extends InSimElement {
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
-    this.log('props.children', this.props.children);
-    this.log('newProps.children', newProps.children);
     this.props = newProps;
 
     applyStyles(this.node, newProps);
-    // this.container.updateAllLayouts();
 
     this.container.node.calculateLayout();
-    // this.parent?.children.forEach((child) => {
-    //   // if (child === this) {
-    //   //   return;
-    //   // }
-    //   child.updateLayout();
-    // });
 
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);
@@ -248,15 +239,6 @@ export class ButtonElement extends InSimElement {
 
     if (!newProps.isConnected) {
       this.log(`do not update - not connected`);
-      return;
-    }
-
-    const onlyTextChanged = this.onlyTextChanged(changedPropNames);
-
-    if (onlyTextChanged) {
-      this.log(`only text changed`);
-      this.logClickIds();
-      this.sendButtonWithUpdatedText(newProps);
       return;
     }
 
@@ -275,6 +257,15 @@ export class ButtonElement extends InSimElement {
 
     if (onlyEventListenersChanged && !eventListenersAddedOrRemoved) {
       this.log(`only event listeners changed - do not send a new packet`);
+      return;
+    }
+
+    const onlyTextChanged = this.onlyTextChanged(changedPropNames);
+
+    if (onlyTextChanged) {
+      this.log(`only text changed`);
+      this.logClickIds();
+      this.sendButtonWithUpdatedText(newProps);
       return;
     }
 
@@ -313,8 +304,11 @@ export class ButtonElement extends InSimElement {
       return;
     }
 
-    this.updateButtonPacketLayoutData();
-    this.sendNewButton();
+    const isLayoutUpdated = this.updateButtonPacketLayoutData();
+
+    if (isLayoutUpdated) {
+      this.sendNewButton();
+    }
   }
 
   private assertButtonCount({ UCID }: ButtonElementProps): void {
@@ -343,7 +337,7 @@ export class ButtonElement extends InSimElement {
     this.updateButtonPacketLayoutData();
   }
 
-  private updateButtonPacketLayoutData() {
+  private updateButtonPacketLayoutData(): boolean {
     const { left, top, width, height } = getAbsolutePosition(this.node);
     this.log('updateButtonPacketLayoutData', { left, top, width, height });
 
@@ -354,13 +348,15 @@ export class ButtonElement extends InSimElement {
       height === this.packet.H
     ) {
       this.log('do not update layout - no change');
-      return;
+      return false;
     }
 
     this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
     this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
     this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
     this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
+
+    return true;
   }
 
   private reinitializeButtonAfterNewConnection(): void {
@@ -532,24 +528,11 @@ export class ButtonElement extends InSimElement {
     }
   }
 
-  // TODO return true if onClick or onType also changed
   private onlyTextChanged(
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): boolean {
-    const onePropChanged = changedPropNames.length === 1;
-    const twoPropsChanged = changedPropNames.length === 2;
-
-    const childrenChanged = changedPropNames.includes('children');
-    const captionChanged = changedPropNames.includes('caption');
-    const onlyChildrenChanged =
-      onePropChanged && changedPropNames[0] === 'children';
-    const onlyCaptionChanged =
-      onePropChanged && changedPropNames[0] === 'caption';
-    const childrenAndCaptionChanged =
-      twoPropsChanged && childrenChanged && captionChanged;
-
-    return (
-      onlyChildrenChanged || onlyCaptionChanged || childrenAndCaptionChanged
+    return changedPropNames.every((prop) =>
+      ['children', 'caption', 'onClick', 'onType'].includes(prop),
     );
   }
 

@@ -98,7 +98,15 @@ export function ButtonOperationsExample() {
         pop
       </Button>
       {buttons.map(({ id, text }) => (
-        <Button key={id} width={width} height={height} variant="dark">
+        <Button
+          onClick={() => {
+            console.log('test');
+          }}
+          key={id}
+          width={width}
+          height={height}
+          variant="dark"
+        >
           {text}
         </Button>
       ))}
