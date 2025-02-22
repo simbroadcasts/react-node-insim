@@ -7,8 +7,8 @@ import type { OpaqueRoot } from 'react-reconciler';
 import { ConcurrentRoot } from 'react-reconciler/constants';
 
 import { InSimContextProvider } from '../../internals/InSimContext';
+import { RootElement } from './elements/RootElement';
 import { InSimRenderer } from './InSimRenderer';
-import { RootElement } from './RootElement';
 import type { StyleProps } from './styleProps';
 
 export type CreateRootOptions = {

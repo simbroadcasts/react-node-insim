@@ -10,12 +10,10 @@ import {
   TypeIn,
 } from 'node-insim/packets';
 import { pipe } from 'ramda';
-import Yoga, { YogaNode } from 'yoga-layout-prebuilt';
+import Yoga from 'yoga-layout-prebuilt';
 
 import { log as baseLog } from '../../../internals/logger';
 import { childrenToString } from '../../../internals/utils';
-import type { InSimElementProps } from '../InSimElement';
-import { InSimElement } from '../InSimElement';
 import { getAbsolutePosition } from '../node';
 import type { StyleProps } from '../styleProps';
 import applyStyles from '../styleProps';
@@ -26,6 +24,8 @@ import type {
   TextChildren,
   UpdatePayload,
 } from '../types';
+import type { InSimElementProps } from './InSimElement';
+import { InSimElement } from './InSimElement';
 
 const log = baseLog.extend('button');
 

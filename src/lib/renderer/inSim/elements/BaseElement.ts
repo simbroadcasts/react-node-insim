@@ -1,7 +1,7 @@
 import type { YogaNode } from 'yoga-layout-prebuilt';
 
+import type { Children, Type } from '../types';
 import type { InSimElement } from './InSimElement';
-import type { Children, Type } from './types';
 
 export abstract class BaseElement {
   readonly type: Type | 'root';

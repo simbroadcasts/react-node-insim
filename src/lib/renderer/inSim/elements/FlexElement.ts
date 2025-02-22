@@ -1,10 +1,10 @@
 import Yoga from 'yoga-layout-prebuilt';
 
 import type { ButtonChild } from '../../../components/types';
-import { type InSimElementProps, InSimElement } from '../InSimElement';
 import type { StyleProps } from '../styleProps';
 import applyStyles from '../styleProps';
 import type { Container, HostContext, PublicInstance } from '../types';
+import { type InSimElementProps, InSimElement } from './InSimElement';
 
 export type FlexElementInstance = PublicInstance<FlexElement>;
 

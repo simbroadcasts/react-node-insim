@@ -1,7 +1,6 @@
 import type { Key, Ref } from 'react';
 import type { YogaNode } from 'yoga-layout-prebuilt';
 
-import { BaseElement } from './BaseElement';
 import type {
   Children,
   Container,
@@ -9,7 +8,8 @@ import type {
   Props,
   Type,
   UpdatePayload,
-} from './types';
+} from '../types';
+import { BaseElement } from './BaseElement';
 
 export type InSimElementProps<PublicInstance, Props> = Props & {
   ref?: Ref<PublicInstance>;

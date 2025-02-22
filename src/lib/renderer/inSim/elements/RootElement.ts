@@ -2,10 +2,10 @@ import type { InSim } from 'node-insim';
 import { PacketType } from 'node-insim/packets';
 import Yoga from 'yoga-layout-prebuilt';
 
-import { log } from '../../internals/logger';
+import { log } from '../../../internals/logger';
+import applyStyles, { type StyleProps } from '../styleProps';
+import type { Children } from '../types';
 import { BaseElement } from './BaseElement';
-import applyStyles, { type StyleProps } from './styleProps';
-import type { Children } from './types';
 
 export class RootElement extends BaseElement {
   readonly id: string;

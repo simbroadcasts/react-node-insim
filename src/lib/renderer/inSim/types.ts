@@ -1,5 +1,5 @@
-import type { InSimElement } from './InSimElement';
-import type { RootElement } from './RootElement';
+import type { InSimElement } from './elements/InSimElement';
+import type { RootElement } from './elements/RootElement';
 
 export type Container = RootElement;
 

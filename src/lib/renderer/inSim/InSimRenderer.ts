@@ -5,7 +5,7 @@ import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
 import type { ButtonElementProps, FlexElementProps } from './elements';
 import { ButtonElement, FlexElement } from './elements';
-import type { InSimElement } from './InSimElement';
+import type { InSimElement } from './elements/InSimElement';
 import applyStyles from './styleProps';
 import type {
   Container,
