@@ -229,7 +229,6 @@ export class ButtonElement extends InSimElement {
     this.props = newProps;
 
     applyStyles(this.node, newProps);
-
     this.container.node.calculateLayout();
 
     if (newProps.shouldClearAllButtons) {
@@ -377,15 +376,12 @@ export class ButtonElement extends InSimElement {
     newProps: ButtonElementProps,
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
-    const onClickChanged = changedPropNames.includes('onClick');
-    const onTypeChanged = changedPropNames.includes('onType');
-
-    if (onClickChanged) {
+    if (changedPropNames.includes('onClick')) {
       this.log(`onClick changed`);
       this.onClick = newProps.onClick;
     }
 
-    if (onTypeChanged) {
+    if (changedPropNames.includes('onType')) {
       this.log(`onType changed`);
       this.onType = newProps.onType;
     }
