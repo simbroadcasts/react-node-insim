@@ -293,7 +293,7 @@ export const InSimRenderer = ReactReconciler<
       );
     }
 
-    removeChild(parentInstance, child);
+    parentInstance.removeChild(child);
   },
 
   clearContainer(container: Container) {
@@ -347,16 +347,4 @@ function shallowDiff(
 
     return oldObj[propName] !== newObj[propName];
   });
-}
-
-function removeChild(parent: InSimElement | Container, child: InSimElement) {
-  parent.node.removeChild(child.node);
-  parent.node.calculateLayout();
-
-  parent.children = parent.children.filter((c) => c !== child);
-
-  child.parent = null;
-  child.node.freeRecursive();
-
-  child.detachDeletedInstance();
 }

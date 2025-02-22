@@ -204,7 +204,6 @@ export class ButtonElement extends InSimElement {
     this.props = props;
 
     this.container.updateAllLayouts();
-
     this.updateButtonPacketData(props);
     this.generateClickIdForUCID(this.packet.UCID);
 
@@ -227,10 +226,20 @@ export class ButtonElement extends InSimElement {
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
+    this.log('props.children', this.props.children);
+    this.log('newProps.children', newProps.children);
     this.props = newProps;
 
     applyStyles(this.node, newProps);
-    this.container.updateAllLayouts();
+    // this.container.updateAllLayouts();
+
+    this.container.node.calculateLayout();
+    // this.parent?.children.forEach((child) => {
+    //   // if (child === this) {
+    //   //   return;
+    //   // }
+    //   child.updateLayout();
+    // });
 
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);
@@ -278,6 +287,7 @@ export class ButtonElement extends InSimElement {
     this.logClickIds();
     this.updateButtonPacketData(newProps);
     this.sendNewButton();
+    this.container.updateAllLayouts();
   }
 
   detachDeletedInstance(): void {
@@ -303,8 +313,39 @@ export class ButtonElement extends InSimElement {
       return;
     }
 
+    this.updateButtonPacketLayoutData();
+    this.sendNewButton();
+  }
+
+  private assertButtonCount({ UCID }: ButtonElementProps): void {
+    if (this.container.buttonUCIDsByClickID.length > IS_BTN.MAX_CLICK_ID) {
+      throw new Error(
+        `Too many buttons for UCID ${UCID}. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
+      );
+    }
+  }
+
+  private updateButtonPacketData(props: ButtonElementProps): void {
+    this.packet.ReqI = ButtonElement.REQUEST_ID;
+    this.packet.UCID = props.UCID;
+    this.packet.BStyle = this.getButtonStyleFromProps(props);
+    this.packet.Text = this.buildButtonText(props);
+
+    const initValueButtonText = props.initializeDialogWithButtonText
+      ? TypeIn.INIT_VALUE_BUTTON_TEXT
+      : 0;
+    this.packet.TypeIn = props.onType
+      ? props.maxTypeInChars + initValueButtonText
+      : 0;
+
+    this.packet.Inst = props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0;
+
+    this.updateButtonPacketLayoutData();
+  }
+
+  private updateButtonPacketLayoutData() {
     const { left, top, width, height } = getAbsolutePosition(this.node);
-    this.log('updateLayout', { left, top, width, height });
+    this.log('updateButtonPacketLayoutData', { left, top, width, height });
 
     if (
       left === this.packet.L &&
@@ -320,40 +361,6 @@ export class ButtonElement extends InSimElement {
     this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
     this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
     this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
-
-    this.sendNewButton();
-  }
-
-  private assertButtonCount({ UCID }: ButtonElementProps): void {
-    if (this.container.buttonUCIDsByClickID.length > IS_BTN.MAX_CLICK_ID) {
-      throw new Error(
-        `Too many buttons for UCID ${UCID}. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
-      );
-    }
-  }
-
-  private updateButtonPacketData(props: ButtonElementProps): void {
-    this.packet.ReqI = ButtonElement.REQUEST_ID;
-    this.packet.UCID = props.UCID;
-
-    const { left, top, width, height } = getAbsolutePosition(this.node);
-
-    this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
-    this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
-    this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
-    this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
-
-    this.packet.BStyle = this.getButtonStyleFromProps(props);
-    const initValueButtonText = props.initializeDialogWithButtonText
-      ? TypeIn.INIT_VALUE_BUTTON_TEXT
-      : 0;
-
-    this.packet.Text = this.buildButtonText(props);
-    this.packet.TypeIn = props.onType
-      ? props.maxTypeInChars + initValueButtonText
-      : 0;
-
-    this.packet.Inst = props.isAlwaysOnScreen ? IS_BTN.INST_ALWAYS_ON : 0;
   }
 
   private reinitializeButtonAfterNewConnection(): void {

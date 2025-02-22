@@ -83,6 +83,16 @@ export function ButtonOperationsExample() {
       >
         append
       </Button>
+      <Button
+        width={20}
+        height={5}
+        variant="light"
+        onClick={() => {
+          setButtons((prevButtons) => prevButtons.slice(0, -1));
+        }}
+      >
+        pop
+      </Button>
       {buttons.map(({ id, text }) => (
         <Button key={id} width={width} height={height} variant="dark">
           {text}
