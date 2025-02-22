@@ -194,6 +194,8 @@ export const InSimRenderer = ReactReconciler<
 
   detachDeletedInstance(instance) {
     log('detachDeletedInstance', instance.type);
+
+    instance.detachDeletedInstance();
   },
 
   commitMount(instance, type: Type, props) {
@@ -323,8 +325,6 @@ export const InSimRenderer = ReactReconciler<
 
       child.node.freeRecursive();
 
-      child.detachDeletedInstance();
-
       parentInstance.children.forEach((parentChild) => {
         parentChild.updateLayout();
       });
@@ -353,8 +353,6 @@ export const InSimRenderer = ReactReconciler<
     parentInstance.node.calculateLayout();
 
     child.node.freeRecursive();
-
-    child.detachDeletedInstance();
 
     parentInstance.children.forEach((parentChild) => {
       parentChild.updateLayout();
