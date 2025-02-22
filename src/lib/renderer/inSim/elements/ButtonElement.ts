@@ -394,15 +394,8 @@ export class ButtonElement extends InSimElement {
   private onlyEventListenersChanged(
     changedPropNames: NonNullable<UpdatePayload<ButtonElementProps>>,
   ): boolean {
-    const onClickChanged = changedPropNames.includes('onClick');
-    const onTypeChanged = changedPropNames.includes('onType');
-
-    const eventListenerPropNames: (keyof ButtonElementProps)[] = [];
-    onClickChanged && eventListenerPropNames.push('onClick');
-    onTypeChanged && eventListenerPropNames.push('onType');
-
     return changedPropNames.every((prop) =>
-      eventListenerPropNames.includes(prop),
+      ['onClick', 'onType'].includes(prop),
     );
   }
 
@@ -411,10 +404,8 @@ export class ButtonElement extends InSimElement {
     newProps: ButtonElementProps,
   ): boolean {
     return (
-      (oldProps.onClick === undefined && newProps.onClick !== undefined) ||
-      (oldProps.onClick !== undefined && newProps.onClick === undefined) ||
-      (oldProps.onType === undefined && newProps.onType !== undefined) ||
-      (oldProps.onType !== undefined && newProps.onType === undefined)
+      Boolean(oldProps.onClick) !== Boolean(newProps.onClick) ||
+      Boolean(oldProps.onType) !== Boolean(newProps.onType)
     );
   }
 
