@@ -19,14 +19,14 @@ export class RootElement extends BaseElement {
    */
   buttonUCIDsByClickID: Set<number>[];
   buttonClickIDStart: number;
-  appendButtonIDs: boolean;
+  appendClickIDsInButtons: boolean;
 
   constructor(
     id: string,
     inSim: InSim,
     nodeStyle?: StyleProps,
     buttonClickIDStart = 0,
-    appendButtonIDs = false,
+    appendClickIDsInButtons = false,
   ) {
     const node = Yoga.Node.create();
 
@@ -46,7 +46,7 @@ export class RootElement extends BaseElement {
     this.inSim = inSim;
     this.buttonUCIDsByClickID = [];
     this.buttonClickIDStart = buttonClickIDStart;
-    this.appendButtonIDs = appendButtonIDs;
+    this.appendClickIDsInButtons = appendClickIDsInButtons;
 
     // When a connection leaves, remove their UCID from all buttons
     inSim.on(PacketType.ISP_CNL, (packet) => {

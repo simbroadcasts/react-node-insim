@@ -203,7 +203,7 @@ export class ButtonElement extends InSimElement {
     this.log(`mount`);
     this.props = props;
 
-    this.container.node.calculateLayout();
+    this.container.updateAllLayouts();
 
     this.updateButtonPacketData(props);
     this.generateClickIdForUCID(this.packet.UCID);
@@ -221,33 +221,6 @@ export class ButtonElement extends InSimElement {
     this.sendNewButton();
   }
 
-  updateLayout() {
-    const { left, top, width, height } = getAbsolutePosition(this.node);
-    this.log('updateLayout', { left, top, width, height });
-
-    if (!this.props.isConnected) {
-      this.log('do not update layout - not connected');
-      return;
-    }
-
-    if (
-      left === this.packet.L &&
-      top === this.packet.T &&
-      width === this.packet.W &&
-      height === this.packet.H
-    ) {
-      this.log('do not update layout - no change');
-      return;
-    }
-
-    this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
-    this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
-    this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
-    this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
-
-    this.sendNewButton();
-  }
-
   commitUpdate(
     oldProps: ButtonElementProps,
     newProps: ButtonElementProps,
@@ -257,8 +230,7 @@ export class ButtonElement extends InSimElement {
     this.props = newProps;
 
     applyStyles(this.node, newProps);
-    this.container.node.calculateLayout();
-    this.container.children.forEach((child) => child.updateLayout());
+    this.container.updateAllLayouts();
 
     if (newProps.shouldClearAllButtons) {
       this.log(`do not update - user has hidden all buttons`);
@@ -323,6 +295,33 @@ export class ButtonElement extends InSimElement {
     if (childrenToString(props.children).length > 240) {
       throw new Error('Button text too long');
     }
+  }
+
+  updateLayout() {
+    if (!this.props.isConnected) {
+      this.log('do not update layout - not connected');
+      return;
+    }
+
+    const { left, top, width, height } = getAbsolutePosition(this.node);
+    this.log('updateLayout', { left, top, width, height });
+
+    if (
+      left === this.packet.L &&
+      top === this.packet.T &&
+      width === this.packet.W &&
+      height === this.packet.H
+    ) {
+      this.log('do not update layout - no change');
+      return;
+    }
+
+    this.packet.L = Math.min(left, ButtonElement.MAX_SIZE);
+    this.packet.T = Math.min(top, ButtonElement.MAX_SIZE);
+    this.packet.W = Math.min(width, ButtonElement.MAX_SIZE);
+    this.packet.H = Math.min(height, ButtonElement.MAX_SIZE);
+
+    this.sendNewButton();
   }
 
   private assertButtonCount({ UCID }: ButtonElementProps): void {
@@ -552,7 +551,7 @@ export class ButtonElement extends InSimElement {
 
     const packet = new IS_BTN(this.packet);
 
-    if (this.container.appendButtonIDs) {
+    if (this.container.appendClickIDsInButtons) {
       packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
     }
 
@@ -570,7 +569,7 @@ export class ButtonElement extends InSimElement {
       H: 0,
     });
 
-    if (this.container.appendButtonIDs) {
+    if (this.container.appendClickIDsInButtons) {
       packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
     }
 

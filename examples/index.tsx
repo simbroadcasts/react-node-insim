@@ -3,12 +3,7 @@ import './env';
 import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
 import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
-import Yoga from 'yoga-layout-prebuilt';
 
-import { Button } from '../src/lib/components/Button';
-import { Flex } from '../src/lib/components/layout/Flex';
-import { log } from '../src/lib/internals/logger';
-import applyStyles from '../src/lib/renderer/inSim/styleProps';
 import {
   ButtonExample,
   FlexExample,
@@ -35,7 +30,7 @@ const root = createRoot({
   port,
   adminPassword,
   flags,
-  // appendButtonIDs: true,
+  // appendClickIDsInButtons: true,
   rootNodeStyle: {
     justifyContent: 'center',
     alignItems: 'center',

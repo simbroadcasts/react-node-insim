@@ -33,12 +33,11 @@ export class FlexElement extends InSimElement {
   }
 
   commitMount(): void {
-    // noop
+    this.updateAllLayouts();
   }
 
   commitUpdate(): void {
-    // noop
-    // this.updateLayout();
+    this.updateAllLayouts();
   }
 
   detachDeletedInstance(): void {
@@ -46,10 +45,6 @@ export class FlexElement extends InSimElement {
   }
 
   updateLayout() {
-    // noop
-    this.children.forEach((child) => {
-      // log('flex - updateLayout - child', child.type);
-      // child.updateLayout();
-    });
+    this.children.forEach((child) => child.updateLayout());
   }
 }

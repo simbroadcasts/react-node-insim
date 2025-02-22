@@ -20,7 +20,7 @@ export type CreateRootOptions = {
   prefix?: string;
   UDPPort?: number;
   interval?: number;
-  appendButtonIDs?: boolean;
+  appendClickIDsInButtons?: boolean;
   buttonClickIDStart?: number;
   rootNodeStyle?: StyleProps;
 };
@@ -41,7 +41,7 @@ export function createRoot({
   prefix,
   UDPPort,
   interval,
-  appendButtonIDs = false,
+  appendClickIDsInButtons = false,
   buttonClickIDStart = 0,
   rootNodeStyle = {},
 }: CreateRootOptions) {
@@ -64,7 +64,7 @@ export function createRoot({
     inSim,
     rootNodeStyle,
     buttonClickIDStart,
-    appendButtonIDs,
+    appendClickIDsInButtons,
   );
   rootContainers.set(rootID, container);
   const fiberRoot = InSimRenderer.createContainer(
