@@ -1,5 +1,6 @@
 import './env';
 
+import { InSim } from 'node-insim';
 import { InSimFlags } from 'node-insim/packets';
 import React, { StrictMode } from 'react';
 import { ConnectionsPlayersProvider, createRoot } from 'react-node-insim';
@@ -19,13 +20,18 @@ import {
 
 const host = process.env.HOST ?? '127.0.0.1';
 
-const root = createRoot({
-  name: 'React InSim',
-  host,
-  port: process.env.PORT ? parseInt(process.env.PORT, 10) : 29999,
-  adminPassword: process.env.ADMIN ?? '',
-  flags: host === '127.0.0.1' ? InSimFlags.ISF_LOCAL : undefined,
+const inSim = new InSim();
+
+inSim.connect({
+  IName: 'React InSim',
+  ReqI: 1,
+  Host: host,
+  Port: process.env.PORT ? parseInt(process.env.PORT, 10) : 29999,
+  Admin: process.env.ADMIN ?? '',
+  Flags: host === '127.0.0.1' ? InSimFlags.ISF_LOCAL : undefined,
 });
+
+const root = createRoot(inSim);
 
 root.render(
   <StrictMode>

@@ -8,7 +8,8 @@ A [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#render
 
 ## Introduction
 
-> 🚧 This project is still under development. Any API may change as needed.
+> [!WARNING]
+> This project is still under development. Any API may change as needed.
 
 React Node InSim is a [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [Live for Speed](https://www.lfs.net/) [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons. It also provides [layout components](#horizontal-stack) for easier button positioning, [hooks](#hooks) for handling incoming InSim packets and tracking server connections & players.
 
@@ -187,15 +188,21 @@ pnpm add react@18 node-insim react-node-insim
 Displaying an InSim button on a local computer
 
 ```tsx
+import { InSim } from 'node-insim';
 import { InSimFlags } from 'node-insim/packets';
-import { Button, createRoot } from 'react-node-insim';
+import { Button, CONNECT_REQUEST_ID, createRoot } from 'react-node-insim';
 
-const root = createRoot({
-  name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
+const inSim = new InSim();
+
+inSim.connect({
+  IName: 'React InSim',
+  ReqI: CONNECT_REQUEST_ID,
+  Host: '127.0.0.1',
+  Port: 29999,
+  Flags: InSimFlags.ISF_LOCAL,
 });
+
+const root = createRoot(inSim);
 
 root.render(
   <Button top={100} left={80} width={30} height={10}>

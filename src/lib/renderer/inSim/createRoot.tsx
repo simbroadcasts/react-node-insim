@@ -1,6 +1,5 @@
 import { Provider as JotaiProvider } from 'jotai/react';
-import { InSim } from 'node-insim';
-import type { InSimFlags } from 'node-insim/packets';
+import type { InSim } from 'node-insim';
 import { IS_BTN, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import type { OpaqueRoot } from 'react-reconciler';
@@ -12,37 +11,25 @@ import { InSimRenderer } from './InSimRenderer';
 import type { Container } from './types';
 
 export type CreateRootOptions = {
-  name: string;
-  host: string;
-  port: number;
-  adminPassword?: string;
-  flags?: InSimFlags;
-  prefix?: string;
-  UDPPort?: number;
-  interval?: number;
   appendButtonIDs?: boolean;
   buttonClickIDStart?: number;
 };
-
-export const CONNECT_REQUEST_ID = 255;
 
 const rootContainers = new Map<string, Container>();
 const roots = new Map<string, OpaqueRoot>();
 
 let idCounter = 0;
 
-export function createRoot({
-  name,
-  host,
-  port,
-  adminPassword,
-  flags,
-  prefix,
-  UDPPort,
-  interval,
-  appendButtonIDs = false,
-  buttonClickIDStart = 0,
-}: CreateRootOptions) {
+export function createRoot(
+  inSim: InSim,
+  { appendButtonIDs = false, buttonClickIDStart = 0 }: CreateRootOptions = {},
+) {
+  if (inSim.options.ReqI === undefined || inSim.options.ReqI === 0) {
+    throw new Error(
+      `Failed to create root - ReqI in InSim options must be non-zero.`,
+    );
+  }
+
   if (buttonClickIDStart < 0) {
     throw new Error(
       `Failed to create root - 'buttonClickIDStart' cannot be negative.`,
@@ -54,8 +41,6 @@ export function createRoot({
       `Failed to create root - 'buttonClickIDStart' must be smaller than ${IS_BTN.MAX_CLICK_ID}.`,
     );
   }
-
-  const inSim = new InSim();
 
   const rootID = '' + idCounter++;
   const container: Container = {
@@ -83,18 +68,6 @@ export function createRoot({
 
   roots.set(rootID, fiberRoot);
 
-  inSim.connect({
-    ReqI: CONNECT_REQUEST_ID,
-    IName: name,
-    Host: host,
-    Port: port,
-    Admin: adminPassword,
-    Flags: flags,
-    Prefix: prefix,
-    UDPPort,
-    Interval: interval,
-  });
-
   // When a connection leaves, remove their UCID from all buttons
   inSim.on(PacketType.ISP_CNL, (packet) => {
     container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
@@ -110,7 +83,8 @@ export function createRoot({
       InSimRenderer.updateContainer(
         <InSimContextProvider
           inSim={inSim}
-          connectRequestId={CONNECT_REQUEST_ID}
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          connectRequestId={inSim.options.ReqI!}
         >
           <JotaiProvider>{children}</JotaiProvider>
         </InSimContextProvider>,
