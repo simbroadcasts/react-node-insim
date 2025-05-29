@@ -1,0 +1,7 @@
+{
+  "testEnvironment": "node",
+  "roots": ["<rootDir>"],
+  "collectCoverageFrom": ["src/**/*.ts"],
+  "coverageReporters": ["json-summary"],
+  "coveragePathIgnorePatterns": ["node_modules", "dist"]
+}
