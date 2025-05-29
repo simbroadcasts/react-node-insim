@@ -21,9 +21,6 @@ describe('Buttons', () => {
   });
 
   it('should connect to InSim and send a button', (done) => {
-    let root: ReturnType<typeof createRoot>;
-    let receivedPackets: Buffer[] = [];
-
     const createRootOptions: CreateRootOptions = {
       name: 'Test App',
       host: '127.0.0.1',
@@ -31,6 +28,8 @@ describe('Buttons', () => {
       adminPassword: 'adminPassword',
       prefix: '!',
     };
+
+    let root: ReturnType<typeof createRoot>;
 
     process.nextTick(() => {
       root = createRoot(createRootOptions);
@@ -44,6 +43,8 @@ describe('Buttons', () => {
     mitm.on('connection', (socket, opts) => {
       expect(opts.host).toEqual('127.0.0.1');
       expect(opts.port).toEqual(29999);
+
+      let receivedPackets: Buffer[] = [];
 
       socket.on('data', (data) => {
         receivedPackets.push(data);
