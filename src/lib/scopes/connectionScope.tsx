@@ -2,12 +2,12 @@ import { createScope, molecule, use } from 'bunshi';
 import { ScopeProvider, useMolecule } from 'bunshi/react';
 import { atom, useAtomValue } from 'jotai';
 import { type ReactNode } from 'react';
-
 import {
   type Connection,
   ConnectionsPlayersProvider,
   useConnections,
-} from '../hooks';
+} from 'react-node-insim';
+
 import { useConnectionsPlayersMaybeContext } from '../hooks/ConnectionsPlayersProvider';
 
 export const ConnectionScope = createScope<Connection | null>(null);
