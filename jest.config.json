@@ -3,5 +3,8 @@
   "roots": ["<rootDir>"],
   "collectCoverageFrom": ["src/**/*.ts"],
   "coverageReporters": ["json-summary"],
-  "coveragePathIgnorePatterns": ["node_modules", "dist"]
+  "coveragePathIgnorePatterns": ["node_modules", "dist"],
+  "moduleNameMapper": {
+    "react-node-insim": "<rootDir>/src/index"
+  }
 }
