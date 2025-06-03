@@ -9,7 +9,7 @@ import { useHumanPlayerMaybeScope } from '../scopes/humanPlayerScope';
 import type { WithPartial } from '../types';
 
 export type ButtonProps = WithPartial<
-  Omit<ButtonElementProps, 'shouldClearAllButtons' | 'isConnected'>,
+  Omit<ButtonElementProps, 'UCIDsWithClearedButtons' | 'isConnected'>,
   | 'top'
   | 'left'
   | 'width'
@@ -40,7 +40,7 @@ export const Button = forwardRef(function Button(
   }: ButtonProps,
   ref: ForwardedRef<ButtonElement>,
 ) {
-  const { shouldClearAllButtons, isConnected } = useInSimContext();
+  const { UCIDsWithClearedButtons, isConnected } = useInSimContext();
   const isGlobal = useGlobalScope();
   const connection = useConnectionMaybeScope();
   const player = useHumanPlayerMaybeScope();
@@ -48,7 +48,7 @@ export const Button = forwardRef(function Button(
   const UCID = isGlobal ? 255 : player?.UCID ?? connection?.UCID ?? UCIDProp;
 
   return createElement<ButtonElementProps>('btn', {
-    shouldClearAllButtons,
+    UCIDsWithClearedButtons,
     isConnected,
     top,
     left,

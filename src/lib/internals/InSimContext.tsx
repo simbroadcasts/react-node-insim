@@ -9,7 +9,7 @@ import { log } from './logger';
 type InSimContextAPI = {
   inSim: InSim;
   isConnected: boolean;
-  shouldClearAllButtons: boolean;
+  UCIDsWithClearedButtons: number[];
 };
 
 /** @internal */
@@ -38,20 +38,24 @@ export function InSimContextProvider({
   children,
   connectRequestId,
 }: RootProps) {
-  const [shouldClearAllButtons, setShouldClearAllButtons] = useState(false);
+  const [UCIDsWithClearedButtons, setUCIDsWithClearedButtons] = useState<
+    number[]
+  >([]);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const bfnListener = (packet: IS_BFN) => {
       if (packet.SubT === ButtonFunction.BFN_USER_CLEAR) {
         log('User cleared all buttons');
-        setShouldClearAllButtons(true);
+        setUCIDsWithClearedButtons((prevState) => [...prevState, packet.UCID]);
         return;
       }
 
       if (packet.SubT === ButtonFunction.BFN_REQUEST) {
         log('User requested to show all buttons');
-        setShouldClearAllButtons(false);
+        setUCIDsWithClearedButtons((prevState) =>
+          prevState.filter((ucid) => ucid !== packet.SubT),
+        );
         return;
       }
     };
@@ -81,9 +85,9 @@ export function InSimContextProvider({
     () => ({
       inSim,
       isConnected,
-      shouldClearAllButtons,
+      UCIDsWithClearedButtons,
     }),
-    [inSim, isConnected, shouldClearAllButtons],
+    [inSim, isConnected, UCIDsWithClearedButtons],
   );
 
   return (

@@ -12,7 +12,7 @@ import type {
 export type InSimElementProps<PublicInstance, Props> = Props & {
   ref?: Ref<PublicInstance>;
   key?: Key;
-  shouldClearAllButtons?: boolean;
+  UCIDsWithClearedButtons?: number[];
   isConnected?: boolean;
 };
 

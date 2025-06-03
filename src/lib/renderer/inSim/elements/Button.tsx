@@ -106,7 +106,7 @@ type ButtonBaseProps = {
   caption: string;
 
   /** Used when user has requested to clear all buttons */
-  shouldClearAllButtons: boolean;
+  UCIDsWithClearedButtons: number[];
 
   /** A function to be called when a user clicks the button */
   onClick?: (packet: IS_BTC, inSim: InSim) => void;
@@ -205,7 +205,7 @@ export class Button extends InSimElement {
 
     this.generateClickIdForUCID(this.packet.UCID);
 
-    if (props.shouldClearAllButtons) {
+    if (props.UCIDsWithClearedButtons.includes(this.packet.UCID)) {
       this.log('do not commit mount - user has hidden all buttons');
       return;
     }
@@ -225,7 +225,7 @@ export class Button extends InSimElement {
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
 
-    if (newProps.shouldClearAllButtons) {
+    if (newProps.UCIDsWithClearedButtons.includes(newProps.UCID)) {
       this.log(`do not update - user has hidden all buttons`);
       return;
     }
@@ -590,6 +590,14 @@ export class Button extends InSimElement {
         : text;
 
     return pipe(childrenToString, addCaption, addColor)(props.children);
+  }
+
+  private areAllButtonsHidden(
+    UCIDsWithClearedButtons: number[],
+    UCID: number,
+  ): boolean {
+    // TODO wtf is dis
+    return UCIDsWithClearedButtons.includes(UCID);
   }
 
   private log(...params: unknown[]) {
