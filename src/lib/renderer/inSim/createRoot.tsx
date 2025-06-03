@@ -93,6 +93,5 @@ export function createRoot(
         null,
       );
     },
-    inSim,
   };
 }
