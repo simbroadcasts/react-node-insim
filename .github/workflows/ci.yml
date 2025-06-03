@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    name: 'Build & Test'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'yarn'
+
+      - name: Install
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: install
+
+      - name: Check Code Format
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: format:check
+
+      - name: Lint
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: lint
+
+      - name: Build
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: build
