@@ -23,7 +23,7 @@ It allows you to create things like this:
   <summary>Show source code</summary>
 
 ```tsx
-import type { InSim } from 'node-insim';
+import { InSim } from 'node-insim';
 import { InSimFlags, IS_BTC, IS_MST, PacketType } from 'node-insim/packets';
 import { StrictMode } from 'react';
 import {
@@ -105,12 +105,17 @@ function App() {
   );
 }
 
-const root = createRoot({
-  name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
+const inSim = new InSim();
+
+inSim.connect({
+  IName: 'React InSim',
+  ReqI: 1,
+  Host: '127.0.0.1',
+  Port: 29999,
+  Flags: InSimFlags.ISF_LOCAL,
 });
+
+const root = createRoot(inSim);
 
 root.render(
   <StrictMode>
