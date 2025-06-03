@@ -1,5 +1,7 @@
 node_modules/
 dist/
+coverage/
+junit.xml
 yarn-*.log
 .env.local
 **/.DS_Store
