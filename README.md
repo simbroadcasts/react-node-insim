@@ -899,9 +899,9 @@ You can show different buttons to each connection by wrapping a sub-tree in a `C
 You don't need to specify the button's UCID in the scope - the correct UCID will be injected automatically.
 
 ```tsx
-import { 
-  Button, 
-  ConnectionScopeProvider, 
+import {
+  Button,
+  ConnectionScopeProvider,
   useConnectionScope,
 } from 'react-node-insim';
 
@@ -956,7 +956,6 @@ function UserNameButton() {
 }
 ```
 
-
 ### Global scope
 
 You can show the same set of buttons to all connections wrapping a sub-tree in a `GlobalScopeProvider`.
@@ -969,12 +968,7 @@ import { Button, GlobalScopeProvider } from 'react-node-insim';
 function App() {
   return (
     <GlobalScopeProvider>
-      <Button
-        top={0}
-        left={80}
-        height={5}
-        width={40}
-      >
+      <Button top={0} left={80} height={5} width={40}>
         React Node InSim
       </Button>
     </GlobalScopeProvider>
