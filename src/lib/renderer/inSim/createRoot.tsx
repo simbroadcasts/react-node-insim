@@ -26,7 +26,7 @@ export function createRoot(
 ) {
   if (inSim.options.ReqI === undefined || inSim.options.ReqI === 0) {
     throw new Error(
-      `Failed to create root - ReqI in InSim options must be non-zero.`,
+      `Failed to create root - 'ReqI' property in InSim options must be non-zero.`,
     );
   }
 

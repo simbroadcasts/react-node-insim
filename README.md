@@ -190,13 +190,13 @@ Displaying an InSim button on a local computer
 ```tsx
 import { InSim } from 'node-insim';
 import { InSimFlags } from 'node-insim/packets';
-import { Button, CONNECT_REQUEST_ID, createRoot } from 'react-node-insim';
+import { Button, createRoot } from 'react-node-insim';
 
 const inSim = new InSim();
 
 inSim.connect({
   IName: 'React InSim',
-  ReqI: CONNECT_REQUEST_ID,
+  ReqI: 1,
   Host: '127.0.0.1',
   Port: 29999,
   Flags: InSimFlags.ISF_LOCAL,
@@ -240,12 +240,17 @@ function App() {
   );
 }
 
-const root = createRoot({
-  name: 'React InSim',
-  host: '127.0.0.1',
-  port: 29999,
-  flags: InSimFlags.ISF_LOCAL,
+const inSim = new InSim();
+
+inSim.connect({
+  IName: 'React InSim',
+  ReqI: 1,
+  Host: '127.0.0.1',
+  Port: 29999,
+  Flags: InSimFlags.ISF_LOCAL,
 });
+
+const root = createRoot(inSim);
 
 root.render(<App />);
 ```

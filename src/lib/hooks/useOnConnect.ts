@@ -4,11 +4,12 @@ import { PacketType } from 'node-insim/packets';
 import { useEffect, useRef } from 'react';
 import { useInSim } from 'react-node-insim';
 
-import { CONNECT_REQUEST_ID } from '../renderer/inSim';
+import { useInSimContext } from '../internals/InSimContext';
 
 export function useOnConnect(handler: InSimEvents[PacketType.ISP_VER]) {
   const handlerRef = useRef(handler);
   const inSim = useInSim();
+  const { connectRequestId } = useInSimContext();
 
   useEffect(() => {
     handlerRef.current = handler;
@@ -16,7 +17,7 @@ export function useOnConnect(handler: InSimEvents[PacketType.ISP_VER]) {
 
   useEffect(() => {
     const listener = (packet: IS_VER, inSim: InSim) => {
-      if (packet.ReqI === CONNECT_REQUEST_ID) {
+      if (packet.ReqI === connectRequestId) {
         handlerRef.current(packet, inSim);
       }
     };

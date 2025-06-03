@@ -8,6 +8,7 @@ import { log } from './logger';
 
 type InSimContextAPI = {
   inSim: InSim;
+  connectRequestId: number;
   isConnected: boolean;
   shouldClearAllButtons: boolean;
 };
@@ -80,10 +81,11 @@ export function InSimContextProvider({
   const contextValue = useMemo(
     () => ({
       inSim,
+      connectRequestId,
       isConnected,
       shouldClearAllButtons,
     }),
-    [inSim, isConnected, shouldClearAllButtons],
+    [inSim, isConnected, connectRequestId],
   );
 
   return (
