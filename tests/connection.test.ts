@@ -1,4 +1,5 @@
 import Mitm from 'mitm';
+import { InSim } from 'node-insim';
 
 import { createRoot } from '../src';
 
@@ -18,8 +19,7 @@ describe('InSim connection', () => {
   });
 
   it('should connect to InSim and send an IS_ISI packet', (done) => {
-    // eslint-disable-next-line prefer-const
-    let root: ReturnType<typeof createRoot>;
+    const inSim = new InSim();
 
     mitm.on('connection', (socket, opts) => {
       expect(opts.host).toEqual('127.0.0.1');
@@ -45,17 +45,20 @@ describe('InSim connection', () => {
           ]),
         );
 
-        root.disconnect();
+        inSim.disconnect();
         done();
       });
     });
 
-    root = createRoot({
-      name: 'Test App',
-      host: '127.0.0.1',
-      port: 29999,
-      adminPassword: 'adminPassword',
-      prefix: '!',
+    inSim.connect({
+      ReqI: 255,
+      IName: 'Test App',
+      Host: '127.0.0.1',
+      Port: 29999,
+      Admin: 'adminPassword',
+      Prefix: '!',
     });
+
+    createRoot(inSim);
   });
 });

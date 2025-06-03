@@ -2,7 +2,6 @@ import Mitm from 'mitm';
 import { InSim } from 'node-insim';
 import { IS_BTN, IS_ISI, IS_VER } from 'node-insim/packets';
 
-import type { CreateRootOptions } from '../src';
 import { Button, createRoot } from '../src';
 
 function stringToBytes(string: string) {
@@ -21,18 +20,20 @@ describe('Buttons', () => {
   });
 
   it('should connect to InSim and send a button', (done) => {
-    const createRootOptions: CreateRootOptions = {
-      name: 'Test App',
-      host: '127.0.0.1',
-      port: 29999,
-      adminPassword: 'adminPassword',
-      prefix: '!',
-    };
-
     let root: ReturnType<typeof createRoot>;
+    const inSim = new InSim();
 
     process.nextTick(() => {
-      root = createRoot(createRootOptions);
+      inSim.connect({
+        ReqI: 255,
+        IName: 'Test App',
+        Host: '127.0.0.1',
+        Port: 29999,
+        Admin: 'adminPassword',
+        Prefix: '!',
+      });
+
+      root = createRoot(inSim);
       root.render(
         <Button width={20} height={5}>
           Hello world
@@ -90,7 +91,7 @@ describe('Buttons', () => {
         if (combined.length >= btn.Size) {
           expect(combined).toEqual(Buffer.from(btn.pack()));
 
-          root.disconnect();
+          inSim.disconnect();
           done();
         }
       });
