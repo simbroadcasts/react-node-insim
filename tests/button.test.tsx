@@ -31,7 +31,7 @@ describe('Buttons', () => {
     inSim.disconnect();
   });
 
-  it('should connect to InSim and send a button', async () => {
+  it('should send a button', async () => {
     const root = createRoot(inSim);
     root.render(
       <Button width={20} height={5}>
@@ -53,11 +53,74 @@ describe('Buttons', () => {
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
+        ClickID: 0,
         ReqI: 1,
         W: 20,
         H: 5,
         Text: 'Hello world',
       }),
     );
+  });
+
+  it('should send multiple buttons with incremental unique ClickIDs', async () => {
+    const root = createRoot(inSim);
+    root.render(
+      <>
+        <Button width={20} height={5}>
+          One
+        </Button>
+        <Button top={20} left={50} width={40} height={10}>
+          Two
+        </Button>
+        <Button top={30} left={60} width={10} height={5}>
+          Three
+        </Button>
+      </>,
+    );
+
+    const { packetInterceptor, socket } = await waitForTCPConnection;
+
+    await packetInterceptor.waitForPacket(
+      new IS_ISI({
+        ReqI: 255,
+        InSimVer: 9,
+      }),
+    );
+
+    await wait(50);
+    await sendVersionPacket(socket, 255);
+
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ClickID: 0,
+        ReqI: 1,
+        W: 20,
+        H: 5,
+        Text: 'One',
+      }),
+    );
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ClickID: 1,
+        ReqI: 1,
+        T: 20,
+        L: 50,
+        W: 40,
+        H: 10,
+        Text: 'Two',
+      }),
+    );
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ClickID: 2,
+        ReqI: 1,
+        T: 30,
+        L: 60,
+        W: 10,
+        H: 5,
+        Text: 'Three',
+      }),
+    );
+    await packetInterceptor.assertNoMoreData();
   });
 });
