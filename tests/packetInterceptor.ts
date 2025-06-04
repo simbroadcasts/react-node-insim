@@ -3,6 +3,7 @@ import type { Socket } from 'net';
 import { InSim } from 'node-insim';
 import type { PacketType, SendablePacket } from 'node-insim/packets';
 import { IS_VER, Struct } from 'node-insim/packets';
+import { expect } from 'vitest';
 
 function copyBuffer(buffer: Uint8Array): Uint8Array {
   const dest = new ArrayBuffer(buffer.byteLength);

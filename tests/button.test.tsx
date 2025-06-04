@@ -1,6 +1,7 @@
 import Mitm from 'mitm';
 import { InSim } from 'node-insim';
 import { IS_BTN, IS_ISI } from 'node-insim/packets';
+import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
 import {
