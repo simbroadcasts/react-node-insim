@@ -52,10 +52,6 @@
     "yoga-layout-prebuilt": "^1.10.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.10",
-    "@babel/preset-env": "^7.27.2",
-    "@babel/preset-react": "^7.27.1",
-    "@babel/preset-typescript": "^7.16.7",
     "@types/debug": "^4.1.7",
     "@types/mitm": "^1.3.8",
     "@types/node": "^18.11.9",
