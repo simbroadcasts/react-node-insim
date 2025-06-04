@@ -2,7 +2,7 @@
 
 <img src="https://simbroadcasts.tv/assets/node-insim/react-node-insim-icon-256.png" width="100px" align="right" hspace="15">
 
-[![NPM Version](https://img.shields.io/npm/v/react-node-insim?style=flat-square)](https://www.npmjs.com/package/react-node-insim) <!--![Node.js CI](https://github.com/simbroadcasts/react-node-insim/actions/workflows/.github/workflows/validate.yml/badge.svg)-->
+[![NPM Version](https://img.shields.io/npm/v/react-node-insim?style=flat-square)](https://www.npmjs.com/package/react-node-insim) ![Node.js CI](https://github.com/simbroadcasts/react-node-insim/actions/workflows/.github/workflows/ci.yml/badge.svg)
 
 A [React renderer](https://legacy.reactjs.org/docs/codebase-overview.html#renderers) for [InSim](https://en.lfsmanual.net/wiki/InSim.txt) buttons, based on [Node InSim](https://github.com/simbroadcasts/node-insim).
 
