@@ -1,100 +1,63 @@
 import Mitm from 'mitm';
 import { InSim } from 'node-insim';
-import { IS_BTN, IS_ISI, IS_VER } from 'node-insim/packets';
+import { IS_BTN, IS_ISI } from 'node-insim/packets';
 
 import { Button, createRoot } from '../src';
-
-function stringToBytes(string: string) {
-  return string.split('').map((char) => char.charCodeAt(0));
-}
+import {
+  getTCPConnectionPromise,
+  sendVersionPacket,
+  wait,
+} from './packetInterceptor';
 
 describe('Buttons', () => {
   let mitm: ReturnType<typeof Mitm>;
+  let inSim: InSim;
+  let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
 
   beforeEach(() => {
     mitm = Mitm();
+    inSim = new InSim();
+    waitForTCPConnection = getTCPConnectionPromise(mitm, '127.0.0.1', 29999);
+
+    inSim.connect({
+      ReqI: 255,
+      Host: '127.0.0.1',
+      Port: 29999,
+    });
   });
 
   afterEach(() => {
     mitm.disable();
+    inSim.disconnect();
   });
 
-  it('should connect to InSim and send a button', (done) => {
-    let root: ReturnType<typeof createRoot>;
-    const inSim = new InSim();
+  it('should connect to InSim and send a button', async () => {
+    const root = createRoot(inSim);
+    root.render(
+      <Button width={20} height={5}>
+        Hello world
+      </Button>,
+    );
 
-    process.nextTick(() => {
-      inSim.connect({
+    const { packetInterceptor, socket } = await waitForTCPConnection;
+
+    await packetInterceptor.waitForPacket(
+      new IS_ISI({
         ReqI: 255,
-        IName: 'Test App',
-        Host: '127.0.0.1',
-        Port: 29999,
-        Admin: 'adminPassword',
-        Prefix: '!',
-      });
+        InSimVer: 9,
+      }),
+    );
 
-      root = createRoot(inSim);
-      root.render(
-        <Button width={20} height={5}>
-          Hello world
-        </Button>,
-      );
-    });
+    await wait(10);
+    await sendVersionPacket(socket, 255);
 
-    mitm.on('connection', (socket, opts) => {
-      expect(opts.host).toEqual('127.0.0.1');
-      expect(opts.port).toEqual(29999);
-
-      let receivedPackets: Buffer[] = [];
-
-      socket.on('data', (data) => {
-        receivedPackets.push(data);
-        const combined = Buffer.concat(receivedPackets);
-        const isi = new IS_ISI({
-          ReqI: 255,
-          InSimVer: 9,
-          Prefix: '!',
-          IName: 'Test App',
-          Admin: 'adminPassword',
-        });
-
-        if (combined.length >= isi.Size && receivedPackets.length === 1) {
-          expect(combined).toEqual(Buffer.from(isi.pack()));
-
-          const ver = new IS_VER();
-          const versionPacket = Buffer.from([
-            ver.Size / ver.SIZE_MULTIPLIER,
-            ver.Type,
-            255, // ReqI
-            0, // Zero
-            ...stringToBytes('0.7F\0\0\0\0'), // Version
-            ...stringToBytes('S3\0\0\0\0'), // Product
-            InSim.INSIM_VERSION,
-            0, // Spare
-          ]);
-          setTimeout(() => socket.write(versionPacket));
-
-          receivedPackets = [];
-          return;
-        }
-
-        const btn = new IS_BTN({
-          ReqI: 1,
-          W: 20,
-          H: 5,
-          L: 0,
-          T: 0,
-          ClickID: 0,
-          Text: 'Hello world',
-        });
-
-        if (combined.length >= btn.Size) {
-          expect(combined).toEqual(Buffer.from(btn.pack()));
-
-          inSim.disconnect();
-          done();
-        }
-      });
-    });
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ReqI: 1,
+        W: 20,
+        H: 5,
+        Text: 'Hello world',
+      }),
+    );
   });
 });
