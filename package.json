@@ -38,7 +38,7 @@
     "prepack": "run-s build"
   },
   "peerDependencies": {
-    "node-insim": "^0.9.1 || 1 || 2 || 3 || 4",
+    "node-insim": "^0.9.1 || 1 || 2 || 3 || 4 || 5",
     "react": ">=18"
   },
   "dependencies": {
@@ -67,7 +67,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-simple-import-sort": "^8.0.0",
     "mitm": "^1.7.3",
-    "node-insim": "^4.6.1",
+    "node-insim": "^5.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.6.2",
     "react": "^18.2.0",
