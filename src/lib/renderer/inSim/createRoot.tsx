@@ -66,6 +66,14 @@ export function createRoot(
     null,
   );
 
+  if (process.env['DEV'] === 'true') {
+    InSimRenderer.injectIntoDevTools({
+      bundleType: 1,
+      version: '18.2.0',
+      rendererPackageName: 'react-node-insim',
+    });
+  }
+
   roots.set(rootID, fiberRoot);
 
   // When a connection leaves, remove their UCID from all buttons

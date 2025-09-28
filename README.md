@@ -160,6 +160,7 @@ root.render(
   - [Connection scope](#connection-scope)
   - [Human player scope](#human-player-scope)
   - [Global scope](#global-scope)
+- [Using React Devtools](#using-react-devtools)
 - [Development](#development)
 
 ## Requirements
@@ -975,6 +976,22 @@ function App() {
   );
 }
 ```
+
+## Using React Devtools
+
+React Node InSim supports [React Devtools](https://github.com/facebook/react/tree/master/packages/react-devtools) out of the box. To enable integration with React Devtools in your application, first ensure you have installed the optional `react-devtools-core` dependency, and then run your app with the `DEV=true` environment variable:
+
+```shell
+DEV=true npm start
+```
+
+Then, start React Devtools itself:
+
+```shell
+npx react-devtools
+```
+
+After it starts, you should see the component tree of your InSim app. You can even inspect and change the props of components, and see the results immediately in LFS, without restarting it.
 
 ## Development
 

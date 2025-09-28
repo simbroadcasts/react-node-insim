@@ -18,6 +18,28 @@ import type {
   UpdatePayload,
 } from './types';
 
+if (process.env['DEV'] === 'true') {
+  try {
+    require('../devtools/devtools.js');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    if (error?.code === 'ERR_MODULE_NOT_FOUND') {
+      console.warn(
+        `
+The environment variable DEV is set to true, so React Node InSim tried to import \`react-devtools-core\`,
+but this failed as it was not installed. Debugging with React Devtools requires it.
+
+To install use this command:
+
+$ npm install --save-dev react-devtools-core
+          `.trim() + '\n',
+      );
+    } else {
+      throw error;
+    }
+  }
+}
+
 const NO_CONTEXT = {};
 let instanceCounter = 0;
 

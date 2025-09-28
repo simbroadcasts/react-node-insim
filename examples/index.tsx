@@ -28,7 +28,7 @@ inSim.connect({
   Host: host,
   Port: process.env.PORT ? parseInt(process.env.PORT, 10) : 29999,
   Admin: process.env.ADMIN ?? '',
-  Flags: host === '127.0.0.1' ? InSimFlags.ISF_LOCAL : undefined,
+  Flags: InSimFlags.ISF_LOCAL,
 });
 
 const root = createRoot(inSim);
@@ -37,15 +37,15 @@ root.render(
   <StrictMode>
     <ConnectionsPlayersProvider>
       <PlayersAndConnectionsExample />
-      <ScopesExample />
-      <PacketHooksExample />
-      <FlexExample isEditorVisible={false} />
-      <ButtonExample />
-      <GridExample />
-      <StackExample />
-      <ToggleButtonExample />
-      <ToggleButtonGroupExample />
-      <TextBoxExample />
+      {/*<ScopesExample />*/}
+      {/*<PacketHooksExample />*/}
+      {/*<FlexExample isEditorVisible={false} />*/}
+      {/*<ButtonExample />*/}
+      {/*<GridExample />*/}
+      {/*<StackExample />*/}
+      {/*<ToggleButtonExample />*/}
+      {/*<ToggleButtonGroupExample />*/}
+      {/*<TextBoxExample />*/}
     </ConnectionsPlayersProvider>
   </StrictMode>,
 );
