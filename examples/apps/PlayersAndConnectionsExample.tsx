@@ -1,5 +1,5 @@
 import type { InSim } from 'node-insim';
-import type { IS_BTC } from 'node-insim/packets';
+import type { InSimPacketInstance, PacketType } from 'node-insim/packets';
 import { IS_MST, MessageSound } from 'node-insim/packets';
 import {
   Button,
@@ -18,7 +18,8 @@ export function PlayersAndConnectionsExample() {
   const { sendMessageToConnection, sendMessageToPlayer } = useInSim();
 
   const handlePlayerClick =
-    (PLID: number) => (packet: IS_BTC, inSim: InSim) => {
+    (PLID: number) =>
+    (packet: InSimPacketInstance<PacketType.ISP_BTC>, inSim: InSim) => {
       inSim.send(new IS_MST({ Msg: `/echo PLID ${PLID}` }));
       sendRaceControlMessageToConnection(
         packet.UCID,
@@ -44,7 +45,8 @@ export function PlayersAndConnectionsExample() {
     };
 
   const handleConnectionClick =
-    (UCID: number) => (packet: IS_BTC, inSim: InSim) => {
+    (UCID: number) =>
+    (packet: InSimPacketInstance<PacketType.ISP_BTC>, inSim: InSim) => {
       inSim.send(new IS_MST({ Msg: `/echo UCID ${UCID}` }));
       sendRaceControlMessageToConnection(
         packet.UCID,
