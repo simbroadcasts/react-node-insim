@@ -26,7 +26,7 @@ describe('InSim connection', () => {
     await packetInterceptor.waitForPacket(
       new IS_ISI({
         ReqI: 255,
-        InSimVer: 9,
+        InSimVer: 10,
       }),
     );
 

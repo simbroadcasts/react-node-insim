@@ -1,5 +1,5 @@
 import type { InSim } from 'node-insim';
-import type { IS_BFN, IS_VER } from 'node-insim/packets';
+import type { InSimPacketInstance } from 'node-insim/packets';
 import { ButtonFunction, PacketType } from 'node-insim/packets';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
@@ -43,7 +43,7 @@ export function InSimContextProvider({
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const bfnListener = (packet: IS_BFN) => {
+    const bfnListener = (packet: InSimPacketInstance<PacketType.ISP_BFN>) => {
       if (packet.SubT === ButtonFunction.BFN_USER_CLEAR) {
         log('User cleared all buttons');
         setShouldClearAllButtons(true);
@@ -65,7 +65,7 @@ export function InSimContextProvider({
   }, []);
 
   useEffect(() => {
-    const onVersion = (packet: IS_VER) => {
+    const onVersion = (packet: InSimPacketInstance<PacketType.ISP_VER>) => {
       if (packet.ReqI === connectRequestId) {
         setIsConnected(true);
       }

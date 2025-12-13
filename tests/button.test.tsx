@@ -45,7 +45,7 @@ describe('Buttons', () => {
     await packetInterceptor.waitForPacket(
       new IS_ISI({
         ReqI: 255,
-        InSimVer: 9,
+        InSimVer: 10,
       }),
     );
 
@@ -84,7 +84,7 @@ describe('Buttons', () => {
     await packetInterceptor.waitForPacket(
       new IS_ISI({
         ReqI: 255,
-        InSimVer: 9,
+        InSimVer: 10,
       }),
     );
 

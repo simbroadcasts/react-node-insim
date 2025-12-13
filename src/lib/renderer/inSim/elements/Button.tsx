@@ -1,5 +1,5 @@
 import type { InSim } from 'node-insim';
-import type { IS_BTC, IS_BTN_Data, IS_BTT, IS_NCN } from 'node-insim/packets';
+import type { InSimPacketInstance, IS_BTN_Data } from 'node-insim/packets';
 import {
   ButtonFunction,
   ButtonStyle,
@@ -109,14 +109,20 @@ type ButtonBaseProps = {
   shouldClearAllButtons: boolean;
 
   /** A function to be called when a user clicks the button */
-  onClick?: (packet: IS_BTC, inSim: InSim) => void;
+  onClick?: (
+    packet: InSimPacketInstance<PacketType.ISP_BTC>,
+    inSim: InSim,
+  ) => void;
 
   /**
    * A function to be called when a user enters a value in the button's dialog.
    *
    * {@link maxTypeInChars} must be set to a value greater than 0.
    */
-  onType?: (packet: IS_BTT, inSim: InSim) => void;
+  onType?: (
+    packet: InSimPacketInstance<PacketType.ISP_BTT>,
+    inSim: InSim,
+  ) => void;
 
   /**
    * NOTE: You should not use this flag for most buttons.
@@ -140,7 +146,10 @@ export class Button extends InSimElement {
   private onType: ButtonElementProps['onType'];
   private onTypeListener: ButtonElementProps['onType'];
 
-  private onNewConnectionListener?: (packet: IS_NCN, inSim: InSim) => void;
+  private onNewConnectionListener?: (
+    packet: InSimPacketInstance<PacketType.ISP_NCN>,
+    inSim: InSim,
+  ) => void;
 
   constructor(
     id: number,
@@ -164,7 +173,10 @@ export class Button extends InSimElement {
     if (this.onClick) {
       this.log(`add onClick listener`);
 
-      const onClickListener = (btcPacket: IS_BTC, inSim: InSim) => {
+      const onClickListener = (
+        btcPacket: InSimPacketInstance<PacketType.ISP_BTC>,
+        inSim: InSim,
+      ) => {
         if (
           this.packet.ClickID === btcPacket.ClickID &&
           (this.packet.UCID === btcPacket.UCID ||
@@ -181,7 +193,10 @@ export class Button extends InSimElement {
     if (this.onType) {
       this.log(`add onType listener`);
 
-      const onTypeListener = (bttPacket: IS_BTT, inSim: InSim) => {
+      const onTypeListener = (
+        bttPacket: InSimPacketInstance<PacketType.ISP_BTT>,
+        inSim: InSim,
+      ) => {
         if (
           this.packet.ClickID === bttPacket.ClickID &&
           (this.packet.UCID === bttPacket.UCID ||
@@ -341,7 +356,9 @@ export class Button extends InSimElement {
   }
 
   private reinitializeButtonAfterNewConnection(): void {
-    this.onNewConnectionListener = (packet: IS_NCN) => {
+    this.onNewConnectionListener = (
+      packet: InSimPacketInstance<PacketType.ISP_NCN>,
+    ) => {
       if (
         packet.ReqI === 0 &&
         (this.packet.UCID === packet.UCID ||

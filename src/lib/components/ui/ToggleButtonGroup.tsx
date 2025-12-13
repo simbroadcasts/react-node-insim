@@ -1,4 +1,4 @@
-import type { IS_BTC } from 'node-insim/packets';
+import type { InSimPacketInstance, PacketType } from 'node-insim/packets';
 import type { ButtonProps } from 'react-node-insim';
 import { Button, HStack } from 'react-node-insim';
 
@@ -31,13 +31,14 @@ export function ToggleButtonGroup<TOption extends ToggleButtonGroupOption>({
 }: Props<TOption>) {
   const totalWidth = options.length === 0 ? 0 : width / options.length;
 
-  const handleChange = (option: TOption) => (_: IS_BTC) => {
-    if (option.value === selectedOption.value) {
-      return;
-    }
+  const handleChange =
+    (option: TOption) => (_: InSimPacketInstance<PacketType.ISP_BTC>) => {
+      if (option.value === selectedOption.value) {
+        return;
+      }
 
-    onChange(option);
-  };
+      onChange(option);
+    };
 
   return (
     <HStack top={top} left={left} width={totalWidth}>

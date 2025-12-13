@@ -2279,10 +2279,10 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-node-insim@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/node-insim/-/node-insim-5.0.0.tgz#8b132846ded4c87e6778613d18256f24cb506c3f"
-  integrity sha512-51xf9cBhF49kSz2+BbF/4K5TPf+5mNAWMkZYrTwSZuYP4InkRIb+TgtI4HmW6dgP75h8KX600v9/SF7TrsB7Ow==
+node-insim@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/node-insim/-/node-insim-6.0.0.tgz#fa098a3c9ce02e588823e6ad6e50b2d69361543d"
+  integrity sha512-ujjKYAEc3pGk9vaeG+x1KVR2xicSbQs6MvZqTD50mHTZmkfL3Pnu7tijOv6ItfbLnzeMPfJlvpUJTjJUaDVK0A==
   dependencies:
     "@types/debug" "^4.1.12"
     "@types/lodash.defaults" "^4.2.9"
