@@ -24,7 +24,7 @@ It allows you to create things like this:
 
 ```tsx
 import { InSim } from 'node-insim';
-import { InSimFlags, IS_BTC, IS_MST, PacketType } from 'node-insim/packets';
+import { InSimFlags, InSimPacketInstance, IS_MST, PacketType } from 'node-insim/packets';
 import { StrictMode } from 'react';
 import {
   Button,
@@ -54,11 +54,11 @@ function App() {
   });
 
   // Clickable buttons
-  const handlePlayerClick = (plid: number) => (_: IS_BTC, inSim: InSim) => {
+  const handlePlayerClick = (plid: number) => (_: InSimPacketInstance<PacketType.ISP_BTC>, inSim: InSim) => {
     inSim.send(new IS_MST({ Msg: `/echo PLID ${plid}` }));
   };
 
-  const handleConnectionClick = (ucid: number) => (_: IS_BTC, inSim: InSim) => {
+  const handleConnectionClick = (ucid: number) => (_: InSimPacketInstance<PacketType.ISP_BTC>, inSim: InSim) => {
     inSim.send(new IS_MST({ Msg: `/echo UCID ${ucid}` }));
   };
 
