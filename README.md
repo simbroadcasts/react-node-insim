@@ -171,7 +171,7 @@ root.render(
 ## Requirements
 
 - [Node.js](https://nodejs.org/) 14 or higher
-- [Node InSim](https://github.com/simbroadcasts/node-insim)
+- [Node InSim](https://github.com/simbroadcasts/node-insim) 6
 - [React](https://github.com/facebook/react) 18
 
 ## Installation
