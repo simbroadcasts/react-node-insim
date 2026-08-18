@@ -1,6 +1,6 @@
 import Mitm from 'mitm';
 import { InSim } from 'node-insim';
-import { IS_BTN, IS_ISI } from 'node-insim/packets';
+import { ButtonFunction, IS_BFN, IS_BTN, IS_ISI } from 'node-insim/packets';
 import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
@@ -10,7 +10,7 @@ import {
   wait,
 } from './packetInterceptor';
 
-describe('Buttons', () => {
+describe('Button updates', () => {
   let mitm: ReturnType<typeof Mitm>;
   let inSim: InSim;
   let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
@@ -32,7 +32,7 @@ describe('Buttons', () => {
     inSim.disconnect();
   });
 
-  it('should send a button', async () => {
+  it('should send an updated button when only its text changes', async () => {
     const root = createRoot(inSim);
     root.render(
       <Button width={20} height={5}>
@@ -61,22 +61,31 @@ describe('Buttons', () => {
         Text: 'Hello world',
       }),
     );
+
+    root.render(
+      <Button width={20} height={5}>
+        Updated text
+      </Button>,
+    );
+
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ClickID: 0,
+        ReqI: 1,
+        W: 0,
+        H: 0,
+        Text: 'Updated text',
+      }),
+    );
+    await packetInterceptor.assertNoMoreData();
   });
 
-  it('should send multiple buttons with incremental unique ClickIDs', async () => {
+  it('should send a full button update when its dimensions change', async () => {
     const root = createRoot(inSim);
     root.render(
-      <>
-        <Button width={20} height={5}>
-          One
-        </Button>
-        <Button top={20} left={50} width={40} height={10}>
-          Two
-        </Button>
-        <Button top={30} left={60} width={10} height={5}>
-          Three
-        </Button>
-      </>,
+      <Button width={20} height={5}>
+        Hello world
+      </Button>,
     );
 
     const { packetInterceptor, socket } = await waitForTCPConnection;
@@ -88,7 +97,7 @@ describe('Buttons', () => {
       }),
     );
 
-    await wait(50);
+    await wait(10);
     await sendVersionPacket({ socket, ReqI: 255 });
 
     await packetInterceptor.waitForPacket(
@@ -97,29 +106,84 @@ describe('Buttons', () => {
         ReqI: 1,
         W: 20,
         H: 5,
-        Text: 'One',
+        Text: 'Hello world',
       }),
     );
+
+    root.render(
+      <Button top={20} left={50} width={40} height={10}>
+        Hello world
+      </Button>,
+    );
+
     await packetInterceptor.waitForPacket(
       new IS_BTN({
-        ClickID: 1,
+        ClickID: 0,
         ReqI: 1,
         T: 20,
         L: 50,
         W: 40,
         H: 10,
-        Text: 'Two',
+        Text: 'Hello world',
       }),
     );
+    await packetInterceptor.assertNoMoreData();
+  });
+
+  it('should delete a button when it is unmounted, freeing its ClickID', async () => {
+    const root = createRoot(inSim);
+    root.render(
+      <Button width={20} height={5}>
+        Hello world
+      </Button>,
+    );
+
+    const { packetInterceptor, socket } = await waitForTCPConnection;
+
+    await packetInterceptor.waitForPacket(
+      new IS_ISI({
+        ReqI: 255,
+        InSimVer: 10,
+      }),
+    );
+
+    await wait(10);
+    await sendVersionPacket({ socket, ReqI: 255 });
+
     await packetInterceptor.waitForPacket(
       new IS_BTN({
-        ClickID: 2,
+        ClickID: 0,
         ReqI: 1,
-        T: 30,
-        L: 60,
-        W: 10,
+        W: 20,
         H: 5,
-        Text: 'Three',
+        Text: 'Hello world',
+      }),
+    );
+
+    root.render(null);
+
+    await packetInterceptor.waitForPacket(
+      new IS_BFN({
+        SubT: ButtonFunction.BFN_DEL_BTN,
+        ClickID: 0,
+        UCID: 0,
+      }),
+    );
+    await packetInterceptor.assertNoMoreData();
+
+    root.render(
+      <Button width={30} height={8}>
+        New button
+      </Button>,
+    );
+
+    await packetInterceptor.waitForPacket(
+      new IS_BTN({
+        ClickID: 0,
+        ReqI: 1,
+        W: 30,
+        H: 8,
+        Text: 'New button',
       }),
     );
     await packetInterceptor.assertNoMoreData();

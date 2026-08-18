@@ -1,8 +1,20 @@
 import type Mitm from 'mitm';
 import type { Socket } from 'net';
 import { InSim } from 'node-insim';
-import type { PacketType, SendablePacket } from 'node-insim/packets';
-import { IS_VER, Struct } from 'node-insim/packets';
+import type {
+  PacketType,
+  SendablePacket as SendablePacketInstance,
+  Struct as StructInstance,
+} from 'node-insim/packets';
+import {
+  IS_BTC,
+  IS_BTT,
+  IS_NCN,
+  IS_NPL,
+  IS_VER,
+  SendablePacket,
+  Struct,
+} from 'node-insim/packets';
 import { expect } from 'vitest';
 
 function copyBuffer(buffer: Uint8Array): Uint8Array {
@@ -10,10 +22,6 @@ function copyBuffer(buffer: Uint8Array): Uint8Array {
   const newBuffer = new Uint8Array(dest);
   newBuffer.set(buffer);
   return newBuffer;
-}
-
-function stringToBytes(string: string): number[] {
-  return string.split('').map((char) => char.charCodeAt(0));
 }
 
 export class PacketInterceptor {
@@ -130,7 +138,9 @@ export class PacketInterceptor {
     }
   }
 
-  public async waitForPacket<T extends SendablePacket>(expectedPacket: T) {
+  public async waitForPacket<T extends SendablePacketInstance>(
+    expectedPacket: T,
+  ) {
     const promise = new Promise<Uint8Array>((resolve, reject) => {
       this.waitingPromises.push({
         resolve,
@@ -195,24 +205,25 @@ export async function getTCPConnectionPromise(
   };
 }
 
-export async function sendVersionPacket(
-  socket: Socket,
-  reqI: number,
-): Promise<void> {
+export async function sendVersionPacket({
+  socket,
+  ReqI,
+}: {
+  socket: Socket;
+  ReqI: number;
+}): Promise<void> {
   const ver = new IS_VER();
-  const versionPacketBuffer = Buffer.from([
-    ver.Size / ver.SIZE_MULTIPLIER,
-    ver.Type,
-    reqI,
-    0, // Zero
-    ...stringToBytes('0.7F\0\0\0\0'), // Version
-    ...stringToBytes('S3\0\0\0\0'), // Product
-    InSim.INSIM_VERSION, // InSim version from node-insim
-    0, // Spare
-  ]);
+  ver.ReqI = ReqI;
+  ver.Version = '0.7F';
+  ver.Product = 'S3';
+  ver.InSimVer = InSim.INSIM_VERSION;
 
+  return sendPacket(socket, ver);
+}
+
+function writeToSocket(socket: Socket, buffer: Buffer): Promise<void> {
   return new Promise((resolve, reject) => {
-    socket.write(versionPacketBuffer, (err) => {
+    socket.write(buffer, (err) => {
       if (err) {
         reject(err);
       } else {
@@ -220,6 +231,92 @@ export async function sendVersionPacket(
       }
     });
   });
+}
+
+// Receive-only packets (e.g. IS_NCN, IS_BTC) don't implement `pack()` -
+// there's normally no reason for InSim to send one. `pack()` is only
+// defined on SendablePacket, but its implementation is generic (driven by
+// each packet's own field decorators), so it works identically when called
+// against any Struct instance - this lets tests simulate LFS sending these
+// packets without hand-building their wire format.
+export async function sendPacket(
+  socket: Socket,
+  packet: StructInstance,
+): Promise<void> {
+  const buffer = SendablePacket.prototype.pack.call(packet);
+  return writeToSocket(socket, Buffer.from(buffer));
+}
+
+export async function sendButtonClickPacket(
+  socket: Socket,
+  { ReqI, UCID = 0, ClickID }: { ReqI: number; UCID?: number; ClickID: number },
+): Promise<void> {
+  const packet = new IS_BTC();
+  packet.ReqI = ReqI;
+  packet.UCID = UCID;
+  packet.ClickID = ClickID;
+
+  return sendPacket(socket, packet);
+}
+
+export async function sendButtonTypePacket(
+  socket: Socket,
+  {
+    ReqI,
+    UCID = 0,
+    ClickID,
+    TypeIn,
+    Text,
+  }: {
+    ReqI: number;
+    UCID?: number;
+    ClickID: number;
+    TypeIn: number;
+    Text: string;
+  },
+): Promise<void> {
+  const packet = new IS_BTT();
+  packet.ReqI = ReqI;
+  packet.UCID = UCID;
+  packet.ClickID = ClickID;
+  packet.TypeIn = TypeIn;
+  packet.Text = Text;
+
+  return sendPacket(socket, packet);
+}
+
+export async function sendNewConnectionPacket(
+  socket: Socket,
+  {
+    UCID,
+  }: {
+    UCID: number;
+  },
+): Promise<void> {
+  const packet = new IS_NCN();
+  packet.UCID = UCID;
+
+  return sendPacket(socket, packet);
+}
+
+export async function sendNewPlayerPacket(
+  socket: Socket,
+  {
+    UCID,
+    PLID,
+    PType = 0,
+  }: {
+    UCID: number;
+    PLID: number;
+    PType?: number;
+  },
+): Promise<void> {
+  const packet = new IS_NPL();
+  packet.UCID = UCID;
+  packet.PLID = PLID;
+  packet.PType = PType;
+
+  return sendPacket(socket, packet);
 }
 
 export async function wait(ms: number): Promise<void> {
