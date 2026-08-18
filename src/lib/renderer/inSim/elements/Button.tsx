@@ -641,7 +641,7 @@ export class Button extends InSimElement {
 
 const buttonBackgroundMap: Record<
   Required<ButtonElementProps>['background'],
-  ButtonStyle
+  ButtonStyle | 0
 > = {
   dark: ButtonStyle.ISB_DARK,
   light: ButtonStyle.ISB_LIGHT,
@@ -650,7 +650,7 @@ const buttonBackgroundMap: Record<
 
 const buttonAlignmentMap: Record<
   Required<ButtonElementProps>['align'],
-  ButtonStyle
+  ButtonStyle | 0
 > = {
   left: ButtonStyle.ISB_LEFT,
   center: 0,

@@ -1,6 +1,7 @@
+import { createContext } from 'react';
 import type { FlexProps } from 'react-node-insim';
-import type { HostConfig } from 'react-reconciler';
-import { DefaultEventPriority } from 'react-reconciler/constants';
+import type { HostConfig, ReactContext } from 'react-reconciler';
+import { DefaultEventPriority, NoEventPriority } from 'react-reconciler/constants';
 
 import { log } from '../../internals/logger';
 import { childrenToString } from '../../internals/utils';
@@ -15,11 +16,11 @@ import type {
   PublicInstance,
   TextChildren,
   Type,
-  UpdatePayload,
 } from './types';
 
 if (process.env['DEV'] === 'true') {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('../devtools/devtools.js');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -42,6 +43,7 @@ $ npm install --save-dev react-devtools-core
 
 const NO_CONTEXT = {};
 let instanceCounter = 0;
+let currentUpdatePriority = NoEventPriority;
 
 export const hostConfig: HostConfig<
   Type,
@@ -51,12 +53,13 @@ export const hostConfig: HostConfig<
   never,
   never,
   never,
+  never,
   PublicInstance<Instance>,
   HostContext,
-  UpdatePayload<Props>,
   never,
   NodeJS.Timeout,
-  number
+  number,
+  null
 > = {
   supportsMutation: true,
   supportsPersistence: false,
@@ -207,31 +210,6 @@ export const hostConfig: HostConfig<
     return false;
   },
 
-  prepareUpdate(
-    instance: Instance,
-    type: Type,
-    oldProps: Props,
-    newProps: Props,
-  ) {
-    log('prepareUpdate', type, instance.id);
-
-    if (oldProps === null) {
-      throw new Error('Should have old props');
-    }
-    if (newProps === null) {
-      throw new Error('Should have new props');
-    }
-
-    const hasTextContent = shouldSetTextContent(type, newProps);
-    const diff = shallowDiff(oldProps, newProps, hasTextContent);
-
-    if (diff.length === 0) {
-      return null;
-    }
-
-    return diff;
-  },
-
   shouldSetTextContent,
 
   createTextInstance(text: string) {
@@ -249,8 +227,65 @@ export const hostConfig: HostConfig<
     log('');
   },
 
-  getCurrentEventPriority() {
-    return DefaultEventPriority;
+  NotPendingTransition: null,
+  HostTransitionContext: createContext(null) as unknown as ReactContext<null>,
+
+  setCurrentUpdatePriority(newPriority) {
+    currentUpdatePriority = newPriority;
+  },
+
+  getCurrentUpdatePriority() {
+    return currentUpdatePriority;
+  },
+
+  resolveUpdatePriority() {
+    return currentUpdatePriority !== NoEventPriority
+      ? currentUpdatePriority
+      : DefaultEventPriority;
+  },
+
+  resetFormInstance() {
+    // Forms are not supported.
+  },
+
+  requestPostPaintCallback() {
+    // Post-paint callbacks are not supported.
+  },
+
+  shouldAttemptEagerTransition() {
+    return false;
+  },
+
+  trackSchedulerEvent() {
+    // NO-OP
+  },
+
+  resolveEventType() {
+    return null;
+  },
+
+  resolveEventTimeStamp() {
+    return -1;
+  },
+
+  maySuspendCommit() {
+    return false;
+  },
+
+  preloadInstance() {
+    return false;
+  },
+
+  startSuspendingCommit() {
+    // NO-OP
+  },
+
+  suspendInstance() {
+    // NO-OP
+  },
+
+  waitForCommitToBeReady() {
+    return null;
   },
 
   getInstanceFromNode() {
@@ -289,14 +324,24 @@ export const hostConfig: HostConfig<
 
   commitUpdate(
     instance: Instance,
-    updatePayload: NonNullable<UpdatePayload>,
     type: Type,
     oldProps: Props,
     newProps: Props,
   ): void {
-    log('commitUpdate', type, instance.id, { updatePayload });
     if (oldProps === null) {
       throw new Error('Should have old props');
+    }
+    if (newProps === null) {
+      throw new Error('Should have new props');
+    }
+
+    const hasTextContent = shouldSetTextContent(type, newProps);
+    const updatePayload = shallowDiff(oldProps, newProps, hasTextContent);
+
+    log('commitUpdate', type, instance.id, { updatePayload });
+
+    if (updatePayload.length === 0) {
+      return;
     }
 
     instance.commitUpdate(oldProps, newProps, updatePayload);

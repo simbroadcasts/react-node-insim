@@ -39,6 +39,6 @@ export type PublicInstance<T extends Instance> = Omit<
 
 export type HostContext = object;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type UpdatePayload<Props extends Record<string, unknown> = {}> =
-  | (keyof Props)[];
+  (keyof Props)[];

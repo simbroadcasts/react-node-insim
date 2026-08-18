@@ -1,3 +1,3 @@
-export { type CreateRootOptions, createRoot } from './createRoot';
+export { createRoot, type CreateRootOptions } from './createRoot';
 export * from './elements';
 export * from './types';

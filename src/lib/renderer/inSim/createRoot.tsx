@@ -60,10 +60,16 @@ export function createRoot(
     false,
     false,
     '',
-    function (error: unknown) {
+    function onUncaughtError(error: unknown) {
       console.error(error);
     },
-    null,
+    function onCaughtError(error: unknown) {
+      console.error(error);
+    },
+    function onRecoverableError(error: unknown) {
+      console.error(error);
+    },
+    function onDefaultTransitionIndicator() {},
   );
 
   if (process.env['DEV'] === 'true') {
@@ -91,7 +97,6 @@ export function createRoot(
       InSimRenderer.updateContainer(
         <InSimContextProvider
           inSim={inSim}
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           connectRequestId={inSim.options.ReqI!}
         >
           <JotaiProvider>{children}</JotaiProvider>

@@ -1,7 +1,7 @@
 export {
   type Connection,
-  type Player,
   ConnectionsPlayersProvider,
+  type Player,
   useConnections,
   usePlayers,
 } from './ConnectionsPlayersProvider';
