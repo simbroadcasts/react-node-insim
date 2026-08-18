@@ -139,6 +139,7 @@ export class Button extends InSimElement {
   private static readonly UCID_ALL = 255;
 
   private packet: IS_BTN = new IS_BTN();
+  private isDetached = false;
 
   private onClick: ButtonElementProps['onClick'];
   private onClickListener: ButtonElementProps['onClick'];
@@ -291,6 +292,15 @@ export class Button extends InSimElement {
   }
 
   detachDeletedInstance(): void {
+    // react-reconciler calls this once for the fiber and once for its
+    // alternate, which share this instance in mutation mode - guard so the
+    // delete packet and ClickID cleanup only happen once.
+    if (this.isDetached) {
+      return;
+    }
+
+    this.isDetached = true;
+
     this.log(`delete`);
 
     const clickID = this.packet.ClickID;
