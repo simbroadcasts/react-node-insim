@@ -142,6 +142,17 @@ describe('Button validation', () => {
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
+  // React's scheduler dispatches concurrent work via MessageChannel, which
+  // can need more than one macrotask turn to fully commit under a loaded
+  // machine (e.g. CI). A single `wait(0)` isn't always enough headroom, and
+  // if it isn't, renders queue up and get batched together instead of one
+  // per iteration, which is what this test relies on.
+  async function settle() {
+    for (let i = 0; i < 5; i++) {
+      await wait(0);
+    }
+  }
+
   it('should not send a button when too many buttons are rendered for the same UCID', async () => {
     // Deliberately left unconnected (no version handshake): ClickID
     // allocation happens in commitMount regardless of connection state, and
@@ -158,9 +169,9 @@ describe('Button validation', () => {
       );
       root.render(<>{buttons}</>);
 
-      // Yield so this render's commitMount (and ClickID allocation) finishes
-      // before the next one is constructed.
-      await wait(0);
+      // Let this render's commitMount (and ClickID allocation) finish before
+      // the next one is constructed.
+      await settle();
     }
 
     buttons.push(
@@ -169,7 +180,7 @@ describe('Button validation', () => {
       </Button>,
     );
     root.render(<>{buttons}</>);
-    await wait(0);
+    await settle();
 
     expectRenderErrorMessage(
       `Too many buttons for UCID 1. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
