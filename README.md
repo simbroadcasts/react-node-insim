@@ -172,26 +172,26 @@ root.render(
 
 - [Node.js](https://nodejs.org/) 14 or higher
 - [Node InSim](https://github.com/simbroadcasts/node-insim) 6
-- [React](https://github.com/facebook/react) 18
+- [React](https://github.com/facebook/react) 19
 
 ## Installation
 
 [NPM](https://www.npmjs.com/)
 
 ```shell
-npm install react@18 node-insim react-node-insim
+npm install react@19 node-insim react-node-insim
 ```
 
 [Yarn](https://classic.yarnpkg.com/en/docs)
 
 ```shell
-yarn add react@18 node-insim react-node-insim
+yarn add react@19 node-insim react-node-insim
 ```
 
 [pnpm](https://pnpm.io/)
 
 ```shell
-pnpm add react@18 node-insim react-node-insim
+pnpm add react@19 node-insim react-node-insim
 ```
 
 ## Basic usage

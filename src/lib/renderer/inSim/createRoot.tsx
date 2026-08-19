@@ -75,7 +75,7 @@ export function createRoot(
   if (process.env['DEV'] === 'true') {
     InSimRenderer.injectIntoDevTools({
       bundleType: 1,
-      version: '18.2.0',
+      version: '19.2.0',
       rendererPackageName: 'react-node-insim',
     });
   }
