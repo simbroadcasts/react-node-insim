@@ -37,15 +37,15 @@ root.render(
   <StrictMode>
     <ConnectionsPlayersProvider>
       <PlayersAndConnectionsExample />
-      {/*<ScopesExample />*/}
-      {/*<PacketHooksExample />*/}
-      {/*<FlexExample isEditorVisible={false} />*/}
-      {/*<ButtonExample />*/}
-      {/*<GridExample />*/}
-      {/*<StackExample />*/}
-      {/*<ToggleButtonExample />*/}
-      {/*<ToggleButtonGroupExample />*/}
-      {/*<TextBoxExample />*/}
+      <ScopesExample />
+      <PacketHooksExample />
+      <FlexExample isEditorVisible={false} />
+      <ButtonExample />
+      <GridExample />
+      <StackExample />
+      <ToggleButtonExample />
+      <ToggleButtonGroupExample />
+      <TextBoxExample />
     </ConnectionsPlayersProvider>
   </StrictMode>,
 );
