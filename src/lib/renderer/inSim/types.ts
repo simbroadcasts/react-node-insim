@@ -18,6 +18,15 @@ export type Container = {
   buttonUCIDsByClickID: Set<UCID>[];
   buttonClickIDStart: number;
   appendButtonIDs: boolean;
+
+  /**
+   * UCIDs currently known to be connected to this root (including the host,
+   * UCID 0). Used to resolve which connections a UCID=255 ("all connections")
+   * button should be individually sent to once some connected UCID has
+   * cleared its buttons and a single broadcast can no longer reach everyone
+   * correctly.
+   */
+  connectedUCIDs: Set<UCID>;
 };
 
 export type Type = 'btn' | 'flex';

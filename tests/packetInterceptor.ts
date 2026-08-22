@@ -2,17 +2,21 @@ import Mitm from 'mitm';
 import type { Socket } from 'net';
 import { InSim } from 'node-insim';
 import type {
+  ButtonFunction,
   PacketType,
   SendablePacket as SendablePacketInstance,
   Struct as StructInstance,
 } from 'node-insim/packets';
 import {
+  IS_BFN,
   IS_BTC,
   IS_BTT,
+  IS_CNL,
   IS_ISI,
   IS_NCN,
   IS_NPL,
   IS_VER,
+  LeaveReason,
   SendablePacket,
   Struct,
 } from 'node-insim/packets';
@@ -355,6 +359,29 @@ export async function sendNewConnectionPacket(
 ): Promise<void> {
   const packet = new IS_NCN();
   packet.UCID = UCID;
+
+  return sendPacket(socket, packet);
+}
+
+export async function sendClearButtonsPacket(
+  socket: Socket,
+  { SubT, UCID = 0 }: { SubT: ButtonFunction; UCID?: number },
+): Promise<void> {
+  const packet = new IS_BFN({ SubT, UCID });
+
+  return sendPacket(socket, packet);
+}
+
+export async function sendConnectionLeavePacket(
+  socket: Socket,
+  {
+    UCID,
+    Reason = LeaveReason.LEAVR_DISCO,
+  }: { UCID: number; Reason?: LeaveReason },
+): Promise<void> {
+  const packet = new IS_CNL();
+  packet.UCID = UCID;
+  packet.Reason = Reason;
 
   return sendPacket(socket, packet);
 }

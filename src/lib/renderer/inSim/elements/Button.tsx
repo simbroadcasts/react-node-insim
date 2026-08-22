@@ -105,8 +105,8 @@ type ButtonBaseProps = {
   /** Sets the caption of the text entry dialog, if enabled by the {@link maxTypeInChars} property */
   caption: string;
 
-  /** Used when user has requested to clear all buttons */
-  shouldClearAllButtons: boolean;
+  /** UCIDs of connections that have hidden all their buttons (Shift+I) */
+  clearedUCIDs: ReadonlySet<number>;
 
   /** A function to be called when a user clicks the button */
   onClick?: (
@@ -139,6 +139,7 @@ export class Button extends InSimElement {
   private static readonly UCID_ALL = 255;
 
   private packet: IS_BTN = new IS_BTN();
+  private clearedUCIDs: ReadonlySet<number> = new Set();
   private isDetached = false;
 
   private onClick: ButtonElementProps['onClick'];
@@ -164,6 +165,7 @@ export class Button extends InSimElement {
 
     this.onClick = props.onClick;
     this.onType = props.onType;
+    this.clearedUCIDs = props.clearedUCIDs;
 
     this.assertButtonCount(props);
     this.assertTextLength(props);
@@ -219,9 +221,14 @@ export class Button extends InSimElement {
   commitMount(props: ButtonElementProps): void {
     this.log(`mount`);
 
+    this.clearedUCIDs = props.clearedUCIDs;
+
     this.generateClickIdForUCID(this.packet.UCID);
 
-    if (props.shouldClearAllButtons) {
+    if (
+      this.packet.UCID !== Button.UCID_ALL &&
+      this.clearedUCIDs.has(this.packet.UCID)
+    ) {
       this.log('do not commit mount - user has hidden all buttons');
       return;
     }
@@ -241,13 +248,37 @@ export class Button extends InSimElement {
   ): void {
     this.log('update', `[${changedPropNames.join()}]`);
 
-    if (newProps.shouldClearAllButtons) {
+    this.clearedUCIDs = newProps.clearedUCIDs;
+
+    if (
+      newProps.UCID !== Button.UCID_ALL &&
+      this.clearedUCIDs.has(newProps.UCID)
+    ) {
       this.log(`do not update - user has hidden all buttons`);
       return;
     }
 
     if (!newProps.isConnected) {
       this.log(`do not update - not connected`);
+      return;
+    }
+
+    // `clearedUCIDs` is a new Set reference whenever ANY connection clears or
+    // restores its buttons, even ones unrelated to this button's own UCID. A
+    // connection-scoped button only needs to react when its own membership in
+    // the set changed (e.g. it's the one being restored) - otherwise this is
+    // a no-op for it, and resending would needlessly touch this connection's
+    // buttons in response to a different connection's Shift+I.
+    const onlyClearedUCIDsChangedForAnotherConnection =
+      newProps.UCID !== Button.UCID_ALL &&
+      changedPropNames.length === 1 &&
+      changedPropNames[0] === 'clearedUCIDs' &&
+      !oldProps.clearedUCIDs.has(newProps.UCID);
+
+    if (onlyClearedUCIDsChangedForAnotherConnection) {
+      this.log(
+        'do not update - clearedUCIDs changed for a different connection',
+      );
       return;
     }
 
@@ -369,10 +400,19 @@ export class Button extends InSimElement {
     this.onNewConnectionListener = (
       packet: InSimPacketInstance<PacketType.ISP_NCN>,
     ) => {
+      if (packet.ReqI !== 0) {
+        return;
+      }
+
+      if (this.packet.UCID === Button.UCID_ALL) {
+        this.log('reinitialize existing global button after new connection');
+        this.sendNewButton();
+        return;
+      }
+
       if (
-        packet.ReqI === 0 &&
-        (this.packet.UCID === packet.UCID ||
-          this.packet.UCID === Button.UCID_ALL)
+        this.packet.UCID === packet.UCID &&
+        !this.clearedUCIDs.has(packet.UCID)
       ) {
         this.log('reinitialize existing button');
         this.sendNewButton();
@@ -556,34 +596,65 @@ export class Button extends InSimElement {
     );
   }
 
+  /**
+   * A UCID=255 ("all connections") button can only stay hidden for the one
+   * connection that cleared it - while still showing for everyone else - by
+   * sending individual packets to every other currently-connected UCID
+   * instead of a single broadcast. When nobody currently connected has
+   * cleared anything, a single broadcast packet is sent as before.
+   */
+  private resolveSendTargets(): number | number[] {
+    if (this.packet.UCID !== Button.UCID_ALL) {
+      return this.packet.UCID;
+    }
+
+    const anyConnectedUCIDCleared = Array.from(
+      this.container.connectedUCIDs,
+    ).some((ucid) => this.clearedUCIDs.has(ucid));
+
+    if (!anyConnectedUCIDCleared) {
+      return Button.UCID_ALL;
+    }
+
+    return Array.from(this.container.connectedUCIDs).filter(
+      (ucid) => !this.clearedUCIDs.has(ucid),
+    );
+  }
+
+  private dispatch(basePacket: IS_BTN): void {
+    const targets = this.resolveSendTargets();
+    const targetUCIDs = Array.isArray(targets) ? targets : [targets];
+
+    targetUCIDs.forEach((ucid) => {
+      const packet = new IS_BTN({ ...basePacket, UCID: ucid });
+
+      if (this.container.appendButtonIDs) {
+        packet.Text += ` [ClickID ${packet.ClickID} | UCID ${packet.UCID}]`;
+      }
+
+      this.container.inSim.send(packet);
+    });
+  }
+
   private sendNewButton(): void {
     this.log('send button');
 
-    const packet = new IS_BTN(this.packet);
-
-    if (this.container.appendButtonIDs) {
-      packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
-    }
-
-    this.container.inSim.send(packet);
+    this.dispatch(new IS_BTN(this.packet));
   }
 
   private sendButtonWithUpdatedText(props: ButtonElementProps): void {
     this.log('update button text');
 
     const text = this.buildButtonText(props);
-    const packet = new IS_BTN({
-      ...this.packet,
-      Text: text,
-      W: 0,
-      H: 0,
-    });
 
-    if (this.container.appendButtonIDs) {
-      packet.Text += ` [ClickID ${this.packet.ClickID} | UCID ${this.packet.UCID}]`;
-    }
-
-    this.container.inSim.send(packet);
+    this.dispatch(
+      new IS_BTN({
+        ...this.packet,
+        Text: text,
+        W: 0,
+        H: 0,
+      }),
+    );
   }
 
   private deleteButton(clickID: number, ucid: number) {
