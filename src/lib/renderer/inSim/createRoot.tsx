@@ -51,6 +51,7 @@ export function createRoot(
     buttonUCIDsByClickID: [],
     buttonClickIDStart,
     appendButtonIDs,
+    connectedUCIDs: new Set([0]),
   };
   rootContainers.set(rootID, container);
   const fiberRoot = InSimRenderer.createContainer(
@@ -82,8 +83,16 @@ export function createRoot(
 
   roots.set(rootID, fiberRoot);
 
+  // Track which UCIDs are currently connected, for resolving UCID=255
+  // ("all connections") button sends.
+  inSim.on(PacketType.ISP_NCN, (packet) => {
+    container.connectedUCIDs.add(packet.UCID);
+  });
+
   // When a connection leaves, remove their UCID from all buttons
   inSim.on(PacketType.ISP_CNL, (packet) => {
+    container.connectedUCIDs.delete(packet.UCID);
+
     container.buttonUCIDsByClickID.forEach((ucIds, clickID) => {
       if (ucIds.has(packet.UCID)) {
         log(`removing UCID ${packet.UCID} from clickID ${clickID}`);

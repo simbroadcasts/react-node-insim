@@ -10,7 +10,7 @@ type InSimContextAPI = {
   inSim: InSim;
   connectRequestId: number;
   isConnected: boolean;
-  shouldClearAllButtons: boolean;
+  clearedUCIDs: ReadonlySet<number>;
 };
 
 /** @internal */
@@ -39,20 +39,38 @@ export function InSimContextProvider({
   children,
   connectRequestId,
 }: RootProps) {
-  const [shouldClearAllButtons, setShouldClearAllButtons] = useState(false);
+  const [clearedUCIDs, setClearedUCIDs] = useState<Set<number>>(
+    () => new Set(),
+  );
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const bfnListener = (packet: InSimPacketInstance<PacketType.ISP_BFN>) => {
       if (packet.SubT === ButtonFunction.BFN_USER_CLEAR) {
-        log('User cleared all buttons');
-        setShouldClearAllButtons(true);
+        log(`User cleared all buttons for UCID ${packet.UCID}`);
+        setClearedUCIDs((prev) => {
+          if (prev.has(packet.UCID)) {
+            return prev;
+          }
+
+          const next = new Set(prev);
+          next.add(packet.UCID);
+          return next;
+        });
         return;
       }
 
       if (packet.SubT === ButtonFunction.BFN_REQUEST) {
-        log('User requested to show all buttons');
-        setShouldClearAllButtons(false);
+        log(`User requested to show all buttons for UCID ${packet.UCID}`);
+        setClearedUCIDs((prev) => {
+          if (!prev.has(packet.UCID)) {
+            return prev;
+          }
+
+          const next = new Set(prev);
+          next.delete(packet.UCID);
+          return next;
+        });
         return;
       }
     };
@@ -61,6 +79,26 @@ export function InSimContextProvider({
 
     return () => {
       inSim.off(PacketType.ISP_BFN, bfnListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const cnlListener = (packet: InSimPacketInstance<PacketType.ISP_CNL>) => {
+      setClearedUCIDs((prev) => {
+        if (!prev.has(packet.UCID)) {
+          return prev;
+        }
+
+        const next = new Set(prev);
+        next.delete(packet.UCID);
+        return next;
+      });
+    };
+
+    inSim.on(PacketType.ISP_CNL, cnlListener);
+
+    return () => {
+      inSim.off(PacketType.ISP_CNL, cnlListener);
     };
   }, []);
 
@@ -83,9 +121,9 @@ export function InSimContextProvider({
       inSim,
       connectRequestId,
       isConnected,
-      shouldClearAllButtons,
+      clearedUCIDs,
     }),
-    [inSim, isConnected, connectRequestId, shouldClearAllButtons],
+    [inSim, isConnected, connectRequestId, clearedUCIDs],
   );
 
   return (
