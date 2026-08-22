@@ -1,37 +1,16 @@
-import type { InSim } from 'node-insim';
 import { ButtonFunction, IS_BFN, IS_BTN } from 'node-insim/packets';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import type { getTCPConnectionPromise } from './packetInterceptor';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-} from './packetInterceptor';
+import { Button } from '../src';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button updates', () => {
-  let inSim: InSim;
-  let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
-  let cleanup: () => void;
-
-  beforeEach(() => {
-    ({ inSim, waitForTCPConnection, cleanup } = beginInSimConnection());
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it('should send an updated button when only its text changes', async () => {
-    const root = createRoot(inSim);
-    root.render(
+    const { root, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello world
       </Button>,
     );
-
-    const { packetInterceptor } =
-      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -59,18 +38,16 @@ describe('Button updates', () => {
       }),
     );
     await packetInterceptor.assertNoMoreData();
+
+    cleanup();
   });
 
   it('should send a full button update when its dimensions change', async () => {
-    const root = createRoot(inSim);
-    root.render(
+    const { root, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello world
       </Button>,
     );
-
-    const { packetInterceptor } =
-      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -100,18 +77,16 @@ describe('Button updates', () => {
       }),
     );
     await packetInterceptor.assertNoMoreData();
+
+    cleanup();
   });
 
   it('should delete a button when it is unmounted, freeing its ClickID', async () => {
-    const root = createRoot(inSim);
-    root.render(
+    const { root, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello world
       </Button>,
     );
-
-    const { packetInterceptor } =
-      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -150,5 +125,7 @@ describe('Button updates', () => {
       }),
     );
     await packetInterceptor.assertNoMoreData();
+
+    cleanup();
   });
 });

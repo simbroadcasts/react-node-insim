@@ -1,40 +1,25 @@
 import { IS_BTN, IS_TINY, PlayerType, TinyType } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
 import {
   Button,
   ConnectionScopeProvider,
-  createRoot,
   GlobalScopeProvider,
   HumanPlayerScopeProvider,
 } from '../src';
 import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
   sendNewConnectionPacket,
   sendNewPlayerPacket,
   wait,
 } from './packetInterceptor';
-
-async function renderScoped(children: ReactElement) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim);
-  root.render(children);
-
-  const { packetInterceptor, socket } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { socket, packetInterceptor, cleanup };
-}
+import { renderInSimButtons } from './renderInSimButtons';
 
 // ConnectionScopeProvider (and HumanPlayerScopeProvider, which wraps it)
 // mount a ConnectionsPlayersProvider, which requests a full connection/player
 // dump as soon as it connects.
 async function consumeConnectionsPlayersDumpRequest(
   packetInterceptor: Awaited<
-    ReturnType<typeof renderScoped>
+    ReturnType<typeof renderInSimButtons>
   >['packetInterceptor'],
 ) {
   await packetInterceptor.waitForPacket(
@@ -47,7 +32,7 @@ async function consumeConnectionsPlayersDumpRequest(
 
 describe('Scope providers', () => {
   it('should render a single UCID=255 button for GlobalScopeProvider, regardless of connections', async () => {
-    const { packetInterceptor, cleanup } = await renderScoped(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <GlobalScopeProvider>
         <Button width={20} height={5}>
           Hello
@@ -71,7 +56,7 @@ describe('Scope providers', () => {
   });
 
   it('should render one button per non-host connection for ConnectionScopeProvider', async () => {
-    const { socket, packetInterceptor, cleanup } = await renderScoped(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <ConnectionScopeProvider>
         <Button width={20} height={5}>
           Hello
@@ -98,7 +83,7 @@ describe('Scope providers', () => {
   });
 
   it('should render a button for a connection with a human player, using the player scope', async () => {
-    const { socket, packetInterceptor, cleanup } = await renderScoped(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <HumanPlayerScopeProvider>
         <Button width={20} height={5}>
           Hello
@@ -120,7 +105,7 @@ describe('Scope providers', () => {
   });
 
   it('should not render a button for a connection with only an AI player', async () => {
-    const { socket, packetInterceptor, cleanup } = await renderScoped(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <HumanPlayerScopeProvider>
         <Button width={20} height={5}>
           Hello

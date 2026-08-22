@@ -1,37 +1,16 @@
-import type { InSim } from 'node-insim';
 import { IS_BTN } from 'node-insim/packets';
-import { afterEach, beforeEach, describe, it } from 'vitest';
+import { describe, it } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import type { getTCPConnectionPromise } from './packetInterceptor';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-} from './packetInterceptor';
+import { Button } from '../src';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Buttons', () => {
-  let inSim: InSim;
-  let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
-  let cleanup: () => void;
-
-  beforeEach(() => {
-    ({ inSim, waitForTCPConnection, cleanup } = beginInSimConnection());
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it('should send a button', async () => {
-    const root = createRoot(inSim);
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello world
       </Button>,
     );
-
-    const { packetInterceptor } =
-      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -42,11 +21,12 @@ describe('Buttons', () => {
         Text: 'Hello world',
       }),
     );
+
+    cleanup();
   });
 
   it('should send multiple buttons with incremental unique ClickIDs', async () => {
-    const root = createRoot(inSim);
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <>
         <Button width={20} height={5}>
           One
@@ -58,11 +38,7 @@ describe('Buttons', () => {
           Three
         </Button>
       </>,
-    );
-
-    const { packetInterceptor } = await connectAndCompleteHandshake(
-      waitForTCPConnection,
-      50,
+      { handshakeWaitMs: 50 },
     );
 
     await packetInterceptor.waitForPacket(
@@ -97,5 +73,7 @@ describe('Buttons', () => {
       }),
     );
     await packetInterceptor.assertNoMoreData();
+
+    cleanup();
   });
 });

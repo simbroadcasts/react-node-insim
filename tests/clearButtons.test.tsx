@@ -1,27 +1,17 @@
 import { ButtonFunction, IS_BFN, IS_BTN } from 'node-insim/packets';
 import { describe, it } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-  sendPacket,
-  wait,
-} from './packetInterceptor';
+import { Button } from '../src';
+import { sendPacket, wait } from './packetInterceptor';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Clearing and restoring all buttons (Shift+I)', () => {
   it('should stop sending button updates while cleared, and resend when requested', async () => {
-    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-    const root = createRoot(inSim);
-    root.render(
+    const { packetInterceptor, socket, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello world
       </Button>,
     );
-
-    const { packetInterceptor, socket } =
-      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({

@@ -1,24 +1,8 @@
 import { ButtonStyle, ButtonTextColour, IS_BTN } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-} from './packetInterceptor';
-
-async function renderButton(button: ReactElement) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim);
-  root.render(button);
-
-  const { packetInterceptor } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { packetInterceptor, cleanup };
-}
+import { Button } from '../src';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button styling', () => {
   describe('text align', () => {
@@ -29,7 +13,7 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for align=$align',
       async ({ align, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderButton(
+        const { packetInterceptor, cleanup } = await renderInSimButtons(
           <Button width={20} height={5} align={align}>
             Hello
           </Button>,
@@ -83,7 +67,7 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for color=$color',
       async ({ color, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderButton(
+        const { packetInterceptor, cleanup } = await renderInSimButtons(
           <Button width={20} height={5} color={color}>
             Hello
           </Button>,
@@ -119,7 +103,7 @@ describe('Button styling', () => {
     ])(
       'should prefix the text with ^$index for color=$color without setting a BStyle bit',
       async ({ color, index }) => {
-        const { packetInterceptor, cleanup } = await renderButton(
+        const { packetInterceptor, cleanup } = await renderInSimButtons(
           <Button width={20} height={5} color={color}>
             Hello
           </Button>,
@@ -150,7 +134,7 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for background=$background',
       async ({ background, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderButton(
+        const { packetInterceptor, cleanup } = await renderInSimButtons(
           <Button width={20} height={5} background={background}>
             Hello
           </Button>,
@@ -175,7 +159,7 @@ describe('Button styling', () => {
 
   describe('variants', () => {
     it('should apply the light variant color and background when neither is set explicitly', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} variant="light">
           Hello
         </Button>,
@@ -197,7 +181,7 @@ describe('Button styling', () => {
     });
 
     it('should apply the dark variant color and background when neither is set explicitly', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} variant="dark">
           Hello
         </Button>,
@@ -219,7 +203,7 @@ describe('Button styling', () => {
     });
 
     it('should let an explicit color override the variant color, keeping the variant background', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} variant="light" color="ok">
           Hello
         </Button>,
@@ -241,7 +225,7 @@ describe('Button styling', () => {
     });
 
     it('should let an explicit background override the variant background, keeping the variant color', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} variant="dark" background="transparent">
           Hello
         </Button>,
@@ -265,7 +249,7 @@ describe('Button styling', () => {
 
   describe('disabled buttons', () => {
     it('should set the UNAVAILABLE text colour and not be clickable', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} isDisabled>
           Hello
         </Button>,
@@ -287,7 +271,7 @@ describe('Button styling', () => {
     });
 
     it('should not set ISB_CLICK even when onClick is provided', async () => {
-      const { packetInterceptor, cleanup } = await renderButton(
+      const { packetInterceptor, cleanup } = await renderInSimButtons(
         <Button width={20} height={5} isDisabled onClick={() => {}}>
           Hello
         </Button>,

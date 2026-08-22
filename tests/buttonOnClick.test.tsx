@@ -1,35 +1,19 @@
 import { ButtonStyle, IS_BTN } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-  sendButtonClickPacket,
-  wait,
-} from './packetInterceptor';
-
-async function renderButton(button: ReactElement) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim);
-  root.render(button);
-
-  const { packetInterceptor, socket } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { inSim, socket, packetInterceptor, cleanup };
-}
+import { Button } from '../src';
+import { sendButtonClickPacket, wait } from './packetInterceptor';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button onClick event listener', () => {
   it('should call onClick when a matching IS_BTC packet is received', async () => {
     const onClick = vi.fn();
-    const { inSim, socket, packetInterceptor, cleanup } = await renderButton(
-      <Button UCID={1} width={20} height={5} onClick={onClick}>
-        Hello
-      </Button>,
-    );
+    const { inSim, socket, packetInterceptor, cleanup } =
+      await renderInSimButtons(
+        <Button UCID={1} width={20} height={5} onClick={onClick}>
+          Hello
+        </Button>,
+      );
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -57,7 +41,7 @@ describe('Button onClick event listener', () => {
 
   it('should not call onClick when the ClickID does not match', async () => {
     const onClick = vi.fn();
-    const { socket, packetInterceptor, cleanup } = await renderButton(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button UCID={1} width={20} height={5} onClick={onClick}>
         Hello
       </Button>,
@@ -85,7 +69,7 @@ describe('Button onClick event listener', () => {
 
   it('should not call onClick when the UCID does not match', async () => {
     const onClick = vi.fn();
-    const { socket, packetInterceptor, cleanup } = await renderButton(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button UCID={1} width={20} height={5} onClick={onClick}>
         Hello
       </Button>,
@@ -113,7 +97,7 @@ describe('Button onClick event listener', () => {
 
   it('should call onClick for any UCID when the button UCID is 255 (all)', async () => {
     const onClick = vi.fn();
-    const { socket, packetInterceptor, cleanup } = await renderButton(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button UCID={255} width={20} height={5} onClick={onClick}>
         Hello
       </Button>,

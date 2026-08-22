@@ -1,35 +1,19 @@
 import { ButtonStyle, IS_BTN } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Button, createRoot } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-  sendButtonTypePacket,
-  wait,
-} from './packetInterceptor';
-
-async function renderButton(button: ReactElement) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim);
-  root.render(button);
-
-  const { packetInterceptor, socket } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { inSim, socket, packetInterceptor, cleanup };
-}
+import { Button } from '../src';
+import { sendButtonTypePacket, wait } from './packetInterceptor';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button onType event listener', () => {
   it('should call onType when a matching IS_BTT packet is received', async () => {
     const onType = vi.fn();
-    const { inSim, socket, packetInterceptor, cleanup } = await renderButton(
-      <Button UCID={1} width={20} height={5} onType={onType}>
-        Hello
-      </Button>,
-    );
+    const { inSim, socket, packetInterceptor, cleanup } =
+      await renderInSimButtons(
+        <Button UCID={1} width={20} height={5} onType={onType}>
+          Hello
+        </Button>,
+      );
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -68,7 +52,7 @@ describe('Button onType event listener', () => {
 
   it('should not call onType when the ClickID does not match', async () => {
     const onType = vi.fn();
-    const { socket, packetInterceptor, cleanup } = await renderButton(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button UCID={1} width={20} height={5} onType={onType}>
         Hello
       </Button>,
@@ -103,7 +87,7 @@ describe('Button onType event listener', () => {
 
   it('should not call onType when the UCID does not match', async () => {
     const onType = vi.fn();
-    const { socket, packetInterceptor, cleanup } = await renderButton(
+    const { socket, packetInterceptor, cleanup } = await renderInSimButtons(
       <Button UCID={1} width={20} height={5} onType={onType}>
         Hello
       </Button>,

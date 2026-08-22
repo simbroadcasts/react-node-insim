@@ -1,44 +1,26 @@
-import type { InSim } from 'node-insim';
 import { IS_BTN } from 'node-insim/packets';
 import type { ReactElement } from 'react';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Button, createRoot } from '../src';
-import type { getTCPConnectionPromise } from './packetInterceptor';
 import {
   beginInSimConnection,
-  completeHandshake,
   wait,
-  waitForISIHandshake,
+  waitForInSimInitPacket,
 } from './packetInterceptor';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button validation', () => {
-  let inSim: InSim;
-  let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
-  let cleanup: () => void;
   let consoleErrorSpy: MockInstance<typeof console.error>;
 
   beforeEach(() => {
-    ({ inSim, waitForTCPConnection, cleanup } = beginInSimConnection());
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleErrorSpy.mockRestore();
-    cleanup();
   });
-
-  // Rendering before the version handshake mirrors how a real app mounts its
-  // tree: InSimContextProvider must exist to catch the IS_VER packet, so it
-  // has to be rendered before the packet arrives, not after.
-  async function connectAndWaitForISI() {
-    const root = createRoot(inSim);
-    const { packetInterceptor, socket } =
-      await waitForISIHandshake(waitForTCPConnection);
-
-    return { root, packetInterceptor, socket };
-  }
 
   function expectRenderErrorMessage(message: string) {
     expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(
@@ -47,66 +29,63 @@ describe('Button validation', () => {
   }
 
   it('should not send a button when width is set without height', async () => {
-    const { root, packetInterceptor, socket } = await connectAndWaitForISI();
-
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={0}>
         Hello world
       </Button>,
     );
-    await completeHandshake(socket);
 
     await packetInterceptor.assertNoMoreData();
     expectRenderErrorMessage('Invalid button dimensions: W=20 H=0');
+
+    cleanup();
   });
 
   it('should not send a button when height is set without width', async () => {
-    const { root, packetInterceptor, socket } = await connectAndWaitForISI();
-
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={0} height={5}>
         Hello world
       </Button>,
     );
-    await completeHandshake(socket);
 
     await packetInterceptor.assertNoMoreData();
     expectRenderErrorMessage('Invalid button dimensions: W=0 H=5');
+
+    cleanup();
   });
 
   it('should not send a button when no dimensions are set', async () => {
-    const { root, packetInterceptor, socket } = await connectAndWaitForISI();
-
-    root.render(<Button>Hello world</Button>);
-    await completeHandshake(socket);
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
+      <Button>Hello world</Button>,
+    );
 
     await packetInterceptor.assertNoMoreData();
     expectRenderErrorMessage('Invalid button dimensions: W=0 H=0');
+
+    cleanup();
   });
 
   it('should not send a button when button text is too long', async () => {
-    const { root, packetInterceptor, socket } = await connectAndWaitForISI();
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         {'a'.repeat(241)}
       </Button>,
     );
-    await completeHandshake(socket);
 
     await packetInterceptor.assertNoMoreData();
     expectRenderErrorMessage('Button text too long');
+
+    cleanup();
   });
 
   it('should send a button when text is at the maximum length', async () => {
-    const { root, packetInterceptor, socket } = await connectAndWaitForISI();
     const maxLengthText = 'a'.repeat(240);
 
-    root.render(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         {maxLengthText}
       </Button>,
     );
-    await completeHandshake(socket);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -119,6 +98,8 @@ describe('Button validation', () => {
     );
     await packetInterceptor.assertNoMoreData();
     expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+    cleanup();
   });
 
   // React's scheduler dispatches concurrent work via MessageChannel, which
@@ -136,7 +117,9 @@ describe('Button validation', () => {
     // Deliberately left unconnected (no version handshake): ClickID
     // allocation happens in commitMount regardless of connection state, and
     // skipping the handshake means no IS_BTN packets need to be drained here.
-    const { root } = await connectAndWaitForISI();
+    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
+    const root = createRoot(inSim);
+    await waitForInSimInitPacket(waitForTCPConnection);
 
     const buttons: ReactElement[] = [];
 
@@ -164,5 +147,7 @@ describe('Button validation', () => {
     expectRenderErrorMessage(
       `Too many buttons for UCID 1. The maximum number of rendered buttons is ${IS_BTN.MAX_CLICK_ID}.`,
     );
+
+    cleanup();
   });
 });

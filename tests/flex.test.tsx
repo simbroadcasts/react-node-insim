@@ -1,28 +1,12 @@
 import { ButtonStyle, IS_BTN } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
-import { Button, createRoot, Flex } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-} from './packetInterceptor';
-
-async function renderFlex(flex: ReactElement) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim);
-  root.render(flex);
-
-  const { packetInterceptor } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { packetInterceptor, cleanup };
-}
+import { Button, Flex } from '../src';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Flex', () => {
   it('should position children in a row using the yoga-computed layout', async () => {
-    const { packetInterceptor, cleanup } = await renderFlex(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Flex top={10} left={20} width={100} height={50}>
         <Button width={20} height={10}>
           One
@@ -61,7 +45,7 @@ describe('Flex', () => {
   });
 
   it('should render a background filler button covering the whole flex area', async () => {
-    const { packetInterceptor, cleanup } = await renderFlex(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Flex top={5} left={5} width={100} height={50} backgroundColor="dark">
         <Button width={20} height={10}>
           One
@@ -98,7 +82,7 @@ describe('Flex', () => {
   });
 
   it('should render 4 border filler buttons and shift children inside the border', async () => {
-    const { packetInterceptor, cleanup } = await renderFlex(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Flex
         top={0}
         left={0}

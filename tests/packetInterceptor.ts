@@ -231,7 +231,7 @@ export function beginInSimConnection() {
   };
 }
 
-export async function waitForISIHandshake(
+export async function waitForInSimInitPacket(
   waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>,
 ) {
   const { socket, packetInterceptor } = await waitForTCPConnection;
@@ -259,7 +259,7 @@ export async function connectAndCompleteHandshake(
   waitMs = 10,
 ) {
   const { socket, packetInterceptor } =
-    await waitForISIHandshake(waitForTCPConnection);
+    await waitForInSimInitPacket(waitForTCPConnection);
   await completeHandshake(socket, waitMs);
 
   return { socket, packetInterceptor };

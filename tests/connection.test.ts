@@ -1,7 +1,10 @@
 import { describe, it } from 'vitest';
 
 import { createRoot } from '../src';
-import { beginInSimConnection, waitForISIHandshake } from './packetInterceptor';
+import {
+  beginInSimConnection,
+  waitForInSimInitPacket,
+} from './packetInterceptor';
 
 describe('InSim connection', () => {
   it('should connect to InSim and send an IS_ISI packet', async () => {
@@ -10,7 +13,7 @@ describe('InSim connection', () => {
     createRoot(inSim);
 
     const { packetInterceptor } =
-      await waitForISIHandshake(waitForTCPConnection);
+      await waitForInSimInitPacket(waitForTCPConnection);
 
     await packetInterceptor.assertNoMoreData();
 

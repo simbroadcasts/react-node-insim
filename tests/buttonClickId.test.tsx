@@ -1,32 +1,12 @@
 import { IS_BTN } from 'node-insim/packets';
-import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
-import type { CreateRootOptions } from '../src';
-import { Button, createRoot } from '../src';
-import {
-  beginInSimConnection,
-  connectAndCompleteHandshake,
-} from './packetInterceptor';
-
-async function renderButtons(
-  buttons: ReactElement,
-  options?: CreateRootOptions,
-) {
-  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
-
-  const root = createRoot(inSim, options);
-  root.render(buttons);
-
-  const { packetInterceptor } =
-    await connectAndCompleteHandshake(waitForTCPConnection);
-
-  return { packetInterceptor, cleanup };
-}
+import { Button } from '../src';
+import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button ClickID allocation', () => {
   it('should reuse the same ClickID for buttons with different UCIDs', async () => {
-    const { packetInterceptor, cleanup } = await renderButtons(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <>
         <Button UCID={1} width={20} height={5}>
           A
@@ -49,7 +29,7 @@ describe('Button ClickID allocation', () => {
   });
 
   it('should allocate different ClickIDs for buttons with the same UCID', async () => {
-    const { packetInterceptor, cleanup } = await renderButtons(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <>
         <Button UCID={5} width={20} height={5}>
           A
@@ -72,7 +52,7 @@ describe('Button ClickID allocation', () => {
   });
 
   it('should only allocate a fully free ClickID for a UCID=255 (all) button, and keep it reserved for later buttons', async () => {
-    const { packetInterceptor, cleanup } = await renderButtons(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <>
         <Button UCID={1} width={20} height={5}>
           A
@@ -105,11 +85,11 @@ describe('Button ClickID allocation', () => {
   });
 
   it('should offset allocated ClickIDs by buttonClickIDStart', async () => {
-    const { packetInterceptor, cleanup } = await renderButtons(
+    const { packetInterceptor, cleanup } = await renderInSimButtons(
       <Button width={20} height={5}>
         Hello
       </Button>,
-      { buttonClickIDStart: 10 },
+      { createRootOptions: { buttonClickIDStart: 10 } },
     );
 
     await packetInterceptor.waitForPacket(
