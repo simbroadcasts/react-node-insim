@@ -1,12 +1,4 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import {
-  IS_BTN,
-  IS_ISI,
-  IS_TINY,
-  PlayerType,
-  TinyType,
-} from 'node-insim/packets';
+import { IS_BTN, IS_TINY, PlayerType, TinyType } from 'node-insim/packets';
 import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
@@ -18,51 +10,23 @@ import {
   HumanPlayerScopeProvider,
 } from '../src';
 import {
-  getTCPConnectionPromise,
+  beginInSimConnection,
+  connectAndCompleteHandshake,
   sendNewConnectionPacket,
   sendNewPlayerPacket,
-  sendVersionPacket,
   wait,
 } from './packetInterceptor';
 
 async function renderScoped(children: ReactElement) {
-  const mitm = Mitm();
-  const inSim = new InSim();
-  const waitForTCPConnection = getTCPConnectionPromise(
-    mitm,
-    '127.0.0.1',
-    29999,
-  );
-
-  inSim.connect({
-    ReqI: 255,
-    Host: '127.0.0.1',
-    Port: 29999,
-  });
+  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
   const root = createRoot(inSim);
   root.render(children);
 
-  const { packetInterceptor, socket } = await waitForTCPConnection;
+  const { packetInterceptor, socket } =
+    await connectAndCompleteHandshake(waitForTCPConnection);
 
-  await packetInterceptor.waitForPacket(
-    new IS_ISI({
-      ReqI: 255,
-      InSimVer: 10,
-    }),
-  );
-
-  await wait(10);
-  await sendVersionPacket({ socket, ReqI: 255 });
-
-  return {
-    socket,
-    packetInterceptor,
-    cleanup: () => {
-      mitm.disable();
-      inSim.disconnect();
-    },
-  };
+  return { socket, packetInterceptor, cleanup };
 }
 
 // ConnectionScopeProvider (and HumanPlayerScopeProvider, which wraps it)

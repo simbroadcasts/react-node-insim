@@ -1,35 +1,25 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import { IS_BTN, IS_ISI } from 'node-insim/packets';
+import type { InSim } from 'node-insim';
+import { IS_BTN } from 'node-insim/packets';
 import { afterEach, beforeEach, describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
+import type { getTCPConnectionPromise } from './packetInterceptor';
 import {
-  getTCPConnectionPromise,
-  sendVersionPacket,
-  wait,
+  beginInSimConnection,
+  connectAndCompleteHandshake,
 } from './packetInterceptor';
 
 describe('Buttons', () => {
-  let mitm: ReturnType<typeof Mitm>;
   let inSim: InSim;
   let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
+  let cleanup: () => void;
 
   beforeEach(() => {
-    mitm = Mitm();
-    inSim = new InSim();
-    waitForTCPConnection = getTCPConnectionPromise(mitm, '127.0.0.1', 29999);
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
+    ({ inSim, waitForTCPConnection, cleanup } = beginInSimConnection());
   });
 
   afterEach(() => {
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 
   it('should send a button', async () => {
@@ -40,17 +30,8 @@ describe('Buttons', () => {
       </Button>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
-
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
+    const { packetInterceptor } =
+      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -79,17 +60,10 @@ describe('Buttons', () => {
       </>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
+    const { packetInterceptor } = await connectAndCompleteHandshake(
+      waitForTCPConnection,
+      50,
     );
-
-    await wait(50);
-    await sendVersionPacket({ socket, ReqI: 255 });
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({

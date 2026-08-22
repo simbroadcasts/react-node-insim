@@ -1,40 +1,32 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import { IS_BTN, IS_ISI } from 'node-insim/packets';
+import type { InSim } from 'node-insim';
+import { IS_BTN } from 'node-insim/packets';
 import type { ReactElement } from 'react';
 import type { MockInstance } from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { Button, createRoot } from '../src';
+import type { getTCPConnectionPromise } from './packetInterceptor';
 import {
-  getTCPConnectionPromise,
-  sendVersionPacket,
+  beginInSimConnection,
+  completeHandshake,
   wait,
+  waitForISIHandshake,
 } from './packetInterceptor';
 
 describe('Button validation', () => {
-  let mitm: ReturnType<typeof Mitm>;
   let inSim: InSim;
   let waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>;
+  let cleanup: () => void;
   let consoleErrorSpy: MockInstance<typeof console.error>;
 
   beforeEach(() => {
-    mitm = Mitm();
-    inSim = new InSim();
-    waitForTCPConnection = getTCPConnectionPromise(mitm, '127.0.0.1', 29999);
+    ({ inSim, waitForTCPConnection, cleanup } = beginInSimConnection());
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
   });
 
   afterEach(() => {
     consoleErrorSpy.mockRestore();
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 
   // Rendering before the version handshake mirrors how a real app mounts its
@@ -42,23 +34,10 @@ describe('Button validation', () => {
   // has to be rendered before the packet arrives, not after.
   async function connectAndWaitForISI() {
     const root = createRoot(inSim);
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
+    const { packetInterceptor, socket } =
+      await waitForISIHandshake(waitForTCPConnection);
 
     return { root, packetInterceptor, socket };
-  }
-
-  async function completeHandshake(
-    socket: Awaited<ReturnType<typeof connectAndWaitForISI>>['socket'],
-  ) {
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
   }
 
   function expectRenderErrorMessage(message: string) {

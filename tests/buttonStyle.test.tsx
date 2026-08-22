@@ -1,58 +1,23 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import {
-  ButtonStyle,
-  ButtonTextColour,
-  IS_BTN,
-  IS_ISI,
-} from 'node-insim/packets';
+import { ButtonStyle, ButtonTextColour, IS_BTN } from 'node-insim/packets';
 import type { ReactElement } from 'react';
 import { describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
 import {
-  getTCPConnectionPromise,
-  sendVersionPacket,
-  wait,
+  beginInSimConnection,
+  connectAndCompleteHandshake,
 } from './packetInterceptor';
 
 async function renderButton(button: ReactElement) {
-  const mitm = Mitm();
-  const inSim = new InSim();
-  const waitForTCPConnection = getTCPConnectionPromise(
-    mitm,
-    '127.0.0.1',
-    29999,
-  );
-
-  inSim.connect({
-    ReqI: 255,
-    Host: '127.0.0.1',
-    Port: 29999,
-  });
+  const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
   const root = createRoot(inSim);
   root.render(button);
 
-  const { packetInterceptor, socket } = await waitForTCPConnection;
+  const { packetInterceptor } =
+    await connectAndCompleteHandshake(waitForTCPConnection);
 
-  await packetInterceptor.waitForPacket(
-    new IS_ISI({
-      ReqI: 255,
-      InSimVer: 10,
-    }),
-  );
-
-  await wait(10);
-  await sendVersionPacket({ socket, ReqI: 255 });
-
-  return {
-    packetInterceptor,
-    cleanup: () => {
-      mitm.disable();
-      inSim.disconnect();
-    },
-  };
+  return { packetInterceptor, cleanup };
 }
 
 describe('Button styling', () => {

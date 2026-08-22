@@ -1,30 +1,15 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import { ButtonStyle, IS_BTN, IS_ISI, TypeIn } from 'node-insim/packets';
+import { ButtonStyle, IS_BTN, TypeIn } from 'node-insim/packets';
 import { describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
 import {
-  getTCPConnectionPromise,
-  sendVersionPacket,
-  wait,
+  beginInSimConnection,
+  connectAndCompleteHandshake,
 } from './packetInterceptor';
 
 describe('Button type in', () => {
   it('should set TypeIn to maxTypeInChars when onType is provided', async () => {
-    const mitm = Mitm();
-    const inSim = new InSim();
-    const waitForTCPConnection = getTCPConnectionPromise(
-      mitm,
-      '127.0.0.1',
-      29999,
-    );
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
+    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
     const root = createRoot(inSim);
     root.render(
@@ -33,17 +18,8 @@ describe('Button type in', () => {
       </Button>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
-
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
+    const { packetInterceptor } =
+      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -58,24 +34,11 @@ describe('Button type in', () => {
     );
     await packetInterceptor.assertNoMoreData();
 
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 
   it('should not set TypeIn when onType is not provided, even if maxTypeInChars is set', async () => {
-    const mitm = Mitm();
-    const inSim = new InSim();
-    const waitForTCPConnection = getTCPConnectionPromise(
-      mitm,
-      '127.0.0.1',
-      29999,
-    );
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
+    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
     const root = createRoot(inSim);
     root.render(
@@ -84,17 +47,8 @@ describe('Button type in', () => {
       </Button>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
-
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
+    const { packetInterceptor } =
+      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -108,24 +62,11 @@ describe('Button type in', () => {
     );
     await packetInterceptor.assertNoMoreData();
 
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 
   it('should add INIT_VALUE_BUTTON_TEXT to TypeIn when initializeDialogWithButtonText is set', async () => {
-    const mitm = Mitm();
-    const inSim = new InSim();
-    const waitForTCPConnection = getTCPConnectionPromise(
-      mitm,
-      '127.0.0.1',
-      29999,
-    );
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
+    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
     const root = createRoot(inSim);
     root.render(
@@ -140,17 +81,8 @@ describe('Button type in', () => {
       </Button>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
-
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
+    const { packetInterceptor } =
+      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -165,7 +97,6 @@ describe('Button type in', () => {
     );
     await packetInterceptor.assertNoMoreData();
 
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 });

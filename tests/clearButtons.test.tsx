@@ -1,31 +1,17 @@
-import Mitm from 'mitm';
-import { InSim } from 'node-insim';
-import { ButtonFunction, IS_BFN, IS_BTN, IS_ISI } from 'node-insim/packets';
+import { ButtonFunction, IS_BFN, IS_BTN } from 'node-insim/packets';
 import { describe, it } from 'vitest';
 
 import { Button, createRoot } from '../src';
 import {
-  getTCPConnectionPromise,
+  beginInSimConnection,
+  connectAndCompleteHandshake,
   sendPacket,
-  sendVersionPacket,
   wait,
 } from './packetInterceptor';
 
 describe('Clearing and restoring all buttons (Shift+I)', () => {
   it('should stop sending button updates while cleared, and resend when requested', async () => {
-    const mitm = Mitm();
-    const inSim = new InSim();
-    const waitForTCPConnection = getTCPConnectionPromise(
-      mitm,
-      '127.0.0.1',
-      29999,
-    );
-
-    inSim.connect({
-      ReqI: 255,
-      Host: '127.0.0.1',
-      Port: 29999,
-    });
+    const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 
     const root = createRoot(inSim);
     root.render(
@@ -34,17 +20,8 @@ describe('Clearing and restoring all buttons (Shift+I)', () => {
       </Button>,
     );
 
-    const { packetInterceptor, socket } = await waitForTCPConnection;
-
-    await packetInterceptor.waitForPacket(
-      new IS_ISI({
-        ReqI: 255,
-        InSimVer: 10,
-      }),
-    );
-
-    await wait(10);
-    await sendVersionPacket({ socket, ReqI: 255 });
+    const { packetInterceptor, socket } =
+      await connectAndCompleteHandshake(waitForTCPConnection);
 
     await packetInterceptor.waitForPacket(
       new IS_BTN({
@@ -79,7 +56,6 @@ describe('Clearing and restoring all buttons (Shift+I)', () => {
     );
     await packetInterceptor.assertNoMoreData();
 
-    mitm.disable();
-    inSim.disconnect();
+    cleanup();
   });
 });

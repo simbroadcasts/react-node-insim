@@ -1,4 +1,4 @@
-import type Mitm from 'mitm';
+import Mitm from 'mitm';
 import type { Socket } from 'net';
 import { InSim } from 'node-insim';
 import type {
@@ -9,6 +9,7 @@ import type {
 import {
   IS_BTC,
   IS_BTT,
+  IS_ISI,
   IS_NCN,
   IS_NPL,
   IS_VER,
@@ -90,11 +91,7 @@ export class PacketInterceptor {
   }
 
   private processBuffer() {
-    let processedAny = true;
-
-    while (processedAny && this.waitingPromises.length > 0) {
-      processedAny = false;
-
+    while (this.waitingPromises.length > 0) {
       const { resolve, packetType } = this.waitingPromises[0];
 
       if (this.receivedDataBuffer.length < 1) {
@@ -118,7 +115,6 @@ export class PacketInterceptor {
           );
           this.waitingPromises.shift();
           resolve(packetBuffer);
-          processedAny = true;
         } else {
           console.warn(
             `[PacketInterceptor] Unexpected packet type (0x${receivedType.toString(
@@ -203,6 +199,70 @@ export async function getTCPConnectionPromise(
     socket,
     packetInterceptor,
   };
+}
+
+const INSIM_HOST = '127.0.0.1';
+const INSIM_PORT = 29999;
+const INSIM_REQI = 255;
+
+export function beginInSimConnection() {
+  const mitm = Mitm();
+  const inSim = new InSim();
+  const waitForTCPConnection = getTCPConnectionPromise(
+    mitm,
+    INSIM_HOST,
+    INSIM_PORT,
+  );
+
+  inSim.connect({
+    ReqI: INSIM_REQI,
+    Host: INSIM_HOST,
+    Port: INSIM_PORT,
+  });
+
+  return {
+    mitm,
+    inSim,
+    waitForTCPConnection,
+    cleanup: () => {
+      mitm.disable();
+      inSim.disconnect();
+    },
+  };
+}
+
+export async function waitForISIHandshake(
+  waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>,
+) {
+  const { socket, packetInterceptor } = await waitForTCPConnection;
+
+  await packetInterceptor.waitForPacket(
+    new IS_ISI({
+      ReqI: INSIM_REQI,
+      InSimVer: 10,
+    }),
+  );
+
+  return { socket, packetInterceptor };
+}
+
+export async function completeHandshake(
+  socket: Socket,
+  waitMs = 10,
+): Promise<void> {
+  await wait(waitMs);
+  await sendVersionPacket({ socket, ReqI: INSIM_REQI });
+}
+
+export async function connectAndCompleteHandshake(
+  waitForTCPConnection: ReturnType<typeof getTCPConnectionPromise>,
+  waitMs = 10,
+) {
+  const { socket, packetInterceptor } =
+    await waitForISIHandshake(waitForTCPConnection);
+  await completeHandshake(socket, waitMs);
+
+  return { socket, packetInterceptor };
 }
 
 export async function sendVersionPacket({
