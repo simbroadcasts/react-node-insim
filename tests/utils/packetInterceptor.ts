@@ -18,7 +18,7 @@ import {
 } from 'node-insim/packets';
 import { expect } from 'vitest';
 
-function copyBuffer(buffer: Uint8Array): Uint8Array {
+function copyBuffer(buffer: Uint8Array<ArrayBuffer>): Uint8Array<ArrayBuffer> {
   const dest = new ArrayBuffer(buffer.byteLength);
   const newBuffer = new Uint8Array(dest);
   newBuffer.set(buffer);
@@ -27,10 +27,10 @@ function copyBuffer(buffer: Uint8Array): Uint8Array {
 
 export class PacketInterceptor {
   private socket: Socket;
-  private receivedDataBuffer: Uint8Array = new Uint8Array(0);
+  private receivedDataBuffer: Uint8Array<ArrayBuffer> = new Uint8Array(0);
   private waitingPromises: {
     packetType: PacketType;
-    resolve: (packetBuffer: Uint8Array) => void;
+    resolve: (packetBuffer: Uint8Array<ArrayBuffer>) => void;
     reject: (error: Error) => void;
   }[] = [];
   private noMoreDataPromise: {
@@ -137,7 +137,7 @@ export class PacketInterceptor {
   public async waitForPacket<T extends SendablePacketInstance>(
     expectedPacket: T,
   ) {
-    const promise = new Promise<Uint8Array>((resolve, reject) => {
+    const promise = new Promise<Uint8Array<ArrayBuffer>>((resolve, reject) => {
       this.waitingPromises.push({
         resolve,
         reject,
@@ -146,9 +146,7 @@ export class PacketInterceptor {
       this.processBuffer();
     });
 
-    const packetBuffer = await promise;
-
-    expect(packetBuffer).toEqual(expectedPacket.pack());
+    return await promise;
   }
 
   public async assertNoMoreData(timeoutMs = 50): Promise<void> {

@@ -1,18 +1,20 @@
 import type { ReactElement } from 'react';
+import type { CreateRootOptions } from 'react-node-insim';
+import { createRoot } from 'react-node-insim';
 
-import type { CreateRootOptions } from '../src';
-import { createRoot } from '../src';
 import {
   beginInSimConnection,
   connectAndCompleteHandshake,
 } from './packetInterceptor';
 
+export type RenderInSimButtonsOptions = {
+  createRootOptions?: CreateRootOptions;
+  handshakeWaitMs?: number;
+};
+
 export async function renderInSimButtons(
   element: ReactElement | null,
-  options?: {
-    createRootOptions?: CreateRootOptions;
-    handshakeWaitMs?: number;
-  },
+  options?: RenderInSimButtonsOptions,
 ) {
   const { inSim, waitForTCPConnection, cleanup } = beginInSimConnection();
 

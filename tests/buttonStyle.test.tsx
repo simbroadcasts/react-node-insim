@@ -1,8 +1,7 @@
 import { ButtonStyle, ButtonTextColour, IS_BTN } from 'node-insim/packets';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { Button } from '../src';
-import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button styling', () => {
   describe('text align', () => {
@@ -13,13 +12,11 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for align=$align',
       async ({ align, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderInSimButtons(
+        await expect(
           <Button width={20} height={5} align={align}>
             Hello
           </Button>,
-        );
-
-        await packetInterceptor.waitForPacket(
+        ).toSendButtonPacket(
           new IS_BTN({
             ClickID: 0,
             ReqI: 1,
@@ -29,9 +26,6 @@ describe('Button styling', () => {
             BStyle: expectedBStyle,
           }),
         );
-        await packetInterceptor.assertNoMoreData();
-
-        cleanup();
       },
     );
   });
@@ -67,13 +61,11 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for color=$color',
       async ({ color, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderInSimButtons(
+        await expect(
           <Button width={20} height={5} color={color}>
             Hello
           </Button>,
-        );
-
-        await packetInterceptor.waitForPacket(
+        ).toSendButtonPacket(
           new IS_BTN({
             ClickID: 0,
             ReqI: 1,
@@ -83,9 +75,6 @@ describe('Button styling', () => {
             BStyle: expectedBStyle,
           }),
         );
-        await packetInterceptor.assertNoMoreData();
-
-        cleanup();
       },
     );
   });
@@ -103,13 +92,11 @@ describe('Button styling', () => {
     ])(
       'should prefix the text with ^$index for color=$color without setting a BStyle bit',
       async ({ color, index }) => {
-        const { packetInterceptor, cleanup } = await renderInSimButtons(
+        await expect(
           <Button width={20} height={5} color={color}>
             Hello
           </Button>,
-        );
-
-        await packetInterceptor.waitForPacket(
+        ).toSendButtonPacket(
           new IS_BTN({
             ClickID: 0,
             ReqI: 1,
@@ -119,9 +106,6 @@ describe('Button styling', () => {
             BStyle: 0,
           }),
         );
-        await packetInterceptor.assertNoMoreData();
-
-        cleanup();
       },
     );
   });
@@ -134,13 +118,11 @@ describe('Button styling', () => {
     ])(
       'should set BStyle $expectedBStyle for background=$background',
       async ({ background, expectedBStyle }) => {
-        const { packetInterceptor, cleanup } = await renderInSimButtons(
+        await expect(
           <Button width={20} height={5} background={background}>
             Hello
           </Button>,
-        );
-
-        await packetInterceptor.waitForPacket(
+        ).toSendButtonPacket(
           new IS_BTN({
             ClickID: 0,
             ReqI: 1,
@@ -150,22 +132,17 @@ describe('Button styling', () => {
             BStyle: expectedBStyle,
           }),
         );
-        await packetInterceptor.assertNoMoreData();
-
-        cleanup();
       },
     );
   });
 
   describe('variants', () => {
     it('should apply the light variant color and background when neither is set explicitly', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} variant="light">
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -175,19 +152,14 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.UNSELECTED_TEXT | ButtonStyle.ISB_LIGHT,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
 
     it('should apply the dark variant color and background when neither is set explicitly', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} variant="dark">
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -197,19 +169,14 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.LIGHT_GREY | ButtonStyle.ISB_DARK,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
 
     it('should let an explicit color override the variant color, keeping the variant background', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} variant="light" color="ok">
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -219,19 +186,14 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.OK | ButtonStyle.ISB_LIGHT,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
 
     it('should let an explicit background override the variant background, keeping the variant color', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} variant="dark" background="transparent">
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -241,21 +203,16 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.LIGHT_GREY,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
   });
 
   describe('disabled buttons', () => {
     it('should set the UNAVAILABLE text colour and not be clickable', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} isDisabled>
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -265,19 +222,14 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.UNAVAILABLE,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
 
     it('should not set ISB_CLICK even when onClick is provided', async () => {
-      const { packetInterceptor, cleanup } = await renderInSimButtons(
+      await expect(
         <Button width={20} height={5} isDisabled onClick={() => {}}>
           Hello
         </Button>,
-      );
-
-      await packetInterceptor.waitForPacket(
+      ).toSendButtonPacket(
         new IS_BTN({
           ClickID: 0,
           ReqI: 1,
@@ -287,9 +239,6 @@ describe('Button styling', () => {
           BStyle: ButtonTextColour.UNAVAILABLE,
         }),
       );
-      await packetInterceptor.assertNoMoreData();
-
-      cleanup();
     });
   });
 });

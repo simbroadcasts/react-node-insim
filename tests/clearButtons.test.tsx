@@ -2,8 +2,8 @@ import { ButtonFunction, IS_BFN, IS_BTN } from 'node-insim/packets';
 import { describe, it } from 'vitest';
 
 import { Button } from '../src';
-import { sendPacket, wait } from './packetInterceptor';
-import { renderInSimButtons } from './renderInSimButtons';
+import { sendPacket, wait } from './utils/packetInterceptor';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 describe('Clearing and restoring all buttons (Shift+I)', () => {
   it('should stop sending button updates while cleared, and resend when requested', async () => {

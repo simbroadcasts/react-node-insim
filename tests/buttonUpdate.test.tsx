@@ -2,7 +2,7 @@ import { ButtonFunction, IS_BFN, IS_BTN } from 'node-insim/packets';
 import { describe, it } from 'vitest';
 
 import { Button } from '../src';
-import { renderInSimButtons } from './renderInSimButtons';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 describe('Button updates', () => {
   it('should send an updated button when only its text changes', async () => {

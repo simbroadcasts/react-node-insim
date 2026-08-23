@@ -19,5 +19,6 @@
     "paths": {
       "react-node-insim": ["./src/index"]
     }
-  }
+  },
+  "include": ["vitest.d.ts", "env.d.ts", "**/*.ts", "**/*.tsx"]
 }

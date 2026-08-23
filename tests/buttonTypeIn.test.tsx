@@ -1,18 +1,15 @@
 import { ButtonStyle, IS_BTN, TypeIn } from 'node-insim/packets';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { Button } from '../src';
-import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button type in', () => {
   it('should set TypeIn to maxTypeInChars when onType is provided', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <Button width={20} height={5} onType={() => {}} maxTypeInChars={42}>
         Hello
       </Button>,
-    );
-
-    await packetInterceptor.waitForPacket(
+    ).toSendButtonPacket(
       new IS_BTN({
         ClickID: 0,
         ReqI: 1,
@@ -23,19 +20,14 @@ describe('Button type in', () => {
         BStyle: ButtonStyle.ISB_CLICK,
       }),
     );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should not set TypeIn when onType is not provided, even if maxTypeInChars is set', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <Button width={20} height={5} maxTypeInChars={42}>
         Hello
       </Button>,
-    );
-
-    await packetInterceptor.waitForPacket(
+    ).toSendButtonPacket(
       new IS_BTN({
         ClickID: 0,
         ReqI: 1,
@@ -45,13 +37,10 @@ describe('Button type in', () => {
         TypeIn: 0,
       }),
     );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should add INIT_VALUE_BUTTON_TEXT to TypeIn when initializeDialogWithButtonText is set', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <Button
         width={20}
         height={5}
@@ -61,9 +50,7 @@ describe('Button type in', () => {
       >
         Hello
       </Button>,
-    );
-
-    await packetInterceptor.waitForPacket(
+    ).toSendButtonPacket(
       new IS_BTN({
         ClickID: 0,
         ReqI: 1,
@@ -74,8 +61,5 @@ describe('Button type in', () => {
         BStyle: ButtonStyle.ISB_CLICK,
       }),
     );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 });

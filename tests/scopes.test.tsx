@@ -1,5 +1,5 @@
 import { IS_BTN, IS_TINY, PlayerType, TinyType } from 'node-insim/packets';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import {
   Button,
@@ -11,8 +11,8 @@ import {
   sendNewConnectionPacket,
   sendNewPlayerPacket,
   wait,
-} from './packetInterceptor';
-import { renderInSimButtons } from './renderInSimButtons';
+} from './utils/packetInterceptor';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 // ConnectionScopeProvider (and HumanPlayerScopeProvider, which wraps it)
 // mount a ConnectionsPlayersProvider, which requests a full connection/player
@@ -32,15 +32,13 @@ async function consumeConnectionsPlayersDumpRequest(
 
 describe('Scope providers', () => {
   it('should render a single UCID=255 button for GlobalScopeProvider, regardless of connections', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <GlobalScopeProvider>
         <Button width={20} height={5}>
           Hello
         </Button>
       </GlobalScopeProvider>,
-    );
-
-    await packetInterceptor.waitForPacket(
+    ).toSendButtonPacket(
       new IS_BTN({
         ClickID: 0,
         ReqI: 1,
@@ -50,9 +48,6 @@ describe('Scope providers', () => {
         Text: 'Hello',
       }),
     );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should render one button per non-host connection for ConnectionScopeProvider', async () => {

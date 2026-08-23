@@ -2,8 +2,8 @@ import { ButtonStyle, IS_BTN } from 'node-insim/packets';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from '../src';
-import { sendButtonTypePacket, wait } from './packetInterceptor';
-import { renderInSimButtons } from './renderInSimButtons';
+import { sendButtonTypePacket, wait } from './utils/packetInterceptor';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 describe('Button onType event listener', () => {
   it('should call onType when a matching IS_BTT packet is received', async () => {

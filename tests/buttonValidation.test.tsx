@@ -8,8 +8,8 @@ import {
   beginInSimConnection,
   wait,
   waitForInSimInitPacket,
-} from './packetInterceptor';
-import { renderInSimButtons } from './renderInSimButtons';
+} from './utils/packetInterceptor';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 describe('Button validation', () => {
   let consoleErrorSpy: MockInstance<typeof console.error>;
@@ -81,13 +81,11 @@ describe('Button validation', () => {
   it('should send a button when text is at the maximum length', async () => {
     const maxLengthText = 'a'.repeat(240);
 
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <Button width={20} height={5}>
         {maxLengthText}
       </Button>,
-    );
-
-    await packetInterceptor.waitForPacket(
+    ).toSendButtonPacket(
       new IS_BTN({
         ClickID: 0,
         ReqI: 1,
@@ -96,10 +94,7 @@ describe('Button validation', () => {
         Text: maxLengthText,
       }),
     );
-    await packetInterceptor.assertNoMoreData();
     expect(consoleErrorSpy).not.toHaveBeenCalled();
-
-    cleanup();
   });
 
   // React's scheduler dispatches concurrent work via MessageChannel, which

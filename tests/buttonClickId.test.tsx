@@ -1,12 +1,11 @@
 import { IS_BTN } from 'node-insim/packets';
-import { describe, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { Button } from '../src';
-import { renderInSimButtons } from './renderInSimButtons';
 
 describe('Button ClickID allocation', () => {
   it('should reuse the same ClickID for buttons with different UCIDs', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <>
         <Button UCID={1} width={20} height={5}>
           A
@@ -15,21 +14,16 @@ describe('Button ClickID allocation', () => {
           B
         </Button>
       </>,
+    ).toSendButtonPackets(
+      [
+        new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 1, W: 20, H: 5, Text: 'A' }),
+        new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 2, W: 20, H: 5, Text: 'B' }),
+      ],
     );
-
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 1, W: 20, H: 5, Text: 'A' }),
-    );
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 2, W: 20, H: 5, Text: 'B' }),
-    );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should allocate different ClickIDs for buttons with the same UCID', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <>
         <Button UCID={5} width={20} height={5}>
           A
@@ -38,21 +32,16 @@ describe('Button ClickID allocation', () => {
           B
         </Button>
       </>,
+    ).toSendButtonPackets(
+      [
+        new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 5, W: 20, H: 5, Text: 'A' }),
+        new IS_BTN({ ClickID: 1, ReqI: 1, UCID: 5, W: 20, H: 5, Text: 'B' }),
+      ],
     );
-
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 5, W: 20, H: 5, Text: 'A' }),
-    );
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 1, ReqI: 1, UCID: 5, W: 20, H: 5, Text: 'B' }),
-    );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should only allocate a fully free ClickID for a UCID=255 (all) button, and keep it reserved for later buttons', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <>
         <Button UCID={1} width={20} height={5}>
           A
@@ -64,39 +53,27 @@ describe('Button ClickID allocation', () => {
           C
         </Button>
       </>,
+    ).toSendButtonPackets(
+      [
+        // A takes the first (empty) slot.
+        new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 1, W: 20, H: 5, Text: 'A' }),
+        // B (all connections) cannot reuse A's slot, since it isn't empty - a
+        // new slot is allocated instead.
+        new IS_BTN({ ClickID: 1, ReqI: 1, UCID: 255, W: 20, H: 5, Text: 'B' }),
+        // C can reuse A's slot, since UCID 2 isn't in it yet.
+        new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 2, W: 20, H: 5, Text: 'C' }),
+      ],
     );
-
-    // A takes the first (empty) slot.
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 1, W: 20, H: 5, Text: 'A' }),
-    );
-    // B (all connections) cannot reuse A's slot, since it isn't empty - a
-    // new slot is allocated instead.
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 1, ReqI: 1, UCID: 255, W: 20, H: 5, Text: 'B' }),
-    );
-    // C can reuse A's slot, since UCID 2 isn't in it yet.
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 0, ReqI: 1, UCID: 2, W: 20, H: 5, Text: 'C' }),
-    );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 
   it('should offset allocated ClickIDs by buttonClickIDStart', async () => {
-    const { packetInterceptor, cleanup } = await renderInSimButtons(
+    await expect(
       <Button width={20} height={5}>
         Hello
       </Button>,
+    ).toSendButtonPacket(
+      new IS_BTN({ ClickID: 10, ReqI: 1, W: 20, H: 5, Text: 'Hello' }),
       { createRootOptions: { buttonClickIDStart: 10 } },
     );
-
-    await packetInterceptor.waitForPacket(
-      new IS_BTN({ ClickID: 10, ReqI: 1, W: 20, H: 5, Text: 'Hello' }),
-    );
-    await packetInterceptor.assertNoMoreData();
-
-    cleanup();
   });
 });

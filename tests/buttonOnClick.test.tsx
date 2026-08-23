@@ -2,8 +2,8 @@ import { ButtonStyle, IS_BTN } from 'node-insim/packets';
 import { describe, expect, it, vi } from 'vitest';
 
 import { Button } from '../src';
-import { sendButtonClickPacket, wait } from './packetInterceptor';
-import { renderInSimButtons } from './renderInSimButtons';
+import { sendButtonClickPacket, wait } from './utils/packetInterceptor';
+import { renderInSimButtons } from './utils/renderInSimButtons';
 
 describe('Button onClick event listener', () => {
   it('should call onClick when a matching IS_BTC packet is received', async () => {

@@ -4,7 +4,7 @@ import { createRoot } from '../src';
 import {
   beginInSimConnection,
   waitForInSimInitPacket,
-} from './packetInterceptor';
+} from './utils/packetInterceptor';
 
 describe('InSim connection', () => {
   it('should connect to InSim and send an IS_ISI packet', async () => {

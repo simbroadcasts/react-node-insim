@@ -8,6 +8,7 @@ export default defineConfig({
     },
   },
   test: {
+    setupFiles: ['./tests/utils/customMatchers.tsx'],
     coverage: {
       reporter: ['json-summary'],
     },
