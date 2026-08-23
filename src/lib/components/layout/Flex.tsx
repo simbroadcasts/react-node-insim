@@ -1,11 +1,5 @@
-import type { ForwardedRef, ReactElement } from 'react';
-import {
-  Children,
-  cloneElement,
-  createElement,
-  forwardRef,
-  Fragment,
-} from 'react';
+import type { ReactElement, Ref } from 'react';
+import { Children, cloneElement, createElement, Fragment } from 'react';
 import type {
   YogaAlign,
   YogaFlexDirection,
@@ -35,6 +29,7 @@ type ButtonChild = ReactElement<ButtonProps> | null;
 type PositionProps = Required<Pick<ButtonProps, 'top' | 'left'>>;
 
 type FlexboxProps = {
+  ref?: Ref<FlexElement>;
   direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   justifyContent?:
     | 'start'
@@ -70,41 +65,39 @@ type FlexboxProps = {
   marginHorizontal?: number;
 };
 
-export const Flex = forwardRef(function FlexWithRef(
-  {
-    children,
-    direction = 'row',
-    justifyContent = 'start',
-    alignItems = 'start',
-    alignContent = 'start',
-    wrap = 'no-wrap',
-    padding,
-    paddingLeft,
-    paddingRight,
-    paddingTop,
-    paddingBottom,
-    paddingVertical,
-    paddingHorizontal,
-    margin,
-    marginLeft,
-    marginRight,
-    marginTop,
-    marginBottom,
-    marginVertical,
-    marginHorizontal,
-    top: topOffset,
-    left: leftOffset,
-    width,
-    height,
-    background,
-    color,
-    backgroundColor,
-    borderSize = 0,
-    borderColor,
-    UCID,
-  }: FlexProps,
-  ref: ForwardedRef<FlexElement>,
-) {
+export function Flex({
+  ref,
+  children,
+  direction = 'row',
+  justifyContent = 'start',
+  alignItems = 'start',
+  alignContent = 'start',
+  wrap = 'no-wrap',
+  padding,
+  paddingLeft,
+  paddingRight,
+  paddingTop,
+  paddingBottom,
+  paddingVertical,
+  paddingHorizontal,
+  margin,
+  marginLeft,
+  marginRight,
+  marginTop,
+  marginBottom,
+  marginVertical,
+  marginHorizontal,
+  top: topOffset,
+  left: leftOffset,
+  width,
+  height,
+  background,
+  color,
+  backgroundColor,
+  borderSize = 0,
+  borderColor,
+  UCID,
+}: FlexProps) {
   const root = yoga.Node.create();
 
   if (width !== undefined) {
@@ -270,7 +263,7 @@ export const Flex = forwardRef(function FlexWithRef(
       </Fragment>
     </>,
   );
-});
+}
 
 const isValidChild = (child: ReactElement | null): child is ReactElement =>
   child !== null &&
